@@ -17,9 +17,9 @@
 		public $user_id;
 
 		//Constructor with Database
-		public function __construct($database){
+		public function __construct($pdoObj){
 			
-			$this->connection = $database;
+			$this->connection = $pdoObj;
 			
 		}
 
@@ -67,7 +67,6 @@
 			$stmt->bindParam(':type', $this->type);
 			$stmt->bindParam(':title', $this->title);
 			$stmt->bindParam(':note', $this->note);
-			$stmt->bindParam(':addtime', $this->addtime);
 			$stmt->bindParam(':user_id', $this->user_id);
 
 			
@@ -109,7 +108,7 @@
 			if($stmt->execute()){
 				return true;
 			}else{
-				echo "Error:".$stmt->error."<br/>";
+				echo "Error:".$stmt->error."<br/>";//QQ_where to echo? log? <br/>?
 				return false;
 			}
 		}//End update
@@ -425,9 +424,10 @@
 				echo "Error:".$stmt->error."<br/>";
 				return false;
 			}
+		}//end check
 
 		// Schedule (update part of data: schedule due startTime)
-		public schedule(){
+		public function schedule(){
 			// SQL query: find the item by id from table:tasks and update it
 			$query = 'UPDATE '.$this->task_table.'AS sk9'.
 								'SET sk9.schedule = :schedule, sk9.due = :due, sk9.startTime = :startTime'.
@@ -454,12 +454,13 @@
 			}else{
 				echo "Error:".$stmt->error."<br/>";
 				return false;
-			
-		}
+			}
+		}//end schedule
 
 		// Delete info in table:checks and table:tasks using SQL setting 
 		// "CONSTRANT 'fk_check_item' FOREIGN KEY (item_id) REFERENCES items (id) ON DELETE CASCADE" in table:checks
 		// "CONSTRANT 'fk_task_item' FOREIGN KEY (item_id) REFERENCES items (id) ON DELETE CASCADE" in table:tasks
 		// Use the Item.delete()
+		}// end Class task
 	
 ?>

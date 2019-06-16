@@ -4,7 +4,7 @@
 		private $host = 'localhost';
 		private $username = 'root';
 		private $password = '1001';
-		private $db_name = 'list';
+		private $db_name = 'myshoot';
 		private $connection;
 		
 		// Connect to Database
@@ -19,7 +19,7 @@
 				echo 'Connection Error: '.$e->getMessage();
 			}
 
-			return $this->connection
+			return $this->connection;
 		}
 
 	}
