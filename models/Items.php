@@ -10,7 +10,7 @@
 		
 		//Item Properties
 		public $id;
-		public $type;
+		public $type = 0;//(0:Item, 1:check, 2:task)
 		public $title;
 		public $note;
 		public $addtime;
@@ -143,6 +143,7 @@
 
 	class Check extends Item{
 		//Item Properties
+		public $type = 1;//(0:Item, 1:check, 2:task)
 		private $check_table='checks';
 		public $check;
 
@@ -275,6 +276,7 @@
 
 	class Task extends Check{
 		//Item Properties
+		public $type = 2;//(0:Item, 1:check, 2:task)
 		private $task_table='tasks';
 		public $shedule;
 		public $due;
