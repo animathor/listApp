@@ -1,25 +1,46 @@
 <?php
 include'Items.php';
-	class BasicList {
+	class GeneralList {
 		//DB
 		private $connection;
 		private $table = 'lists';
 		private $listItems_table = 'list_items';
+		private $items_table = 'items';
+
 		//List properties
 		public $id;
 		public $head;
 		public $items;
 		public $length=0;
+		public $listType;//(0:item, 1:check, 2:task)
+		private $headTypeTable = [0,1,2];//(list type, head type)[(item,item),(check, check), (task, task)
+		private $newItemTypeTable = [0,1,2];//(list type, items type)[(item,item),(check, check), (task, task)
 		private $lastAddIndex=0;
 
 		//Constructor
-		public function __construct($pdoObj){
+		public function __construct($pdoObj, $listType){
 			$this->connection = $pdoObj;
+			$this->listType = $listType;
 		}
 		
+		protected distributeContainer($itemType){
+			switch($itemType){
+				case:0
+					$item = new Item($this->connection);
+					return $item;
+				case:1
+					$item = new Check($this->connection);
+					return $item;
+				case:2
+					$item = new Task($this->connection);
+					return $item;
+			}
+		}
+
 		// Create empty list 
 		public function create($listTitle){
-			$newHead = new Item($this->connection);
+			//根據 list 類型 查表其 head 類型，在選定裝的物件類型
+			$newHead = $this->distributeContainer($headTypeTable[$this->listType]);//head type follows list type 
 			$newHead->title = htmlspecialchars(strip_tags($listTitle));
 			if($newHead->create()){
 				$this->head = $newHead;
@@ -46,8 +67,9 @@ include'Items.php';
 		public function addNewItem($title){
 			// you can't add item before you have the list(record in DB)QQ_neccessary?
 			if(!is_null($this->id)){
-				// Create item in DB, get id.
-				$newItem = new Item($this->connection);
+				// Create item in DB, get id.;
+													//根據 list 類型 查表其 new item 類型，從而選定裝的物件類型
+				$newItem = $this->distributeContainer($this->$newItemTypeTable[$this->listType])
 				$newItem->title = $title;
 				if($newItem->create()){
 					//store in items[]
@@ -112,24 +134,28 @@ include'Items.php';
 
 		// Read BY ID (ver. call Item.read() for each item)
 		public function read(){
-			// Read head
-			$query = 'SELECT head_id FROM '.$this->table.'WHERE id = ?';
+			// Read head and its type to generate list
+			$query = 'SELECT head_id, type FROM '.$this->table.
+								'WHERE id = ? LIMIT 0,1';
 			$stmt = $this->connection->prepare($query);
 			$stmt = execute([$this->id]);
-			$row = $stmt->fetch(PDO::FETCH_NUM);
-			$newHead->id = $row[0];
+			$row = $stmt->fetch(PDO::FETCH_ASSOC);
+			$newHead = $this->distributeContainer($this->$headTypeTable[$row['type']]);//根據 list 類型 查表其 head 類型，在選定裝的物件類型
+			$newHead->id = $row['head_id'];
 			$this->head = $newHead;
 			
 			// Read items
-			// SQL query: find the items id from list_items table
-			$query = 'SELECT item_id , ordinal_num FROM '.$this->listItems_table.' WHERE id = ? ';
+			// SQL query: find the items id from list_items table and list type from items
+			$query = 'SELECT l_i.item_id , l_i.ordinal_num, i.type as item_type FROM '.$this->listItems_table.'AS l_i'.
+								'INNER JOIN '.$items_table.'AS i ON l_i.item_id = i.id'.
+								' WHERE l_i.list_id = ? ';
 			$stmt = $this->connection->prepare($query);// Prepare statement 
 			$stmt->bindParam(1, $this->id);// Bind ? to ID
 			$stmt->execute();// Execute the statement to get the result of the query
 			
 			//fetch the record store in associate array and generate each item
 			while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-				$newItem = new Item($this->connection);
+				$newItem = $this->distributeContainer($row['item_type']);//根據 item type 選定要裝的物件類別
 				$newItem->id = $row['item_id']; 
 				if($newItem->read()){
 					$this->items[$row['ordinal_num']] = $newItem;
@@ -140,6 +166,9 @@ include'Items.php';
 		}//end read
 		
 		// Update head
+		public updateHead(){
+			
+		}
 		// Update item
 		// Update items
 
