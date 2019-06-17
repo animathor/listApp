@@ -12,18 +12,19 @@ include'Items.php';
 		public $head;
 		public $items;
 		public $length=0;
+		public $order;//取得 item index 排列順序 (original index => new index)
 		public $listType;//(0:item, 1:check, 2:task)
 		private $headTypeTable = [0,1,2];//(list type, head type)[(item,item),(check, check), (task, task)
 		private $newItemTypeTable = [0,1,2];//(list type, items type)[(item,item),(check, check), (task, task)
 		private $lastAddIndex=0;
 
 		//Constructor
-		public function __construct($pdoObj, $listType){
+		public function __construct(PDO $pdoObj, int $listType){
 			$this->connection = $pdoObj;
 			$this->listType = $listType;
 		}
 		
-		protected distributeContainer($itemType){
+		protected distributeContainer(int $itemType){
 			switch($itemType){
 				case:0
 					$item = new Item($this->connection);
@@ -38,7 +39,7 @@ include'Items.php';
 		}
 
 		// Create empty list 
-		public function create($listTitle){
+		public function create(string $listTitle){
 			//根據 list 類型 查表其 head 類型，在選定裝的物件類型
 			$newHead = $this->distributeContainer($headTypeTable[$this->listType]);//head type follows list type 
 			$newHead->title = htmlspecialchars(strip_tags($listTitle));
@@ -63,6 +64,39 @@ include'Items.php';
 				return false;
 			}
 		}
+
+		protected function addItemToList(Item $item){
+			//store in items[]
+			$this->items[] = $item;
+			//update lastAddIndex
+			//QQ_為了取得 item 的 index 可以用 key(end($items)) , array_search($newItem, $items) 來取得，最後決定單純一點用var存lastAddIndex
+			if($this->lastAddIndex >0)
+				$lastAddIndex++;
+      
+			// Add new list relation
+			$query = 'INSERT INTO '.$this->table.
+								'SET list_id = :list_id, item_id = :item_id, item_ordinalNum = :item_ordinalNum';
+			
+			// Prepare statement
+			$stmt = $this->connection->prepare($query);
+    
+			// Bind Parameters
+			$stmt->bindParam(':list_id', $this->id);
+			$stmt->bindParam(':item_id', $item->id);//QQ_ same as $this->items[$lastAddItem]->id but...
+			$stmt->bindParam(':item_ordinalNum', $lastAddItem);//QQ_make sure $lastAddItem == index of newItem in items
+    
+			// Execute statement
+			if($stmt->excute()){
+				return true;
+				$this->length++;
+			}else{
+				// failed saving relation in DB. delete the newItem and drop it from items.
+				$this->items[$lastAddItem]->delete();//delete DB record
+				$this->dropItem($lastAddItem);//drop item
+				$lastAddItem--;//previous index
+				return false;
+			}
+		}//end add item to list
 		
 		public function addNewItem($title){
 			// you can't add item before you have the list(record in DB)QQ_neccessary?
@@ -72,37 +106,7 @@ include'Items.php';
 				$newItem = $this->distributeContainer($this->$newItemTypeTable[$this->listType])
 				$newItem->title = $title;
 				if($newItem->create()){
-					//store in items[]
-					items[] = $newItem;
-					//update lastAddIndex
-					//QQ_為了取得 item 的 index 可以用 key(end($items)) , array_search($newItem, $items) 來取得，最後決定單純一點用var存lastAddIndex
-					if($this->lastAddIndex >0)
-						$lastAddIndex++;
-          
-					// Add new list relation
-					$query = 'INSERT INTO '.$this->table.
-										'SET head__id = :head_id, item_id = :item_id, item_ordinalNum = :item_ordinalNum';
-					
-					// Prepare statement
-					$stmt = $this->connection->prepare($query);
-      
-					// Bind Parameters
-					$stmt->bindParam(':head_id', $this->head->id);
-					$stmt->bindParam(':item_id', $newItem->id);//QQ_ same as $this->items[$lastAddItem]->id but...
-					$stmt->bindParam(':item_ordinalNum', $lastAddItem);//QQ_make sure $lastAddItem == index of newItem in items
-      
-					// Execute statement
-					if($stmt->excute()){
-						return true;
-						$this->length++;
-					}else{
-						// failed saving relation in DB. delete the newItem and drop it from items.
-						$this->items[$lastAddItem]->delete();//delete DB record
-						$this->dropItem($lastAddItem);//drop item
-						$lastAddItem--;//previous index
-						return false;
-					}
-      
+      		return addItemToList($newItem);
 				}else{
 					return false;
 				}
@@ -165,14 +169,102 @@ include'Items.php';
 			}
 		}//end read
 		
-		// Update head
-		public updateHead(){
-			
-		}
-		// Update item
-		// Update items
+		// Update List
+		public function update(){
+			// update head
+			$this->head->update();
+
+			// update list-items ordinal_num
+			foreach($this->order as $original_i=>$new_i){
+				$query = 'UPDATE FROM'.$this->listItems_table.' SET ordinal_num = :new_i WHERE id = :list_id AND ordinal_num = :original_i';
+				$stmt = $this->connection->prepare($query);
+				$stmt->execute(['new_i'=>$new_i, 'original_i'=>$original_i, 'list_id'=>$this->id]);
+			}
+
+			// update each item
+			foreach($this->items as $item){
+				$item->update();
+			}
+		}//end update
 
 		// Delete list
+		public function delete(){
+			//delete head
+			$this->head->delete();
+
+			//delete items
+			foreach($this->items as $item){
+				$item->delete
+			}
+		}//end delete list
+
+		// Delete item
+		public function deleteItem(int $index){
+			$this->items[$index]->delete();
+			$length--;
+		}
+
+		// Copy item
+		public function copyItem(int $index){
+			$copy = clone $this->items[$index];
+			$copy->id = null;
+			return $copy;
+		}
+
+		// Cut item
+		public function cutItem(int $index){
+			$item = $this->items[$index];//get the item
+			$this->dropItem($index);//drop item from list
+			return $item;
+		}
+		
+		// Paste item to list
+		public function includeItem(Item $item){
+			// Recieve a copy
+			if(is_null($item->id)){
+				if($item->create()){
+					return addItemToList($item);
+				}else{
+					return false;
+				}
+			}
+			// Recieve a item
+			else{
+				return addItemToList($item);
+			}
+		}
+		
+		// Add another list as sublist. Or to say including head item of list
+		public function includeSublist(GeneralList $sublist){
+			if($sublist->head->type === $itemTypeTable[$this->id]){
+				return addItemToList($sublist->head);
+			}else{
+			//QQ_change item type could wait...
+				return false;
+			}
+		}
+
+		public function createSublist($index){
+			// sublist type is same as item type
+			$sublistType = $this->items[$index]->type;
+			$head = $this->items[$index]->head;
+
+			// Create list
+			$sublist = new GeneralList($this->connection, $sublistType);
+			$query = 'INSERT INTO '.this->table.'(head_id, type) VALUES(:head_id, :listType)';
+			$stmt = $this->connection->prepare($query);
+			$stmt->bindParam(':head_id',$head->id);
+			$stmt->bindParam(':listType',$sublistType);
+			if($stmt->execute()){
+				//get list id
+				$result = $this->connection->query('SELECT LAST_INSERT_ID()', PDO::FETCH_NUM);//useing num since it only has one field
+				$this->id = $result[0];//store lists id
+				$sublist->head = $head;
+				return $sublist;
+			}else{
+				return false;//QQ_null?
+			}
+		}
 
 	}//end Class BasicList
 ?>
