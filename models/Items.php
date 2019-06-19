@@ -401,8 +401,8 @@
 		public function check(){
 			// SQL query: find the item by id from items join table:checks and update it
 			$query = 'UPDATE '.$this->check_table.'AS chk'.
-								'INNER JOIN'.$this->task_table.'AS sk9'.
-								'SET chk.checked = :checked, sk9.endTime = :endTime'.
+								'INNER JOIN'.$this->task_table.'AS tsk'.
+								'SET chk.checked = :checked, tsk.endTime = :endTime'.
 								'WHERE item_id = :id';
 
 			// Prepare statement 
