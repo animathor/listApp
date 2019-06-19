@@ -144,12 +144,12 @@
 		//Item Properties
 		public $type = 1;//(0:Item, 1:check, 2:task)
 		private $check_table='checks';
-		public $check;
+		public $checked;
 
 		//Get Item from DB: Override Item.read()
 		public function read(){
 			// SQL query: find the item by id from items table
-			$query = 'SELECT i.type, i.title, i.note, i.addtime, i.user_id , chk.check'.
+			$query = 'SELECT i.type, i.title, i.note, i.addtime, i.user_id , chk.checked'.
 								'FROM '.$this->table.'AS i '.
 								'INNER JOIN'.$this->check_table.'AS chk '.
 								'ON i.id = chk.item_id '.
@@ -173,7 +173,7 @@
 			$this->note = $row['note'];
 			$this->addtime = $row['addtime'];
 			$this->user_id = $row['user_id'];
-			$this->check = $row['check'];
+			$this->checked = $row['checked'];
 		}//End read
 
 		// Create an item in DB and then add the additional info in table:check
@@ -181,19 +181,19 @@
 			// Call Item.create(), adding item first
 			if(parent::create()){
 				// SQL query: Add id and check to table:checks
-				$query = 'INSERT INTO '.$this->check_table.'(item_id, check) '.
-										'VALUES(:item_id, :check)';
+				$query = 'INSERT INTO '.$this->check_table.'(item_id, checked) '.
+										'VALUES(:item_id, DEFAULT)';
         
 				// Prepare statement 
 				$stmt = $this->connection->prepare($query);
         
 				// Clean data ( maybe do this when api get data from user QQ_security)
 				$this->item_id = htmlspecialchars(strip_tags($this->id));//already get the id by executing Item.create().
-				$this->check = htmlspecialchars(strip_tags($this->check));
+				//$this->checked = htmlspecialchars(strip_tags($this->checked));
         
 				// Bind parameters
 				$stmt->bindParam(':item_id', $this->item_id);
-				$stmt->bindParam(':check', $this->check);
+				//$stmt->bindParam(':checked', $this->checked);//won't check in create stage
         
 				
 				// Execute the statement. Check if it success inserting record. 
@@ -213,7 +213,7 @@
 			// SQL query: find the item by id from items join table:checks and update it
 			$query = 'UPDATE '.$this->table.'AS i'.
 								'INNERJOIN '.$this->check_table.'AS chk ON (i.id = chk.item_id)'.
-								'SET i.title = :title, i.note = :note, i.user_id = :user_id, chk.check = :check'.
+								'SET i.title = :title, i.note = :note, i.user_id = :user_id, chk.checked = :checked'.
 								'WHERE i.id = :id';
 
 			// Prepare statement 
@@ -230,7 +230,7 @@
 			$stmt->bindParam(':note', $this->note);
 			$stmt->bindParam(':user_id', $this->user_id);
 			$stmt->bindParam(':id', $this->id);//QQ_neccessary?
-			$stmt->bindParam(':check', $this->check);
+			$stmt->bindParam(':checked', $this->checked);
 			
 			// Execute the statement. Check if it success inserting record. 
 			if($stmt->execute()){
@@ -249,7 +249,7 @@
 		public function check(){
 			// SQL query: find the item by id from items join table:checks and update it
 			$query = 'UPDATE '.$this->check_table.
-								'SET check = :check'.
+								'SET checked = :checked'.
 								'WHERE item_id = :id';
 
 			// Prepare statement 
@@ -260,7 +260,7 @@
 
 			// Bind parameters
 			$stmt->bindParam(':id', $this->id);//QQ_neccessary?
-			$stmt->bindParam(':check', $this->check);
+			$stmt->bindParam(':checked', $this->checked);
 			
 			// Execute the statement. Check if it success inserting record. 
 			if($stmt->execute()){
@@ -285,7 +285,7 @@
 		//Get Item from DB: Override Item.read()
 		public function read(){
 			// SQL query: find the item by id from items table
-			$query = 'SELECT i.type, i.title, i.note, i.addtime, i.user_id , chk.check, sk9.schedule, sk9.due, sk9.startTime,sk9.endTime'.
+			$query = 'SELECT i.type, i.title, i.note, i.addtime, i.user_id , chk.checked, sk9.schedule, sk9.due, sk9.startTime,sk9.endTime'.
 								'FROM '.$this->table.'AS i '.
 								'INNER JOIN'.$this->check_table.'AS chk '.'ON i.id = chk.item_id '.
 								'INNER JOIN'.$this->task_table.'AS sk9 '.'ON i.id = sk9.item_id '.
@@ -309,7 +309,7 @@
 			$this->note = $row['note'];
 			$this->addtime = $row['addtime'];
 			$this->user_id = $row['user_id'];
-			$this->check = $row['check'];
+			$this->checked = $row['checked'];
 			$this->schedule= $row['schedule'];
 			$this->due= $row['due'];
 			$this->startTime= $row['startTime'];
@@ -361,7 +361,7 @@
 			$query = 'UPDATE '.$this->table.'AS i'.
 								'INNERJOIN '.$this->check_table.'AS chk ON (i.id = chk.item_id)'.
 								'INNERJOIN '.$this->task_table.'AS sk9 ON (i.id = sk9.item_id)'.
-								'SET i.title = :title, i.note = :note, i.user_id = :user_id, chk.check = :check, sk9.schedule = :schedule, sk9.due = :due, sk9.startTime = :startTime, sk9.endTime = :endTime'.
+								'SET i.title = :title, i.note = :note, i.user_id = :user_id, chk.checked = :checked, sk9.schedule = :schedule, sk9.due = :due, sk9.startTime = :startTime, sk9.endTime = :endTime'.
 								'WHERE i.id = :id';
 
 			// Prepare statement 
@@ -382,7 +382,7 @@
 			$stmt->bindParam(':note', $this->note);
 			$stmt->bindParam(':user_id', $this->user_id);
 			$stmt->bindParam(':id', $this->id);
-			$stmt->bindParam(':check', $this->check);
+			$stmt->bindParam(':checked', $this->checked);
 			$stmt->bindParam(':schedule', $this->schedule);
 			$stmt->bindParam(':due', $this->due);
 			$stmt->bindParam(':startTime', $this->startTime);
@@ -402,7 +402,7 @@
 			// SQL query: find the item by id from items join table:checks and update it
 			$query = 'UPDATE '.$this->check_table.'AS chk'.
 								'INNER JOIN'.$this->task_table.'AS sk9'.
-								'SET chk.check = :check, sk9.endTime = :endTime'.
+								'SET chk.checked = :checked, sk9.endTime = :endTime'.
 								'WHERE item_id = :id';
 
 			// Prepare statement 
@@ -414,7 +414,7 @@
 
 			// Bind parameters
 			$stmt->bindParam(':id', $this->id);//QQ_neccessary?
-			$stmt->bindParam(':check', $this->check);
+			$stmt->bindParam(':checked', $this->checked);
 			$stmt->bindParam(':endTime', $this->endTime);
 			
 			// Execute the statement. Check if it success inserting record. 
