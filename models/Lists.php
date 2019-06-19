@@ -1,5 +1,5 @@
 <?php
-include'Items.php';
+	include 'Items.php';
 	class GeneralList {
 		//DB
 		private $connection;
@@ -174,34 +174,91 @@ include'Items.php';
 			// update head
 			$this->head->update();
 
-			// update list-items ordinal_num
-			foreach($this->order as $original_i=>$new_i){
-				$query = 'UPDATE FROM'.$this->listItems_table.' SET ordinal_num = :new_i WHERE id = :list_id AND ordinal_num = :original_i';
-				$stmt = $this->connection->prepare($query);
-				$stmt->execute(['new_i'=>$new_i, 'original_i'=>$original_i, 'list_id'=>$this->id]);
+			if(!is_null($this->order)){
+				// update list-items ordinal_num
+				foreach($this->order as $original_i=>$new_i){
+					$query = 'UPDATE FROM'.$this->listItems_table.' SET ordinal_num = :new_i WHERE id = :list_id AND ordinal_num = :original_i';
+					$stmt = $this->connection->prepare($query);
+					$stmt->execute(['new_i'=>$new_i, 'original_i'=>$original_i, 'list_id'=>$this->id]);
+				}
 			}
 
 			// update each item
 			foreach($this->items as $item){
 				$item->update();
 			}
-		}//end update
+		
+
+		// Update item by index
+		public function updateItem($index){
+			return $this->items[$index]->update();
+
+		}
+
+		// Check List
+		public function check(){
+			// if it is a check list
+			if($this->listType == 1 || $this->listType == 2){
+				$this->head->check();
+				foreach($this->items as $item){
+					if(!$item->check())
+						return false;
+				}
+				return true;
+			}
+			else
+				return false;
+		}
+
+		// Check item
+		public function checkitem($index){
+			if($this->listType == 1 || $this->listType == 2){
+				return $this->item[$index]->check();
+			}
+			else
+				return false;
+		}
+
+		// Schedule List head
+		public schedule(){
+			if($this->listType == 2){
+				return $this->head->schedule();
+			}else{
+				return false;
+			}
+		}
+
+		// Schedule item
+		public scheduleItem($index){
+			if($this->listType == 2){
+				return $this->items[$index]->schedule();
+			}else{
+				return false;
+			}
+		}
 
 		// Delete list
 		public function delete(){
 			//delete head
-			$this->head->delete();
+			if(!$this->head->delete())
+				return false;
 
 			//delete items
 			foreach($this->items as $item){
-				$item->delete
+				if(!$item->delete())
+					return false;
 			}
+			return true;
 		}//end delete list
 
 		// Delete item
 		public function deleteItem(int $index){
-			$this->items[$index]->delete();
-			$length--;
+			if($this->items[$index]->delete()){
+				$length--;
+				return true;
+			}else{
+				return false;
+			}
 		}
 
 		// Copy item
@@ -240,7 +297,7 @@ include'Items.php';
 				return addItemToList($sublist->head);
 			}else{
 			//QQ_change item type could wait...
-				return false;
+				return null;
 			}
 		}
 
@@ -262,7 +319,7 @@ include'Items.php';
 				$sublist->head = $head;
 				return $sublist;
 			}else{
-				return false;//QQ_null?
+				return null;//QQ_null?
 			}
 		}
 
