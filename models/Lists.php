@@ -65,7 +65,7 @@
 			}
 		}
 
-		protected function addItemToList(Item $item){
+		FIX!protected function addItemToList(Item $item){
 			//store in items[]
 			$this->items[] = $item;
 			//update lastAddIndex
@@ -98,7 +98,7 @@
 			}
 		}//end add item to list
 		
-		public function addNewItem($title){
+		FIX!public function addNewItem($title){
 			// you can't add item before you have the list(record in DB)QQ_neccessary?
 			if(!is_null($this->id)){
 				// Create item in DB, get id.;
@@ -115,7 +115,7 @@
 			}//end if id is null
 		}//end addNewItem
 
-		public function dropItem($index){
+		FIX!public function dropItem($index){
 			//delete the record in table:list_items
 			$query = 'DELETE FROM '.$this->listItems_table.
 									'WHERE item_id = :item_id)';
@@ -211,7 +211,7 @@
 		}
 
 		// Check item
-		public function checkitem($index){
+		FIX!public function checkitem($index){
 			if($this->listType == 1 || $this->listType == 2){
 				return $this->item[$index]->check();
 			}
@@ -229,7 +229,7 @@
 		}
 
 		// Schedule item
-		public scheduleItem($index){
+		FIX!public scheduleItem($index){
 			if($this->listType == 2){
 				return $this->items[$index]->schedule();
 			}else{
@@ -252,7 +252,7 @@
 		}//end delete list
 
 		// Delete item
-		public function deleteItem(int $index){
+		FIX!public function deleteItem(int $index){
 			if($this->items[$index]->delete()){
 				$length--;
 				return true;
@@ -262,21 +262,21 @@
 		}
 
 		// Copy item
-		public function copyItem(int $index){
+		FIX!public function copyItem(int $index){
 			$copy = clone $this->items[$index];
 			$copy->id = null;
 			return $copy;
 		}
 
 		// Cut item
-		public function cutItem(int $index){
+		FIX!public function cutItem(int $index){
 			$item = $this->items[$index];//get the item
 			$this->dropItem($index);//drop item from list
 			return $item;
 		}
 		
 		// Paste item to list
-		public function includeItem(Item $item){
+		FIX!public function includeItem(Item $item){
 			// Recieve a copy
 			if(is_null($item->id)){
 				if($item->create()){
@@ -292,7 +292,7 @@
 		}
 		
 		// Add another list as sublist. Or to say including head item of list
-		public function includeSublist(GeneralList $sublist){
+		FIX!public function includeSublist(GeneralList $sublist){
 			if($sublist->head->type === $itemTypeTable[$this->id]){
 				return addItemToList($sublist->head);
 			}else{
@@ -301,7 +301,7 @@
 			}
 		}
 
-		public function createSublist($index){
+		FIX!public function createSublist($index){
 			// sublist type is same as item type
 			$sublistType = $this->items[$index]->type;
 			$head = $this->items[$index]->head;
