@@ -1,5 +1,5 @@
 <?php
-	include_once 'Items.php';
+	include_once 'Items_obj.php';
 
 	class ItemX{
 		//Database
@@ -34,13 +34,13 @@
 
 		public function distributeContainer(int $item_type){
 			switch($item_type){
-				case 0:
+				case 2:
 					$item = new Item($this->connection);
 					return $item;
-				case 1:
+				case 4:
 					$item = new Check($this->connection);
 					return $item;
-				case 2:
+				case 6:
 					$item = new Task($this->connection);
 					return $item;
 				default:
@@ -128,10 +128,10 @@
 					}elseif($prop_name == 'due'){
 						$this->container->due= $value;
 						return true;
-					}elseif($prop_name == 'startTime'){
+					}elseif($prop_name == 'timer'){
 						$this->container->startTime= $value;
 						return true;
-					}elseif($prop_name == 'endTime'){
+					}elseif($prop_name == 'totalTime'){
 						$this->container->endTime= $value;
 						return true;
 					}else{
@@ -142,6 +142,31 @@
 		
 		public function check($on_off){
 			return $this->container->check($on_off);
+		}
+		
+		// Subitem methods
+		public function addSubitem($item_id){
+			return $this->container->addSubitem($item_id);
+		}
+
+		public function addNewSubitem($title, $item_type=self::DEFAULT_NEW){
+			return $this->container->addNewSubitem($title, $item_type=self::DEFAULT_NEW);
+		}
+
+			// Read and store in subitems[]
+		public function readSubitems(){
+			return $this->container->readSubitems();
+		}
+
+		public function dropSubitem($item_id){
+			return $this->container->dropSubitem($item_id);
+		}
+
+		public function deleteSubitem($item_id){
+			return $this->container->deleteSubitem($item_id);
+		}
+		public function updateOrder(){
+			return $this->container->updateOrder();
 		}
 	}// end class ItemX
 ?>

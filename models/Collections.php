@@ -1,24 +1,26 @@
 <?php
+	include_once 'Items_obj.php';
+	
 	class Collection extends Base{
 
 		// Properties
 		private const TYPE = 1;
-		private const COLLECTION_TABLE ='collections';
-		private const ITEM_TABLE ='items';
+		private const COLLECTIONS_TABLE ='collections';
+		private const ITEMS_TABLE ='items';
 
 		// Subcollections Properties
 		private const COLLECTION_COLLECTIONS='collection_collections';
-		private const PARENT_COLLECTION = 'parent_collection_id';
-		private const CHILD_COLLECTION = 'child_collection_id';
+		private const PARENT_COLLECTION = 'parent_collection';
+		private const CHILD_COLLECTION = 'child_collection';
 		private const DEFAULT_NEW = 1;// add new collection
 
 		// Subitems Properties
 		private const COLLECTION_ITEMS='collection_items';
-		private const CHILD_ITEM= 'child_item_id';
+		private const CHILD_ITEM= 'child_item';
 
 		// Methods
 		public function read(){
-			$query = 'SELECT type, title, addTime FROM '.self::COLLECTION_TABLE.' WHERE id = ? ';
+			$query = 'SELECT title, addTime FROM '.self::COLLECTIONS_TABLE.' WHERE id = ? ';
 			$stmt = $this->connection->prepare($query);
 
 			$stmt->bindParam(1,$this->id);
@@ -28,7 +30,6 @@
 				$row = $stmt->fetch(PDO::FETCH_ASSOC);
 
 				//assign each property the value in the corresponding field
-				$this->type = $row['type'];
 				$this->title = $row['title'];
 				$this->addTime = $row['addTime'];
 				return true;
@@ -40,8 +41,8 @@
 
 		}
 
-		public function creat(){
-			$query = 'INSERT INTO '.self::COLLECTION_TABLE.'(type, title)'.
+		public function create(){
+			$query = 'INSERT INTO '.self::COLLECTIONS_TABLE.'(type, title)'.
 								'VALUES(:type, :title)';
 			$stmt = $this->connection->prepare($query);
 
@@ -65,7 +66,7 @@
 		}
 
 		public function update(){
-			$query = 'UPDATE FROM '.self::COLLECTION_TABLE.
+			$query = 'UPDATE FROM '.self::COLLECTIONS_TABLE.
 								'SET title = :title'.
 								'WHERE id = :id';
 			$stmt = $this->connection->prepare($query);
@@ -104,7 +105,7 @@
 						}
 					}
 					// delete collection element
-					if(!deleteEle(self::COLLECTION_TABLE, $collection_id)){
+					if(!deleteEle(self::COLLECTIONS_TABLE, $collection_id)){
 							throw new Exception("Collection $collection_id not deleted");
 							return false;
 					}

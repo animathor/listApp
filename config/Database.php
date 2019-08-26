@@ -4,7 +4,7 @@
 		private $host = 'localhost';
 		private $username = 'root';
 		private $password = '1001';
-		private $db_name = 'myshoot';
+		private $db_name = 'listApp';
 		private $connection;
 		
 		// Connect to Database

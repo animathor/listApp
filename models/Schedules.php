@@ -1,5 +1,5 @@
 <?php
-	include_once('test.php');
+	include_once 'Items_obj.php';
 
 	class Schedule extends Order{
 		// Properties

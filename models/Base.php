@@ -1,18 +1,20 @@
 <?php
+	include_once 'ItemX.php';
+	
 	abstract class Base{
 		// Database
 		protected $connection;
 		
 		// Properties
-		protected $id;
+		public $id;
 		private const TYPE = 0;
-		protected $title;
-		protected $addTime;
-		protected $author_id;
+		public $title;
+		public $addTime;
+		public $author_id;
 		private const ITEM_TABLE = 'items';
 
 		// Subitems Properties
-		protected function $subItems;
+		public $subItems;
 		private const RELATION_TABLE = 'item_items';
 		private const PARENT_ITEM = 'parent_id';
 		private const CHILD_ITEM = 'child_id';
@@ -81,7 +83,7 @@
 		}// End add Subitem by id
 
 
-		protected function addNewSubItemGen($element_type, $title){
+		protected function addNewSubItemGen($title, $element_type){
 			// Create New item
 			$newItem = new ItemX($this->connection, ['type'=>$element_type]);
 			$newItem->setData('title', $title);
@@ -220,7 +222,7 @@
 
 	abstract class Ordered extends Base{
 		// Preserve a specific order for subitems
-		protected order;
+		protected $order;
 
 		protected function addSubItemGen($relation_table, $parent_element, $child_element, $subitem_id){
 			$ordinal_num=0;
@@ -286,14 +288,14 @@
 		}// End read Subitems
 
 		//update order
-		protected function updateOrder($relation_table, $parent_element, $child_element, $element_table){
+		protected function updateOrderGen($relation_table, $parent_element, $child_element, $element_table){
 			if(!is_null($this->order)){
 				foreach($this->order as $index=>$item_id){
 					$query = "UPDATE `".$relation_table."`".
 										" SET ordinal_num = :ordinal_num".
-										" WHERE `"$parent_element."` = :parent_element AND ".$child_element." = :child_element";
+										" WHERE `".$parent_element."` = :parent_element AND ".$child_element." = :child_element";
 					$stmt = $this->connection->prepare($query);
-					if(!stmt->execute(['ordinal_num'=$index, 'parent_element'=$this->id, 'child_element'=$item_id])){
+					if(!$stmt->execute(['ordinal_num'=>$index, 'parent_element'=>$this->id, 'child_element'=>$item_id])){
 						print "{$stmt->error}";
 						return false;
 					}

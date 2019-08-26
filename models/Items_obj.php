@@ -1,5 +1,6 @@
 <?php
-	class Item extends Order{
+	include_once 'Base.php';
+	class Item extends Ordered{
 
 		// Properties
 		protected $note;
@@ -38,7 +39,7 @@
 
 		}
 
-		public function creat(){
+		public function create(){
 			$query = 'INSERT INTO '.self::ITEM_TABLE.'(type, title, note)'.
 								'VALUES(:type, :titlei, :note)';
 			$stmt = $this->connection->prepare($query);
@@ -97,8 +98,8 @@
 			return $this->addSubItemGen(self::ITEM_ITEMS, self::PARENT_ITEM, self::CHILD_ITEM, $item_id);
 		}
 
-		public function addNewSubitem($item_type, $title){
-			return $this->addNewSubItemGen($item_type, $title);
+		public function addNewSubitem($title, $item_type=self::DEFAULT_NEW){
+			return $this->addNewSubItemGen($title, $item_type);
 		}
 
 			// Read and store in subitems[]
@@ -113,7 +114,9 @@
 		public function deleteSubitem($item_id){
 			return $this->deleteAllGen(self::ITEM_ITEMS, self::PARENT_ITEM, self::CHILD_ITEM, $item_id);
 		}
-
+		public function updateOrder(){
+			return $this->updateOrderGen(self::ITEM_ITEMS, self::PARENT_ITEM, self::CHILD_ITEM, self::ITEMS_TABLE);
+		}
 
 	}// End Class Item
 
@@ -336,8 +339,8 @@
 
 		//check
 		public function check($on_off){
-			$query = 'UPDATE FROM '.self::CHECK_TABLE.' AS chk'
-								' INNER JOIN '.self::TASK_TABLE.' AS tsk ON chk.item_id = tsk.item_id'.
+			$query = 'UPDATE FROM '.self::CHECK_TABLE.' AS chk'.
+								' INNER JOIN '.self::TASK_TABLE.' AS tsk ON tsk.item_id = chk.item_id'.
 								' SET chk.checked = :checked , tsk.totlaTime = :totlaTime'.
 								' WHERE chk.item_id = :id';
 
