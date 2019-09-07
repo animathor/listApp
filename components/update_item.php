@@ -52,21 +52,21 @@
 			
 		print_r($_POST);
 		switch($item_type){
-			case 0:
+			case 2:
 				$item->setData('title',$_POST['title']);
 				$item->setData('note',$_POST['note']);
 				break;
-			case 1:
+			case 4:
 				$item->setData('title',$_POST['title']);
 				$item->setData('note',$_POST['note']);
 				$item->setData('checked',	$checked_value);
 				break;
-			case 2:
+			case 6:
 				$item->setData('title',$_POST['title']);
 				$item->setData('note',$_POST['note']);	
 				$item->setData('checked',	$checked_value);	
 				$item->setData('schedule',$schedule_value);
-				$item->setData('due',$due_value);	
+				$item->setData('due',$due_value);
 				break;
 		}
 		echo '<pre>';

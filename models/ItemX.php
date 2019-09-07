@@ -1,23 +1,22 @@
 <?php
 	include_once 'Items_obj.php';
+	include_once 'Collections.php';
 
 	class ItemX{
 		//Database
 		private $connection;
-		private $listItems_table = 'list_items';
-		private $items_table = 'items';
-		private $list_table = 'list';
+		protected	const ITEMS_TABLE = 'items';
 
 		//Properties
-		private $id;
-		private $type;
-		private $container;
+		public $id;
+		public $type;
+		public $container;
 
 		//Constructor
 		public function __construct($pdoObj,$id_type_array){
 			$this->connection = $pdoObj;
 
-			// 1. 有type沒id, 生item   2.有id沒type, 查type, 生item 存id  3.id, type 都有
+			// 1.id, type 都有   2.有id沒type, 查type, 生item 存id  3. 有type沒id, 生item
 			if(isset($id_type_array['id'])){
 				$this->id = $id_type_array['id'];
 				if(isset($id_type_array['type'])){
@@ -28,12 +27,16 @@
 				$this->container = $this->distributeContainer($this->type);
 				$this->container->id = $this->id;
 			}else{
+				$this->type = $id_type_array['type'];
 				$this->container = $this->distributeContainer($this->type);
 			}
 		}//end Constructor
 
 		public function distributeContainer(int $item_type){
 			switch($item_type){
+				case 1:
+					$item = new Collection($this->connection);
+					return $item;
 				case 2:
 					$item = new Item($this->connection);
 					return $item;
@@ -49,7 +52,7 @@
 		}
 
 		public function fetch_type($item_id){
-			$query = 'SELECT FROM '.$this->listItems_table.' WHERE item_id = ?';
+			$query = 'SELECT FROM '.self::ITEMS_TABLE.' WHERE id = ?';
 			$stmt = $this->connection->prepare($query);
 			if($stmt->execute([$item_id]) && $row = $stm->fetch(PDO::FETCH_NUM))
 				return $row[0];
@@ -58,12 +61,16 @@
 		}
 
 		public function read(){
-			$this->container->read();
-			return $this>container;
+			return $this->container->read();
 		}
 
 		public function create(){
-			return $this->container->create();
+			if($this->container->create()){
+				$this->id = $this->container->id;
+				return true;
+			}else{
+				return false;
+			}
 		}
 
 		public function delete(){
@@ -89,7 +96,14 @@
 		public function setData($prop_name,$value){
 			// item
 			switch($this->type){
-				case 0:
+				case 1:
+					if($prop_name == 'title'){
+						$this->container->title = $value;
+						return true;
+					}else{
+						return false;						 
+					}
+				case 2:
 					if($prop_name == 'title'){
 						$this->container->title = $value;
 						return true;
@@ -99,7 +113,7 @@
 					}else{
 						return false;						 
 					}
-				case 1:
+				case 4:
 					if($prop_name == 'title'){
 						$this->container->title = $value;
 						return true;
@@ -112,7 +126,7 @@
 					}else{
 						return false;						 
 					}
-				case 2:
+				case 6:
 					if($prop_name == 'title'){
 						$this->container->title = $value;
 						return true;
@@ -129,10 +143,10 @@
 						$this->container->due= $value;
 						return true;
 					}elseif($prop_name == 'timer'){
-						$this->container->startTime= $value;
+						$this->container->timer= $value;
 						return true;
 					}elseif($prop_name == 'totalTime'){
-						$this->container->endTime= $value;
+						$this->container->totalTime= $value;
 						return true;
 					}else{
 						return false;
@@ -149,8 +163,8 @@
 			return $this->container->addSubitem($item_id);
 		}
 
-		public function addNewSubitem($title, $item_type=self::DEFAULT_NEW){
-			return $this->container->addNewSubitem($title, $item_type=self::DEFAULT_NEW);
+		public function addNewSubitem($title){
+			return $this->container->addNewSubitem($title);// dynamic type is not allow. Maybe add a selector for user.
 		}
 
 			// Read and store in subitems[]
