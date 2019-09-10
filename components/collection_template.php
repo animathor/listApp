@@ -5,14 +5,13 @@
 	
 	function genSubCollTo($collection, $level){
 		// add new collection
-		echo '<form action="add_new_collection.php?id='.$collection->id.'" method="post">'.
+		echo '<form class="addColl" action="add_new_collection.php?id='.$collection->id.'" method="post">'.
 						'<input type="text" name="collection_title" placeholder="add new collection"><br />'.
 					'</form>';
 		// the number of levels to show
 		if($level == 0){
 			return;
 		}
-		// asdf
 		else if($collection->readAllSub() && !empty($collection->subItems)){
 			echo '<ul>';
 			foreach($collection->subItems as $subEle){
@@ -20,10 +19,14 @@
 				switch($subEle->type){
 					// collection
 					case 1:
-						echo '<a href="collection_template.php?id='.$subEle->id.'">'.$subEle->title.'</a>';
-						echo '<form action="update_collection.php?id='.$subEle->id.'" method="post">'.
-									'<input type="text" name="collection_title" value="'.$subEle->title.'">'.
-								'</form>';
+						echo '<div class="collection">';
+						echo 	'<div class="collection-edit">';
+						echo 		'<a href="collection_template.php?id='.$subEle->id.'">'.$subEle->title.'</a>';
+						echo 		'<form action="update_collection.php?id='.$subEle->id.'" method="post">'.
+											'<input type="text" name="collection_title" value="'.$subEle->title.'">'.
+										'</form>';
+						echo  '</div>';
+						echo 	'<div class="collection-control">';
 						echo '<form action="add_new_list.php?id='.$subEle->id.'" method="post">'.
 										'<select name="list_type">'.
 										'<option value=2>item</option>'.
@@ -31,7 +34,9 @@
 										'<option value=6>task</option></select>'.
 									'<input type="submit" value="add">'.
 									'</form>';// Add list link
-						echo '<a href="delete_collection.php?id='.$subEle->id.'">X</a>';// delete link
+						echo '<a href="delete_collection.php?id='.$subEle->id.'">&cross;</a>';// delete link
+						echo  '</div>';
+						echo '</div>';
 
 						// go next level, read the subEles
 						if($subEle->read()){
@@ -40,18 +45,24 @@
 						break;
 					// item
 					case 2:
+						echo '<div class="item">';
 						echo '<a href="list_template.php?id='.$subEle->id.'&type=2">'.$subEle->title.'</a>';
-						echo '<a href="delete_list.php?id='.$collection->id.'&list_id='.$subEle->id.'">X</a>';// delete list
+						echo '<a class="list-control" href="delete_list.php?id='.$collection->id.'&list_id='.$subEle->id.'">&cross;</a>';// delete list
+						echo '</div>';
 						break;
 					// check
 					case 4:
+						echo '<div class="check">';
 						echo '<a href="list_template.php?id='.$subEle->id.'&type=4">'.$subEle->title.'</a>';
-						echo '<a href="delete_list.php?id='.$collection->id.'&list_id='.$subEle->id.'">X</a>';// delete list
+						echo '<a class="list-control" href="delete_list.php?id='.$collection->id.'&list_id='.$subEle->id.'">&cross;</a>';// delete list
+						echo '</div>';
 						break;
 					// task
 					case 6:
+						echo '<div class="task">';
 						echo '<a href="list_template.php?id='.$subEle->id.'&type=6">'.$subEle->title.'</a>';
-						echo '<a href="delete_list.php?id='.$collection->id.'&list_id='.$subEle->id.'">X</a>';// delete list
+						echo '<a class="list-control" href="delete_list.php?id='.$collection->id.'&list_id='.$subEle->id.'">&cross;</a>';// delete list
+						echo '</div>';
 						break;
 				}
 				echo '</li>';
@@ -68,6 +79,7 @@
 	<head>
 		<meta charset="utf-8"/>
 		<title>file</title>
+		<link href="css/collection.css" type="text/css" rel="stylesheet"/>
 	</head>
 </html>
 <body>
@@ -108,30 +120,34 @@
 		
 		// Generate the page
 		// current collection
-			echo '<h1>'.$collection->title.'</h1>';
-			if($collection->id != $defualt_id){
-				echo '<form action="add_new_list.php?id='.$collection->id.'" method="post">'.
-							'<select name="list_type">'.
-								'<option value=2>item</option>'.
-								'<option value=4>check</option>'.
-								'<option value=6>task</option>'.
-							'</select>'.
-							'<input type="submit" value="add">'.
-						'</form>';// Add list link
+		echo '<h1>'.$collection->title.'</h1>';
+		// navigator
+		echo '<nav>';
+			// show path
+			$collection_train = $collection->traceBack();
+			$link_train = '<span id="nav-current-collection">'.$collection->title.'</span>';
+			foreach($collection_train as $c){
+				$link_train = '<a href=collection_template.php?id='.$c->id.'>'.$c->title.'</a> /'.$link_train;
 			}
+			echo '<span>'.$link_train.'</span>';	
+				if($collection->id != $defualt_id){
+					echo '<form id="current-coll-addList" action="add_new_list.php?id='.$collection->id.'" method="post">'.
+								'<select name="list_type">'.
+									'<option value=2>item</option>'.
+									'<option value=4>check</option>'.
+									'<option value=6>task</option>'.
+								'</select>'.
+								'<input type="submit" value="add">'.
+							'</form>';// Add list link
+				}
+		echo '</nav>';
 		// operation message
 			if(isset($_SESSION['message'])){
 				echo "<h2>".$_SESSION['message']."</h2>";
 				unset($_SESSION['message']);
 			}
 		
-		// show path
-		$collection_train = $collection->traceBack();
-		$link_train = $collection->title;
-		foreach($collection_train as $c){
-			$link_train = '<a href=collection_template.php?id='.$c->id.'>'.$c->title.'</a> /'.$link_train;
-		}
-		echo $link_train;	
+		
 		
 		// subcollections and subitem(list)
 			genSubCollTo($collection, 5);

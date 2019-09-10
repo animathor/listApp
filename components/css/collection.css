@@ -1,0 +1,111 @@
+body {
+	background-color: #94ff43;
+}
+
+h1{
+	margin: 30px 0px 0px 0px;
+	padding: 20px 0px 5px 15px;
+	border-style:solid;
+	border-color: white;
+	border-radius:15px 0 0 0;
+	box-shadow:inset 0 10px 20px aliceblue;
+}
+
+nav {
+	/*浮動元素的父元素調整*/
+	overflow: auto;
+	width:100%;
+}
+
+#current-coll-addList{
+	/*新增清單表單置右*/
+	display:inline;
+	float: right;
+}
+
+#nav-current-collection{
+	/*調整成與連結左右margin一樣*/
+	margin:0 0.5em 0 0.5em;
+}
+
+nav > span {
+
+	padding: 0.5em 0 0 0;
+	line-height: 2em;
+}
+
+/*去縮排，對齊左邊*/
+body>ul>li {
+	margin:5px 5px 5px -40px;
+}
+
+ul{
+	list-style-type:none;
+}
+.addColl input{
+	background-color:rgba(255,255,255,0.7);
+	border-radius:5px;
+	border-style:solid;
+	box-shadow:0 0 5px gold;
+}
+
+li{
+		margin: 5px 0 5px 0;
+}
+a{
+		margin:0 0.5em 0 0.5em;
+		text-decoration: none;
+}
+
+
+.collection {
+	background-color: forestgreen;
+	/*浮動元素的父元素調整*/
+	overflow: auto;
+	width:100%;
+}
+
+
+.collection a:link{
+		color: white;
+}
+
+.collection a:hover{
+	text-shadow: 0px 0px 1px white;
+}
+
+.collection a:visited{
+	color: #ece444;
+	text-shadow: 0px 0px 1px white;
+}
+
+.collection form{
+	display:inline;
+}
+.collection-edit{
+	display:inline;
+}
+.collection-control {
+	display:inline;
+	float:right;
+}
+
+.item, .check, .task {
+	background-color: white;
+}
+
+.item a, .check a, .task a{
+	color: limegreen;
+	text-shadow: 0px 0px 1px pink;
+	text-decoration: none;
+}
+
+.item a:hover, .check a:hover, .task a:hover{
+	color:#ec2346;
+	text-decoration: none;
+		
+}
+
+.list-control {
+	float:right;
+}
