@@ -3,19 +3,7 @@
 	include_once '../models/Collections.php';
 	include_once '../models/Items_obj.php';
 	
-	function genSubCollTo($collection, $level){
-		// add new collection
-		echo '<form class="addColl" action="add_new_collection.php?id='.$collection->id.'" method="post">'.
-						'<input type="text" name="collection_title" placeholder="add new collection"><br />'.
-					'</form>';
-		// the number of levels to show
-		if($level == 0){
-			return;
-		}
-		else if($collection->readAllSub() && !empty($collection->subItems)){
-			echo '<ul>';
-			foreach($collection->subItems as $subEle){
-				echo '<li>';
+	function genOneEle($collection,$subEle){
 				switch($subEle->type){
 					// collection
 					case 1:
@@ -37,11 +25,6 @@
 						echo '<a href="delete_collection.php?id='.$subEle->id.'">&cross;</a>';// delete link
 						echo  '</div>';
 						echo '</div>';
-
-						// go next level, read the subEles
-						if($subEle->read()){
-							genSubCollTo($subEle, $level-1);
-						}
 						break;
 					// item
 					case 2:
@@ -64,6 +47,26 @@
 						echo '<a class="list-control" href="delete_list.php?id='.$collection->id.'&list_id='.$subEle->id.'">&cross;</a>';// delete list
 						echo '</div>';
 						break;
+				}
+	}
+	
+	function genSubCollTo($collection, $level){
+		// add new collection
+		echo '<form class="addColl" action="add_new_collection.php?id='.$collection->id.'" method="post">'.
+						'<input type="text" name="collection_title" placeholder="add new collection"><br />'.
+					'</form>';
+		// the number of levels to show
+		if($level == 0){
+			return;
+		}
+		else if($collection->readAllSub() && !empty($collection->subItems)){
+			echo '<ul>';
+			foreach($collection->subItems as $subEle){
+				echo '<li>';
+				genOneEle($collection,$subEle);// html
+				// if it is collection, then go to next level.
+				if($subEle->type == 1 && $subEle->read()){
+							genSubCollTo($subEle, $level-1);
 				}
 				echo '</li>';
 			}
