@@ -65,6 +65,7 @@ a{
 	width: 100%;
 	border-top: 3px #2fce88 solid;
 	border-bottom: 3px #3e5505 solid;
+	line-height: 2em;
 }
 
 
@@ -81,9 +82,6 @@ a{
 	text-shadow: 0px 0px 1px white;
 }
 
-.collection form{
-	display:inline;
-}
 .collection-edit{
 	display:inline-block;
 }
@@ -108,6 +106,23 @@ a{
 		
 }
 
+.collection-control form{
+	float: left;	
+}
+.edit-button {
+	width: 25px;
+	height: 25px;
+	margin: 5px 5px;
+	float: left;
+}
 .list-control {
 	float:right;
+}
+.delete-button {
+	margin-top: 4px;
+	float: left;
+}
+/* dynamic */
+.hide {
+	display:none;
 }

@@ -11,6 +11,15 @@ h1 {
 	box-shadow: inset 0 10px 20px aliceblue;
 	background-color: hsl(187.5, 96.3%, 57.5%);
 }
+
+#head-edit-button {
+	width: 25px;
+	height: 25px;
+	position: absolute;
+	right: 30px;
+	top: 65px;
+}
+
 nav {
 	/*浮動元素的父元素調整*/
 	overflow: auto;
@@ -58,24 +67,28 @@ a{
 		text-decoration: none;
 }
 
-.item {
-	background-color: forestgreen;
-	/*浮動元素的父元素調整*/
-	overflow: auto;
-	width:100%;
-}
 .item, .check, .task {
 	background-color: white;
-	/* width: 100%; */
 	overflow: auto;
 	padding: 0 0 0 10px;
 }
-.item a, .check a, .task a {
+
+/*item showing info*/
+input[type="checkbox"]{
+	margin-top:10px;
+}
+
+.title-link {
+	/* float: left; */
+	line-height: 2em;
+}
+
+.item a {
 	color: hsl(187.5, 100%, 39.2%);
 	text-decoration: none;
 }
 
-.item a:hover, .check a:hover, .task a:hover{
+.item a:hover{
 	color:#eb00ff;
 	text-decoration: none;
 		
@@ -93,11 +106,28 @@ label {
 }
 
 div[class$="edit"] {
-	display: inline-block;
-	width: 95%;
+	width: 100%;
+}
+
+.edit-button {
+	width:25px;
+	height:25px;
+	margin:5px 5px;
+	float: left;
+}
+.delete-button {
+	margin-top: 4px;
+	float: left;
 }
 
 div[class$="control"]{
 	display: inline-block;
 	float: right;
 }
+
+/*dynamic*/
+
+.hide {
+	display:none;
+}
+	

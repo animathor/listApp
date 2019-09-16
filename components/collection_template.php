@@ -9,12 +9,13 @@
 					case 1:
 						echo '<div class="collection">';
 						echo 	'<div class="collection-edit">';
-						echo 		'<a href="collection_template.php?id='.$subEle->id.'">'.$subEle->title.'</a>';
-						echo 		'<form action="update_collection.php?id='.$subEle->id.'" method="post">'.
+						echo 		'<a class="title-link" href="collection_template.php?id='.$subEle->id.'">'.$subEle->title.'</a>';
+						echo 		'<form class="edit-title" action="update_collection.php?id='.$subEle->id.'" method="post">'.
 											'<input type="text" name="collection_title" value="'.$subEle->title.'">'.
 										'</form>';
 						echo  '</div>';
 						echo 	'<div class="collection-control">';
+						echo '<img class="edit-button" src="img/edit.png"/>';
 						echo '<form action="add_new_list.php?id='.$subEle->id.'" method="post">'.
 										'<select name="list_type">'.
 										'<option value=2>item</option>'.
@@ -52,7 +53,7 @@
 	
 	function genSubCollTo($collection, $level){
 		// add new collection
-		echo '<form class="addColl" action="add_new_collection.php?id='.$collection->id.'" method="post">'.
+		echo '<form class="add-new-collection" action="add_new_collection.php?id='.$collection->id.'" method="post">'.
 						'<input type="text" name="collection_title" placeholder="add new collection"><br />'.
 					'</form>';
 		// the number of levels to show
@@ -156,4 +157,6 @@
 			genSubCollTo($collection, 5);
 
 ?>
+<script src="script/hide.js"></script>
+<script src="script/collection_hide.js"></script>
 </body>

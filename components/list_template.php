@@ -2,34 +2,42 @@
 	include_once '../config/Database.php';
 	include_once '../models/Items_obj.php';
 	
-	function genEditForm($item,$isList){
+	function genEditForm($item,$isItem){
 		// delete Option for head, because the template will read a ghost list if it suicide(kill the head item).
-		if($isList===true){
-			$itemlink ='<a href="list_template.php?id='.$item->id.'&type='.$item->type.'">'.$item->title.'</a>';
-			$deleteButt = '<a class="item-control" href="delete_item.php?item_id='.$item->id.'&item_type='.$item->type.'">&cross;</a>';
+		if($isItem===true){
+			$itemlink ='<a class="title-link" href="list_template.php?id='.$item->id.'&type='.$item->type.'">'.$item->title.'</a>';
+			$deleteButt = '<a class="delete-button" href="delete_item.php?item_id='.$item->id.'&item_type='.$item->type.'">&cross;</a>';
+			$editButt = '<img class="edit-button" src="img/edit_blue.png">';
+			$headEditId='';
 		}else{
 			$deleteButt = '';
 			$itemlink = '';
+			$editButt = '<img id="head-edit-button" class="edit-button" src="img/edit.png">';
+			$headEditId = 'id="head-edit"';
 		}
 		switch($item->type){
 			case 2:
-				echo '<div class="item">'.
+				echo '<div class="item type-item">'.
 							'<div class="item-edit">';
+				echo '<div class="item-control">'.$editButt.$deleteButt.'</div>';
 				echo
 								$itemlink.
-								'<form action="update_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post">'.
-									'<input type="text" name="title" value="'.$item->title.'" >'.
+								'<form '.$headEditId.' action="update_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post">'.
+									'<input class="edit-title" type="text" name="title" value="'.$item->title.'" >'.
+									'<div class="edit-panel">'.
 									'<textarea name="note">'.$item->note.'</textarea>'.
 									'<input type="submit" value="save">'.
+									'</div>'.
 								'</form>'.
-								'</div>';
-				echo '<div class="item-control">'.$deleteButt.'</div></div>';	
+								'</div></div>';
+					
 				break;
 			case 4:
-				echo '<div class="check">'.
-							'<div class="check-edit">';
+				echo '<div class="item type-check">'.
+							'<div  class="check-edit">';
+				echo '<div class="check-control">'.$editButt.$deleteButt.'</div>';							
 				echo
-								'<form action="update_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post">';
+								'<form '.$headEditId.' action="update_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post">';
 									if($item->checked){
 										echo '<input type="checkbox" name="checked" value=true checked="checked">';
 									}else{
@@ -37,18 +45,21 @@
 									}
 									echo
 									$itemlink.
-									'<input type="text" name="title" value="'.$item->title.'" >'.
+									'<input class="edit-title" type="text" name="title" value="'.$item->title.'" >'.
+									'<div class="edit-panel">'.
 									'<textarea name="note">'.$item->note.'</textarea>'.
 									'<input type="submit" value="save">'.
+									'</div>'.
 								'</form>'.
-								'</div>';
-				echo '<div class="check-control">'.$deleteButt.'</div></div>';		
+								'</div></div>';
+		
 				break;
 			case 6:
-				echo '<div class="task">'.
-							'<div class="task-edit">';
+				echo '<div class="item type-task">';
+				echo '<div  class="task-edit">'.
+								'<div class="task-control">'.$editButt.$deleteButt.'</div>';
 				echo	
-								'<form action="update_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post">';
+								'<form '.$headEditId.' action="update_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post">';
 									if($item->checked){
 										echo '<input type="checkbox" name="checked" value=true checked="checked">';
 									}else{
@@ -56,7 +67,8 @@
 									}
 									echo
 										$itemlink.
-										'<input type="text" name="title" value="'.$item->title.'" ></br>';
+										'<input class="edit-title" type="text" name="title" value="'.$item->title.'" ></br>';
+									echo'<div class="edit-panel">';
 									//	schedule
 									$scheduleDate='';
 									$scheduleTime='';
@@ -88,10 +100,12 @@
 										'" pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}" step="1">'.
 									'</div>';
 					echo		'<div><textarea name="note">'.$item->note.'</textarea>'.
-									'<input type="submit" value="save"></div>';
-					echo '</form>'.
+									'<input type="submit" value="save">'.
+									'</div>'.
+									'</div>';
+					echo '</form></div>'.
 								'</div>';
-				echo '<div class="task-control">'.$deleteButt.'</div></div>';	
+			
 				break;
 		}//end switch
 		
@@ -193,4 +207,6 @@
 
 
 ?>
+<script src="script/hide.js"></script>
+<script src="script/list_hide.js"></script>
 </body>
