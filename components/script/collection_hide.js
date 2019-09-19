@@ -2,6 +2,9 @@
 toggleHide from hide.js
 */
 
+
+
+
 // hide onload
 if(window.addEventListener){
 	window.addEventListener("load", function(){
@@ -67,6 +70,24 @@ for(var editButt of editButts){
 	}//End else
 }//End for
 
+function hasAncestorInClass(elementNode, classNameWant){
+	// get parent node
+	var wantedEle = elementNode;
+	// fetch the class name
+	do{
+					var parent = wantedEle.parentNode;
+					wantedEle = parent;
+					className ='';
+					if(wantedEle != null){
+					 className += wantedEle.className;}
+	}while(wantedEle != null && !className.match(classNameWant));
+	if(wantedEle != null){
+		return true;
+	}else{
+		return false;
+	}
+}
+
 // item button shows sublist
 var collections = document.getElementsByClassName('collection');
 for(var collection of collections){
@@ -77,7 +98,7 @@ for(var collection of collections){
 			}
 			var el = e.target || e.srcElement;
 			// if it is title link, don't trigger
-			if(el.className != 'title-link'){
+			if(el.className != 'title-link' && !hasAncestorInClass(el, 'collection-control')){
 				// find li node
 				var liNode = el;
 				do{

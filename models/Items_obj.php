@@ -221,8 +221,8 @@
 		public function addNewSubitem($title, $item_type=self::DEFAULT_NEW){
 			return $this->addNewSubItemGen(self::ITEM_ITEMS, self::PARENT_ITEM, self::CHILD_ITEM, $title, $item_type);
 		}
-/*
-		public function check($on_off){
+
+		public function checkTheBox($on_off){
 			$query = 'UPDATE '.self::CHECK_TABLE.
 								' SET checked = :checked '.
 								' WHERE item_id = :id';
@@ -259,7 +259,7 @@
 				return false;
 			}
 		}// End Check
-*/
+
 	}//End Class Check
 
 	class Task extends Check{

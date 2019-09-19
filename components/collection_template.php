@@ -9,11 +9,6 @@
 					case 1:
 						echo '<div class="collection">';
 						echo 	'<div class="collection-edit">';
-						echo 		'<a class="title-link" href="collection_template.php?id='.$subEle->id.'">'.$subEle->title.'</a>';
-						echo 		'<form class="edit-title" action="update_collection.php?id='.$subEle->id.'" method="post">'.
-											'<input type="text" name="collection_title" value="'.$subEle->title.'">'.
-										'</form>';
-						echo  '</div>';
 						echo 	'<div class="collection-control">';
 						echo '<img class="edit-button" src="img/edit.png"/>';
 						echo '<form action="add_new_list.php?id='.$subEle->id.'" method="post">'.
@@ -25,6 +20,12 @@
 									'</form>';// Add list link
 						echo '<a href="delete_collection.php?id='.$subEle->id.'">&cross;</a>';// delete link
 						echo  '</div>';
+						echo 		'<a class="title-link" href="collection_template.php?id='.$subEle->id.'">'.$subEle->title.'</a>';
+						echo 		'<form class="edit-title" action="update_collection.php?id='.$subEle->id.'" method="post">'.
+											'<input type="text" name="collection_title" value="'.$subEle->title.'">'.
+										'</form>';
+						echo  '</div>';
+						
 						echo '</div>';
 						break;
 					// item
