@@ -117,8 +117,8 @@ for(var item of items){
 				e = window.event;
 			}
 			var el = e.target || e.srcElement;
-			// if it is title link, don't trigger
-			if(el.className != 'title-link'){
+			// if it is title link, element in form, don't trigger
+			if(el.className != 'title-link' && el.tagName.toLowerCase() != 'input' && el.tagName.toLowerCase() != 'textarea'){
 				// find li node
 				var liNode = el;
 				do{

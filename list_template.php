@@ -1,13 +1,14 @@
 <?php
-	include_once '../config/Database.php';
-	include_once '../models/Items_obj.php';
+	include_once 'config/Database.php';
+	include_once 'models/Items_obj.php';
+	include_once 'authorize.php';// successfully sign in, session['user_id'] and session['home_collection_id'] are set.
 	
 	function genEditForm($item,$isItem){
 		// delete Option for head, because the template will read a ghost list if it suicide(kill the head item).
 		if($isItem===true){
 			$itemlink ='<a class="title-link" href="list_template.php?id='.$item->id.'&type='.$item->type.'">'.$item->title.'</a>';
-			$deleteButt = '<a class="delete-button" href="delete_item.php?item_id='.$item->id.'&item_type='.$item->type.'">&cross;</a>';
-			$editButt = '<img class="edit-button" src="img/edit_blue.png">';
+			$deleteButt = '<a class="delete-button" href="components/delete_item.php?item_id='.$item->id.'&item_type='.$item->type.'">&cross;</a>';
+			$editButt = '<div class="edit-button"></div>';//'<img class="edit-button" src="img/edit_blue.png">';
 			$headEditId='';
 		}else{
 			$deleteButt = '';
@@ -22,7 +23,7 @@
 				echo '<div class="item-control">'.$editButt.$deleteButt.'</div>';
 				echo
 								$itemlink.
-								'<form '.$headEditId.' action="update_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post">'.
+								'<form '.$headEditId.' action="components/update_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post">'.
 									'<input class="edit-title" type="text" name="title" value="'.$item->title.'" >'.
 									'<div class="edit-panel">'.
 									'<textarea name="note">'.$item->note.'</textarea>'.
@@ -37,7 +38,7 @@
 							'<div  class="check-edit">';
 				echo '<div class="check-control">'.$editButt.$deleteButt.'</div>';							
 				echo
-								'<form '.$headEditId.' action="update_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post">';
+								'<form '.$headEditId.' action="components/update_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post">';
 									if($item->checked){
 										echo '<input type="checkbox" name="checked" value=true checked="checked">';
 									}else{
@@ -59,7 +60,7 @@
 				echo '<div  class="task-edit">'.
 								'<div class="task-control">'.$editButt.$deleteButt.'</div>';
 				echo	
-								'<form '.$headEditId.' action="update_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post">';
+								'<form '.$headEditId.' action="components/update_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post">';
 									if($item->checked){
 										echo '<input type="checkbox" name="checked" value=true checked="checked">';
 									}else{
@@ -113,7 +114,7 @@
 	
 	function genSubitemTo($item, $level){
 		// add item input send to create
-		echo '<form class="add-new-item" action="add_new_item.php?list_id='.$item->id.'&list_type='.$item->type.'" method="post">'.
+		echo '<form class="add-new-item" action="components/add_new_item.php?list_id='.$item->id.'&list_type='.$item->type.'" method="post">'.
 						'<input type="text" name="item_title" placeholder="add new"><br />'.
 					'</form>';
 		if($level==0){
@@ -136,7 +137,6 @@
 	$database = new Database();
 	$connection = $database->connect();
 	
-	session_start();
 	
 	// read list
 		if(isset($_GET['id']) && isset($_GET['type'])){
@@ -163,17 +163,31 @@
 
 ?>
 
+<?php
+
+
+$user_id = $_SESSION['user_id'];
+$username =$_SESSION['username'];
+$home_collection_id = $_SESSION['home_collection_id'];
+//$username = 'Alan';
+//$home_collection_id =1;
+?>
+
 <!Doctype html>
 <html>
 	<head>
 		<meta charset="utf-8"/>
 		<title>list</title>
+		<link href="css/header.css" type="text/css" rel="stylesheet"/>
 		<link href="css/list.css" type="text/css" rel="stylesheet">
 	</head>
 <body>
+
 <?php
+
+		include_once 'header.php';
 			// display list
-		echo '<h1>'.$theList->title.'</h1>';
+		echo '<h2>'.$theList->title.'</h2>';
 
 		genEditForm($theList, false);
 		
@@ -181,9 +195,9 @@
 		echo '<nav>';
 		// show path
 		$item_train = $theList->traceBack();//supitems
-		$link_train = '<span id="nav-current-item">'.$theList->title.'</span>';
+		$link_train = '<li id="nav-current-item">'.$theList->title.'</li>';
 		foreach($item_train as $item){
-			$link_train = '<a href=list_template.php?id='.$item->id.'&type='.$item->type.'>'.$item->title.'</a> /'.$link_train;
+			$link_train = '<li><a href=list_template.php?id='.$item->id.'&type='.$item->type.'>'.$item->title.'</a> /</li>'.$link_train;
 		}
 		// link Back to collection
 		if(empty($item_train)){
@@ -191,7 +205,7 @@
 		}
 		$collection = end($item_train)->in_collection();
 		echo '<span><a href=collection_template.php?id='.$collection->id.'>Back to '.$collection->title.'</a></span><br/>';
-		echo "<span>{$link_train}</span>";
+		echo "<ul>{$link_train}</ul>";
 		echo '</nav>';
 		
 		// responce		

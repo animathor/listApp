@@ -98,7 +98,7 @@ for(var collection of collections){
 			}
 			var el = e.target || e.srcElement;
 			// if it is title link, don't trigger
-			if(el.className != 'title-link' && !hasAncestorInClass(el, 'collection-control')){
+			if(el.className != 'title-link' && !hasAncestorInClass(el, 'collection-control') && el.tagName.toLowerCase() != 'input' && el.tagName.toLowerCase() != 'textarea'){
 				// find li node
 				var liNode = el;
 				do{

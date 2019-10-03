@@ -28,5 +28,5 @@
 			$_SESSION['message'] = 'collection is not updated';
 		}
 	}
-	header("Location:collection_template.php");
+	header("Location:../collection_template.php");
 		

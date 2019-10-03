@@ -79,6 +79,6 @@
 		}else{
 			$_SESSION['message'] = 'item'.$item_id.' not updated';
 		}
-		header("Location:list_template.php");
+		header("Location:../list_template.php");
 	}
 ?>

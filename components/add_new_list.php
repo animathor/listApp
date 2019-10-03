@@ -10,11 +10,11 @@
 	var_dump($connection);
 	var_dump($_GET);
 	// get collection_id from get
-	if(isset($_GET['id']) && $_POST['list_type']){
+	if(isset($_GET['id']) && $_REQUEST['list_type']){
 		$collection_id = $_GET['id'];
 		var_dump($_GET);
 		// get type from $_POST
-		$list_type = $_POST['list_type'];
+		$list_type = $_REQUEST['list_type'];
 			// create list
 		$collection = new Collection($connection);
 		$collection->id = $collection_id;
@@ -25,9 +25,9 @@
 		session_start();
 		if($id = $collection->addNewList('New list',$list_type)){
 		var_dump($id);
-			header("Location:list_template.php?id=".$id."&type=".$list_type);
+			header("Location:../list_template.php?id=".$id."&type=".$list_type);
 		}else{
-			header("Location:collection_template.php");	
+			header("Location:../collection_template.php");	
 		}
 
 	}

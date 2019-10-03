@@ -43,21 +43,24 @@
 		}
 
 		public function create(){
-			$query = 'INSERT INTO '.self::COLLECTIONS_TABLE.'(title)'.
-								'VALUES(:title)';
+			$query = 'INSERT INTO '.self::COLLECTIONS_TABLE.'(title, author_id)'.
+								'VALUES(:title, :author_id)';
 			$stmt = $this->connection->prepare($query);
 
 			$this->title = htmlspecialchars(strip_tags($this->title));
 
 			//$stmt->bindParam(':type', self::TYPE);
 			$stmt->bindParam(':title', $this->title);
+			$stmt->bindParam(':author_id', $this->author_id);
 
 			if($stmt->execute()){
 				//get id
-				
-				$stmt = $this->connection->query('SELECT LAST_INSERT_ID()');
-				$result = $stmt->fetch(PDO::FETCH_NUM);
-				$this->id = $result[0];
+			
+					//$stmt = $this->connection->query('SELECT LAST_INSERT_ID()');
+					//$result = $stmt->fetch(PDO::FETCH_NUM);
+					//$this->id = $result[0];		
+				//one line using pdo method instead
+				$this->id = $this->connection->lastInsertId();
 				return true;
 			}else{
 				foreach($stmt->errorInfo() as $line)

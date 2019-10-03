@@ -1,2 +1,4 @@
 # gimp files
 *.xcf
+# testing
+test*.php

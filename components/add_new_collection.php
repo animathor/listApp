@@ -33,6 +33,6 @@
 			}
 	}
 	// back to current collection
-	header("Location:collection_template.php");
+	header("Location:../collection_template.php");
 	
 ?>

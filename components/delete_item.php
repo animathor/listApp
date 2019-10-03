@@ -24,6 +24,6 @@
 		}else{
 			$_SESSION['message'] = 'item'.$item_id.' is not deleted';
 		}
-		header("Location:list_template.php");
+		header("Location:../list_template.php");
 	}
 ?>

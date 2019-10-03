@@ -17,23 +17,17 @@
 	</head>
 </html>
 <body>
-<form action="sign_up.php" method="post">
+<form action="create_user.php" method="post">
 	<fieldset>
 		<legend>Sign up</legend>
 		<div>
-		<label>username</label>
+		<label for="username">username</label>
 		<input type="text" name="username" />
 		</div>
-		<label>email</label>
+		<input type="file">
+		<div>
+		<label for="email">email</label>
 		<input type="text" name="email" />
-		</div>
-		<div>
-		<label>password</label>
-		<input type="password" name="password"/>
-		</div>
-		<div>
-		<label>confirm your password</label>
-		<input type="password" name="confirm"/>
 		</div>
 		<div>
 		<input type="submit" value="OK"/>

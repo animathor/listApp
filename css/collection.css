@@ -1,15 +1,14 @@
 body {
-	background-color: #9dff51;
+	background-color: #a8ff64;
 }
-
-h1 {
-	margin: 30px 0px 0px 0px;
-	padding: 20px 0px 5px 15px;
+h2 {
+	margin: 70px 0px 0px 0px;
+	padding: 15px 0px 5px 15px;
 	border-style: solid;
 	border-color: white;
 	border-radius: 15px 0 0 0;
 	box-shadow: inset 0 10px 20px aliceblue;
-	background-color: hsl(187.5, 96.3%, 57.5%);
+	background-color: hsla(186, 100%, 96.1%, 0.43);
 }
 nav {
 	/*浮動元素的父元素調整*/
@@ -23,26 +22,46 @@ nav {
 	float: right;
 }
 
+#current-coll-addList select{
+	background-color: #f7f9f8;
+	border: 2px solid #9dff51;
+	border-radius: 20px 0 0 20px;
+	color:#b7b74e;
+	text-align: right;
+}
+#current-coll-addList input{
+	background-color: #fff;
+	border: 3px solid #9dff51;
+	color: limegreen;
+}
 #nav-current-collection{
 	/*調整成與連結左右margin一樣*/
 	margin:0 0.5em 0 0.5em;
 }
 
-nav > span {
-
+nav > div {
+	display: inline;
 	padding: 0.5em 0 0 0;
 	line-height: 2em;
 }
-
 /*去縮排，對齊左邊*/
-body>ul>li {
+#subele>ul>li {
 	margin:5px 5px 5px -40px;
 }
 
 ul{
 	list-style-type:none;
 }
-.addColl input{
+
+.add-new-collection{
+	margin-right:10px;
+}
+
+ul .add-new-collection {
+	margin-left: 45px;
+}
+.add-new-collection input{
+	width:100%;
 	margin: 5px 0 0 0;
 	background-color: rgba(255,255,255,0.7);
 	border:2px solid white;
@@ -65,9 +84,11 @@ a{
 	width: 100%;
 	border-top: 3px #2fce88 solid;
 	border-bottom: 3px #3e5505 solid;
-	line-height: 2em;
+	line-height: 2.2em;
 }
-
+.collection:hover {
+	background-color: #6f7695;
+}
 
 .collection a:link{
 		color: white;
@@ -87,9 +108,34 @@ a{
 	display:inline-block;
 	float:right;
 }
+.collection-control select {
+	background-color: transparent;
+	border: 2px solid white;
+	border-radius: 20px 0 0 20px;
+	color: white;
+	text-align: right;
+}
+.collection-control input {
+	font-weight: bold;
+	width: 30px;
+	border-radius: 0 5px 5px 0;
+	border: 2px solid white;
+	height: 27.3px;
+	background-color: white;
+	color: green;
+}
 
 .item, .check, .task {
 	background-color: white;
+	
+}
+
+.type {
+	border-style: solid;
+	border-radius: 0 10px 10px 0;
+	border-color: #9dff51;
+	padding: 0 5px;
+	color: #b7b74e;
 }
 
 .item a, .check a, .task a{
@@ -123,4 +169,8 @@ a{
 /* dynamic */
 .hide {
 	display:none;
+}
+
+.active{
+	background: #cec7f2;
 }

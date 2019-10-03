@@ -27,8 +27,8 @@
 		// back to current collection
 		if(isset($_SESSION['current_collection'])){
 			$id = $_SESSION['current_collection'];
-			header("Location:collection_template.php?id=$id");
+			header("Location:../collection_template.php?id=$id");
 		}
-		header("Location:collection_template.php");
+		header("Location:../collection_template.php");
 	}
 ?>

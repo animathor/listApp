@@ -2,9 +2,9 @@ body {
 	background-color: #e1f4bc;
 }
 
-h1 {
-	margin: 30px 0px 0px 0px;
-	padding: 20px 0px 5px 15px;
+h2 {
+	margin: 70px 0px 0px 0px;
+	padding: 15px 0px 5px 15px;
 	border-style: solid;
 	border-color: white;
 	border-radius: 15px 0 0 0;
@@ -17,7 +17,7 @@ h1 {
 	height: 25px;
 	position: absolute;
 	right: 30px;
-	top: 65px;
+	top: 95px;
 }
 
 nav {
@@ -36,13 +36,21 @@ nav {
 	/*調整成與連結左右margin一樣*/
 	margin:0 0.5em 0 0.5em;
 }
-
-nav > span {
-
-	padding: 0.5em 0 0 0;
-	line-height: 2em;
+nav ul {
+	margin:0;
+	padding:0;
+}
+nav li {
+	display: inline;
+}
+.add-new-item {
+	margin-right:10px;
+}
+ul .add-new-item{
+	margin-left:45px;
 }
 .add-new-item input {
+	width:100%;
 	margin: 5px 0 0 0;
 	background-color: rgba(255,255,255,0.7);
 	border: 2px solid white;
@@ -110,10 +118,21 @@ div[class$="edit"] {
 }
 
 .edit-button {
-	width:25px;
-	height:25px;
-	margin:5px 5px;
+	width: 25px;
+	height: 25px;
+	margin: 5px 5px;
 	float: left;
+	background-image: url(../img/edit_blue_purple.png);
+	background-size: 50px;
+	
+}
+.edit-button:hover{
+	width: 25px;
+	height: 25px;
+	margin: 5px 5px;
+	float: left;
+	background-position:25px 0px;
+	background-size: 50px;
 }
 .delete-button {
 	margin-top: 4px;
@@ -130,4 +149,6 @@ div[class$="control"]{
 .hide {
 	display:none;
 }
+
+
 	

@@ -27,5 +27,5 @@
 			$_SESSION['message'] = 'item is not created';
 		}
 	}
-	header("Location:list_template.php");
+	header("Location:../list_template.php");
 ?>
