@@ -1,6 +1,7 @@
 <?php
 require_once '../config/Database.php';
 require_once '../models/Users.php';
+include '../authorize.php';// successfully sign in, $user_id, $username and $home_collection_id are set.
 
 	// connect to db
 	$database = new Database();

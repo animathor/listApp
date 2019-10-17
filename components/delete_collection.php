@@ -1,7 +1,8 @@
 <?php
 	include_once '../config/Database.php';
 	include_once '../models/Collections.php';
-
+	include '../authorize.php';// successfully sign in, $user_id, $username and $home_collection_id are set.
+	
 	//connect to DB
 	$database = new Database();
 	$connection = $database->connect();
@@ -9,7 +10,7 @@
 	
 
 	//get data from query string $_GET
-	if(isset($_GET['id'])){
+	if(isset($_GET['id']) && preg_match('/^[0-9]+$/',$_GET['id'])){
 		$collection_id= $_GET['id'];
 		//delete collection 
 		$collection = new Collection($connection);

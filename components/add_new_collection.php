@@ -1,7 +1,7 @@
 <?php
 	include_once '../config/Database.php';
 	include_once '../models/Collections.php';
-
+	include_once '../authorize.php';// successfully sign in, $user_id, $username and $home_collection_id are set.
 
 
 	//connect to DB
@@ -10,20 +10,21 @@
 	var_dump($connection);
 	
 	// get parent collection id
-	if(isset($_GET['id'])){
+	if(isset($_GET['id']) && preg_match('/^[0-9]+$/',$_GET['id'])){
 		// prepare model
 		$collection = new Collection($connection);
 		$collection->id = $_GET['id'];
+// $user_id is set in authorize.php
 		// prepaare title
 			$collection_title = 'new collection';
 			//get data from $_POST
 			if(isset($_POST['collection_title'])){
-				print_r($_POST);echo "<br/>";
 				$collection_title = $_POST['collection_title'];
 			}
 		// create collection
 			session_start();
-			if($collection->addNewSubCollection($collection_title)){
+			$author_id = $user_id;			
+			if($collection->addNewSubCollection($collection_title, $author_id)){
 				$_SESSION['message'] = 'Collection is created';
 				echo '<pre>';
 				var_dump($collection);
