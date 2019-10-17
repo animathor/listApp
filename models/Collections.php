@@ -21,7 +21,7 @@
 		private const ITEM_ITEMS='item_items';
 		// Methods
 		public function read(){
-			$query = 'SELECT title, addTime FROM '.self::COLLECTIONS_TABLE.' WHERE id = ? ';
+			$query = 'SELECT title, addTime, author_id FROM '.self::COLLECTIONS_TABLE.' WHERE id = ? ';
 			$stmt = $this->connection->prepare($query);
 
 			$stmt->bindParam(1,$this->id);
@@ -33,6 +33,7 @@
 				//assign each property the value in the corresponding field
 				$this->title = $row['title'];
 				$this->addTime = $row['addTime'];
+				$this->author_id = $row['author_id'];
 				return true;
 			}else{
 				foreach($stmt->errorInfo() as $line)
@@ -134,12 +135,12 @@
 
 		// Subitems Methods
 
-		public function addList($item_id){
+		public function addList($item_id,$author_id){
 			return $this->addSubItemGen(self::COLLECTION_ITEMS, self::PARENT_COLLECTION, self::CHILD_ITEM, $item_id);
 		}
 
-		public function addNewList($title,$item_type){
-			return $this->addNewSubItemGen(self::COLLECTION_ITEMS, self::PARENT_COLLECTION, self::CHILD_ITEM, $title, $item_type);// return list id to working on the webpage. Otherwise, return false.
+		public function addNewList($title,$item_type,$author_id){
+			return $this->addNewSubItemGen(self::COLLECTION_ITEMS, self::PARENT_COLLECTION, self::CHILD_ITEM, $title, $item_type,$author_id);// return list id to working on the webpage. Otherwise, return false.
 		}
 
 			// Read and store in subitems[]
@@ -157,12 +158,12 @@
 
 		// Subcollections Methods
 
-		public function addSubCollection($subcollection_id){
+		public function addSubCollection($subcollection_id,$author_id){
 			return $this->addSubItemGen(self::COLLECTION_COLLECTIONS, self::PARENT_COLLECTION, self::CHILD_COLLECTION, $subcollection_id);
 		}
 
-		public function addNewSubCollection($title){
-			return $this->addNewSubItemGen(self::COLLECTION_COLLECTIONS, self::PARENT_COLLECTION, self::CHILD_COLLECTION,$title,self::DEFAULT_NEW);
+		public function addNewSubCollection($title, $author_id){
+			return $this->addNewSubItemGen(self::COLLECTION_COLLECTIONS, self::PARENT_COLLECTION, self::CHILD_COLLECTION,$title,self::DEFAULT_NEW, $author_id);
 		}
 
 		protected function readSubCollections(){

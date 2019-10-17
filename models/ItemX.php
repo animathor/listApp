@@ -52,9 +52,9 @@
 		}
 
 		public function fetch_type($item_id){
-			$query = 'SELECT FROM '.self::ITEMS_TABLE.' WHERE id = ?';
-			$stmt = $this->connection->prepare($query);
-			if($stmt->execute([$item_id]) && $row = $stm->fetch(PDO::FETCH_NUM))
+			$query = 'SELECT type FROM '.self::ITEMS_TABLE.' WHERE id = ?';
+			$stm = $this->connection->prepare($query);
+			if($stm->execute([$item_id]) && $row = $stm->fetch(PDO::FETCH_NUM))
 				return $row[0];
 			else
 				return null;
@@ -100,12 +100,18 @@
 					if($prop_name == 'title'){
 						$this->container->title = $value;
 						return true;
+					}elseif($prop_name == 'author_id'){
+						$this->container->author_id = $value;
+						return true;
 					}else{
 						return false;						 
 					}
 				case 2:
 					if($prop_name == 'title'){
 						$this->container->title = $value;
+						return true;
+					}elseif($prop_name == 'author_id'){
+						$this->container->author_id = $value;
 						return true;
 					}elseif($prop_name == 'note'){
 						$this->container->note = $value;
@@ -116,6 +122,9 @@
 				case 4:
 					if($prop_name == 'title'){
 						$this->container->title = $value;
+						return true;
+					}elseif($prop_name == 'author_id'){
+						$this->container->author_id = $value;
 						return true;
 					}elseif($prop_name == 'note'){
 						$this->container->note = $value;
@@ -129,6 +138,9 @@
 				case 6:
 					if($prop_name == 'title'){
 						$this->container->title = $value;
+						return true;
+					}elseif($prop_name == 'author_id'){
+						$this->container->author_id = $value;
 						return true;
 					}elseif($prop_name == 'note'){
 						$this->container->note = $value;
@@ -154,8 +166,8 @@
 				}//end switch
 		}//end setItem
 		
-		public function check($on_off){
-			return $this->container->check($on_off);
+		public function checkTheBox($on_off){
+			return $this->container->checkTheBox($on_off);
 		}
 		
 		// Subitem methods
@@ -163,8 +175,8 @@
 			return $this->container->addSubitem($item_id);
 		}
 
-		public function addNewSubitem($title){
-			return $this->container->addNewSubitem($title);// dynamic type is not allow. Maybe add a selector for user.
+		public function addNewSubitem($author_id,$title){
+			return $this->container->addNewSubitem($author_id,$title);// dynamic type is not allow. Maybe add a selector for user.
 		}
 
 			// Read and store in subitems[]

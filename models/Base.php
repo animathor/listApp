@@ -135,14 +135,14 @@
 		}// End add Subitem by id
 
 
-		protected function addNewSubItemGen($relation_table, $parent_element, $child_element, $title, $element_type= self::DEFAULT_NEW){
+		protected function addNewSubItemGen($relation_table, $parent_element, $child_element, $title, $element_type= self::DEFAULT_NEW, $author_id){
 			// Create New item
 			$id_n_type = ['type'=>$element_type];
 			$newItem = new ItemX($this->connection, $id_n_type);
 			$newItem->setData('title', $title);
+			$newItem->setData('author_id', $author_id); 
 			try{
 				if($newItem->create()){
-					echo 'set title ='.$title;
 					if(!$this->addSubItemGen($relation_table, $parent_element, $child_element, $newItem->id))
 						throw new Exception("Failed adding subItem =".$newItem->id);
 					return $newItem->id;

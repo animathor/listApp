@@ -47,12 +47,12 @@
 								'VALUES(:type, :title, :note)';
 			$stmt = $this->connection->prepare($query);
 
-			$this->title = htmlspecialchars(strip_tags($this->title));
-			$this->note = htmlspecialchars(strip_tags($this->note));
+			$this->title = (empty($this->title)) ? 'blank': htmlspecialchars($this->title);
+			$this->note = htmlspecialchars($this->note);
 
 			$stmt->bindParam(':type', $this->type);
-			$stmt->bindParam(':title', $this->title);
-			$stmt->bindParam(':note', $this->note);
+			$stmt->bindParam(':title', $this->title,PDO::PARAM_STR);
+			$stmt->bindParam(':note', $this->note,PDO::PARAM_STR);
 
 			if($stmt->execute()){
 				//get id
@@ -74,13 +74,13 @@
 								' WHERE id = :id';
 			$stmt = $this->connection->prepare($query);
 			// Clean data
-			$this->title = htmlspecialchars(strip_tags($this->title));
-			$this->note = htmlspecialchars(strip_tags($this->note));
-			//$this->author_id = htmlspecialchars(strip_tags($this->author_id));
+			$this->title = (empty($this->title)) ? 'blank': htmlspecialchars($this->title);
+			$this->note = htmlspecialchars($this->note);
+			//$this->author_id = htmlspecialchars($this->author_id);
 
 			// Bind parameters
-			$stmt->bindParam(':title', $this->title);
-			$stmt->bindParam(':note', $this->note);
+			$stmt->bindParam(':title', $this->title,PDO::PARAM_STR);
+			$stmt->bindParam(':note', $this->note,PDO::PARAM_STR);
 			$stmt->bindParam(':id', $this->id);
 
 			if($stmt->execute()){
@@ -111,8 +111,8 @@
 			return $this->addSubItemGen(self::ITEM_ITEMS, self::PARENT_ITEM, self::CHILD_ITEM, $item_id);
 		}
 
-		public function addNewSubitem($title, $item_type=self::DEFAULT_NEW){
-			return $this->addNewSubItemGen(self::ITEM_ITEMS, self::PARENT_ITEM, self::CHILD_ITEM, $title, $item_type);
+		public function addNewSubitem($author_id, $title, $item_type=self::DEFAULT_NEW){
+			return $this->addNewSubItemGen(self::ITEM_ITEMS, self::PARENT_ITEM, self::CHILD_ITEM, $title, $item_type,$author_id);
 		}
 
 			// Read and store in subitems[]
@@ -191,67 +191,23 @@
 			}
 		}// End create
 
-		public function update(){
-			$query = 'UPDATE '.self::ITEMS_TABLE.' AS i'.
-								' INNER JOIN '.self::CHECK_TABLE.' AS chk ON (i.id = chk.item_id) '.
-								' SET i.title = :title, i.note = :note, chk.checked = :checked '.
-								' WHERE i.id = :id';
 
-			$stmt = $this->connection->prepare($query);
-			// Clean data
-			$this->title = htmlspecialchars(strip_tags($this->title));
-			$this->note = htmlspecialchars(strip_tags($this->note));
-
-			// Bind parameters
-			$stmt->bindParam(':title', $this->title);
-			$stmt->bindParam(':note', $this->note);
-			$stmt->bindParam(':id', $this->id);
-			$stmt->bindParam(':checked', $this->checked,PDO::PARAM_BOOL);
-
-			if($stmt->execute()){
-				return true;
-			}else{
-				foreach($stmt->errorInfo() as $line)
-					echo $line."</br>";
-				return false;
-			}
+		// recover it, since function inherient ref the self::DEFAULT_NEW in parent class where it is defined.
+		public function addNewSubitem($author_id, $title, $item_type=self::DEFAULT_NEW){
+			return $this->addNewSubItemGen(self::ITEM_ITEMS, self::PARENT_ITEM, self::CHILD_ITEM, $title, $item_type,$author_id);
 		}
 		
-		// recover it, since function inherient ref the self::DEFAULT_NEW in parent class where it is defined.
-		public function addNewSubitem($title, $item_type=self::DEFAULT_NEW){
-			return $this->addNewSubItemGen(self::ITEM_ITEMS, self::PARENT_ITEM, self::CHILD_ITEM, $title, $item_type);
-		}
-
 		public function checkTheBox($on_off){
 			$query = 'UPDATE '.self::CHECK_TABLE.
 								' SET checked = :checked '.
 								' WHERE item_id = :id';
-	try{
-					throw new Exception(var_dump($this->connection));
-			}catch(Exception $e){
-				print "檔案:".$e->getFile()."<br/>";
-				print "行號".$e->getLine()."<br/>";
-				print "錯誤:".$e->getMessage()."<br/>";
-			}
+	
 			$stmt = $this->connection->prepare($query);
 			// Bind parameters
 			$stmt->bindParam(':id', $this->id);
 			$stmt->bindParam(':checked', $on_off, PDO::PARAM_BOOL);
 	
 			if($stmt->execute()){
-				// if the item turn off, so does supitem
-				if($on_off === false){
-					$supitem = $this->readSupitemGen(self::ITEM_ITEMS, self::PARENT_ITEM, self::CHILD_ITEM, self::ITEMS_TABLE);
-					if($supitem->checked === true){
-						$supitem->check(false);
-					}
-				}else{
-					// if item is checked, Subitems follows item
-					$this->readSubitems();
-					foreach($this->subitems as $subitem){
-						$subitem->check(true);
-					}
-				}
 				return true;
 			}else{
 				foreach($stmt->errorInfo() as $line)
@@ -335,20 +291,18 @@
 
 		public function update(){
 			$query = 'UPDATE '.self::ITEMS_TABLE.' AS i'.
-								' INNER JOIN '.self::CHECK_TABLE.' AS chk ON (i.id = chk.item_id) '.
 								' INNER JOIN '.self::TASK_TABLE.' AS tsk ON (i.id = tsk.item_id)'.
 								' SET i.title = :title, i.note = :note, chk.checked = :checked, tsk.schedule = :schedule, tsk.due = :due'.
 								' WHERE i.id = :id';
 
 			$stmt = $this->connection->prepare($query);
 			// Clean data
-			$this->title = htmlspecialchars(strip_tags($this->title));
-			$this->note = htmlspecialchars(strip_tags($this->note));
+			$this->title = (empty($this->title)) ? 'blank': htmlspecialchars($this->title);
+			$this->note = htmlspecialchars($this->note);
 
 			// Bind parameters
 			$stmt->bindParam(':title', $this->title);
 			$stmt->bindParam(':note', $this->note);
-			$stmt->bindParam(':checked', $this->checked,PDO::PARAM_BOOL);
 			$stmt->bindParam(':schedule', $this->schedule);
 			$stmt->bindParam(':due', $this->due);
 			$stmt->bindParam(':id', $this->id);
@@ -362,11 +316,11 @@
 			}
 		}
 
-		//check
-		public function check($on_off){
+		/*//check
+		public function checkTheBox($on_off){
 			$query = 'UPDATE '.self::CHECK_TABLE.' AS chk'.
 								' INNER JOIN '.self::TASK_TABLE.' AS tsk ON tsk.item_id = chk.item_id'.
-								' SET chk.checked = :checked , tsk.totlaTime = :totlaTime'.
+								' SET chk.checked = :checked , tsk.totalTime = :totlaTime'.
 								' WHERE chk.item_id = :id';
 
 			$stmt = $this->connection->prepare($query);
@@ -376,26 +330,13 @@
 			$stmt->bindParam(':checked', $on_off, PDO::PARAM_BOOL);
 
 			if($stmt->execute()){
-				// if the item turn off, so does supitem
-				if($on_off === false){
-					$supitem = $this->readSupitemGenn(self::ITEM_ITEMS, self::PARENT_ITEM, self::CHILD_ITEM, self::ITEMS_TABLE);
-					if($supitem->checked === true){
-						$supitem->check(false);
-					}
-				}else{
-					// if item is checked, Subitems follows item
-					$this->readSubitems();
-					foreach($this->subitems as $subitem){
-						$subitem->check(true);
-					}
-				}
 				return true;
 			}else{
 				foreach($stmt->errorInfo() as $line)
 					echo $line."</br>";
 				return false;
 			}
-		}// End Check
+		}// End Check*/
 
 		//clock()
 		protected function clock(){
@@ -418,8 +359,8 @@
 		}
 		
 				// recover it, since function inherient ref the self::DEFAULT_NEW in parent class where it is defined.
-		public function addNewSubitem($title, $item_type=self::DEFAULT_NEW){
-			return $this->addNewSubItemGen(self::ITEM_ITEMS, self::PARENT_ITEM, self::CHILD_ITEM, $title, $item_type);
+		public function addNewSubitem($author_id, $title, $item_type=self::DEFAULT_NEW){
+			return $this->addNewSubItemGen(self::ITEM_ITEMS, self::PARENT_ITEM, self::CHILD_ITEM, $title, $item_type,$author_id);
 		}
 	}// End Task
 ?>
