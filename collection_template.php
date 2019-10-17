@@ -2,9 +2,10 @@
 	include_once 'config/Database.php';
 	include_once 'models/Collections.php';
 	include_once 'models/Items_obj.php';
-	include_once 'authorize.php';// successfully sign in, session['user_id'] and session['home_collection_id'] are set.
-	
+	include 'authorize.php';// successfully sign in, $user_id, $username and $home_collection_id are set.
+		
 	function genOneEle($collection,$subEle){
+				$subEle_title = htmlspecialchars($subEle->title);
 				switch($subEle->type){
 					// collection
 					case 1:
@@ -21,9 +22,9 @@
 									'</form>';// Add list link
 						echo '<a href="components/delete_collection.php?id='.$subEle->id.'">&cross;</a>';// delete link
 						echo  '</div>';
-						echo 		'<a class="title-link" href="collection_template.php?id='.$subEle->id.'">'.$subEle->title.'</a>';
+						echo 		'<a class="title-link" href="collection_template.php?id='.$subEle->id.'">'.$subEle_title.'</a>';
 						echo 		'<form class="edit-title" action="components/update_collection.php?id='.$subEle->id.'" method="post">'.
-											'<input type="text" name="collection_title" value="'.$subEle->title.'">'.
+											'<input type="text" name="collection_title" value="'.$subEle_title.'">'.
 										'</form>';
 						echo  '</div>';
 						
@@ -33,7 +34,7 @@
 					case 2:
 						echo '<div class="item">';
 						echo '<span class="type">item</span>';
-						echo '<a href="list_template.php?id='.$subEle->id.'&type=2">'.$subEle->title.'</a>';
+						echo '<a href="list_template.php?id='.$subEle->id.'&type=2">'.$subEle_title.'</a>';
 						echo '<a class="list-control" href="components/delete_list.php?id='.$collection->id.'&list_id='.$subEle->id.'">&cross;</a>';// delete list
 						echo '</div>';
 						break;
@@ -41,7 +42,7 @@
 					case 4:
 						echo '<div class="check">';
 						echo '<span class="type">check</span>';
-						echo '<a href="list_template.php?id='.$subEle->id.'&type=4">'.$subEle->title.'</a>';
+						echo '<a href="list_template.php?id='.$subEle->id.'&type=4">'.$subEle_title.'</a>';
 						echo '<a class="list-control" href="components/delete_list.php?id='.$collection->id.'&list_id='.$subEle->id.'">&cross;</a>';// delete list
 						echo '</div>';
 						break;
@@ -49,7 +50,7 @@
 					case 6:
 						echo '<div class="task">';
 						echo '<span class="type">task</span>';
-						echo '<a href="list_template.php?id='.$subEle->id.'&type=6">'.$subEle->title.'</a>';
+						echo '<a href="list_template.php?id='.$subEle->id.'&type=6">'.$subEle_title.'</a>';
 						echo '<a class="list-control" href="components/delete_list.php?id='.$collection->id.'&list_id='.$subEle->id.'">&cross;</a>';// delete list
 						echo '</div>';
 						break;
@@ -57,26 +58,29 @@
 	}
 	
 	function genSubCollTo($collection, $level){
-		// add new collection
-		echo '<form class="add-new-collection" action="components/add_new_collection.php?id='.$collection->id.'" method="post">'.
-						'<input type="text" name="collection_title" placeholder="add new collection"><br />'.
-					'</form>';
+		
 		// the number of levels to show
 		if($level == 0){
 			return;
 		}
-		else if($collection->readAllSub() && !empty($collection->subItems)){
-			echo '<ul>';
-			foreach($collection->subItems as $subEle){
-				echo '<li>';
-				genOneEle($collection,$subEle);// html
-				// if it is collection, then go to next level.
-				if($subEle->type == 1 && $subEle->read()){
-							genSubCollTo($subEle, $level-1);
+		else{
+		// add new collection input
+		echo '<form class="add-new-collection" action="components/add_new_collection.php?id='.$collection->id.'" method="post">'.
+						'<input type="text" name="collection_title" placeholder="add new collection"><br />'.
+					'</form>';
+			if($collection->readAllSub() && !empty($collection->subItems)){
+				echo '<ul>';
+				foreach($collection->subItems as $subEle){
+					echo '<li>';
+					genOneEle($collection,$subEle);// html
+					// if it is collection, then go to next level.
+					if($subEle->type == 1 && $subEle->read()){
+								genSubCollTo($subEle, $level-1);
+					}
+					echo '</li>';
 				}
-				echo '</li>';
+				echo '</ul>';
 			}
-			echo '</ul>';
 		}
 		return;
 	}
@@ -94,12 +98,7 @@
 </html>
 <body>
 					
-<?php
-
-	$user_id = $_SESSION['user_id'];
-	$username =$_SESSION['username'];
-	$home_collection_id = $_SESSION['home_collection_id'];
-	
+<?php	
 	// Connect to database	
 	$database = new Database();
 	$connection = $database->connect();
@@ -108,23 +107,31 @@
 	// Use query string to store collection id for browsing specific id collection page
 		// Get the id to present that page
 
-		$defualt_id = 1;
 		$collection = new Collection($connection);// Create a model for reading the data
 		
 		// 1. get 2. current 3. default
-		if(isset($_GET['id']) && is_numeric(($_GET['id']))){
+		if(isset($_GET['id']) && preg_match('/^[0-9]+$/',$_GET['id'])){
 			$collection->id = $_GET['id'];
 		}else if(isset($_SESSION['current_collection'])){
 			$collection->id = $_SESSION['current_collection'];
 		}else{
 			// read default collection
-			$collection->id = $defualt_id;
+			$collection->id = $home_collection_id;
 		}
 		
 		if(!$collection->read()){
 			// since the current collection can't be deleted, and it always start from default.
 			// Current collection always exist.
-			header("Location:collection_template.php?".$home_collection_id);// reload
+			$_SESSION['message'] = 'Fail to read the collection';
+			header("Location:collection_template.php?id=".$home_collection_id);// reload
+			exit;
+		}
+		// check if the collection belons to the current user
+
+		if($collection->author_id != $user_id){
+			$_SESSION['message'] = 'No such collection';
+			header("Location:collection_template.php");
+			exit;
 		}
 		
 		// note down the current collection
@@ -135,14 +142,16 @@
 		// Generate the page
 		include_once 'header.php';
 		// current collection
-		echo '<h2>'.$collection->title.'</h2>';
+		$collection_title = htmlspecialchars($collection->title);
+		echo '<h2>'.$collection_title.'</h2>';
 		// navigator
 		echo '<nav>';
 			// show path
 			$collection_train = $collection->traceBack();
-			$link_train = '<span id="nav-current-collection">'.$collection->title.'</span>';
+			$link_train = '<span id="nav-current-collection">'.$collection_title.'</span>';
 			foreach($collection_train as $c){
-				$link_train = '<a href=collection_template.php?id='.$c->id.'>'.$c->title.'</a> /'.$link_train;
+				$c_title = htmlspecialchars($c->title);
+				$link_train = '<a href=collection_template.php?id='.$c->id.'>'.$c_title.'</a> /'.$link_train;
 			}
 			echo '<div>'.$link_train.'</div>';	
 					echo '<form id="current-coll-addList" action="components/add_new_list.php?id='.$collection->id.'" method="post">'.
@@ -154,13 +163,13 @@
 								'<input type="submit" value="add">'.
 							'</form>';// Add list link
 		echo '</nav>';
-
-		echo "<div id='subele'>";
-			// operation message
+		// operation message
 			if(isset($_SESSION['message'])){
 				echo "<h3>".$_SESSION['message']."</h3>";
 				unset($_SESSION['message']);
 			}
+		echo "<div id='subele'>";
+			
 		// subcollections and subitem(list)
 			genSubCollTo($collection, 5);
 		echo "</div>";		

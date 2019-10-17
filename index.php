@@ -2,7 +2,7 @@
 include_once 'authorize.php';// successfully sign in, session['user_id'] and session['home_collection_id'] are set.
 
 $user_id = $_SESSION['user_id'];
-$username =$_SESSION['username'];
+$username =htmlspecialchars($_SESSION['username']);
 $home_collection_id = $_SESSION['home_collection_id'];
 
 ?>

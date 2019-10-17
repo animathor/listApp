@@ -12,12 +12,15 @@ h2 {
 	background-color: hsl(187.5, 96.3%, 57.5%);
 }
 
-#head-edit-button {
-	width: 25px;
-	height: 25px;
-	position: absolute;
-	right: 30px;
-	top: 95px;
+#head{
+	border:solid white;
+	border-top-width:0px;
+	background-color: #1e7384;
+	
+}
+
+#head .edit-button {
+ margin:0 5px;
 }
 
 nav {
@@ -50,12 +53,16 @@ ul .add-new-item{
 	margin-left:45px;
 }
 .add-new-item input {
-	width:100%;
+	width: 100%;
 	margin: 5px 0 0 0;
-	background-color: rgba(255,255,255,0.7);
-	border: 2px solid white;
+	background-color: rgb(238, 228, 229);
+	border: 2px solid #f9f9f9;
 	border-radius: 5px;
 	box-shadow: 0 0 5px #eb00ff;
+}
+
+#message-board{
+	margin:0;
 }
 /*去縮排，對齊左邊*/
 body>ul>li {
@@ -144,6 +151,37 @@ div[class$="control"]{
 	float: right;
 }
 
+.item form{
+	display: inline;
+}
+
+.checkbox {
+	border: 1px solid #d0c9c9;
+	padding: 0;
+	line-height: 10px;
+	width: 20px;
+	height: 20px;
+	color: white;
+	background-color: white;
+	border-radius: 5px;
+	font-weight: bold;
+}
+.checkbox:hover{
+	color: orange;
+	border-color:orange;
+}
+.checkbox.checked {
+	border: 0px;
+	color: #fdfdfd;
+	background-color: orange;
+}
+.checkbox:hover{
+	color: orange;
+}
+/*turn bg-color for checked items*/
+.checked{
+	background-color: #664b4b12;
+}
 /*dynamic*/
 
 .hide {
