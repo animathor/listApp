@@ -9,7 +9,6 @@ function find_ancestor_class(element, classname){
 function find_ancestor_tag(element, tagname){
 		let targetEle = element;
 			do{
-			console.log(targetEle);
 					targetEle = targetEle.parentNode;
 					var checkTagName = targetEle.tagName.toLowerCase();
 			}while( checkTagName != tagname && checkTagName != 'body');
@@ -30,28 +29,28 @@ function find_1stDescendant_with(element, tagname, classname){
 	}
 }
 
-function getTriggerEle(event){
-	if(!event){
-			event = window.event;
+function getTriggerEle(e){
+	if(!e){
+			e = window.event;
 		}
-	element = event.target || event.srcElement;
+	element = e.target || e.srcElement;
 	return	element;
 }
 
-function preventLinkAction(event){
-		if(event.preventDefault){
-			event.preventDefault();
+function preventLinkAction(e){
+		if(e.preventDefault){
+			e.preventDefault();
 		}else{
-			event.returnValue = false;
+			e.returnValue = false;
 		}
 }
 
-function stopBubbling(event){
+function stopBubbling(e){
 		//stop bubbling
-		if(event.stopPropogation){
-			event.stopPropogation();
+		if(e.stopPropogation){
+			e.stopPropogation();
 		}else{
-			event.cancelBubble = true;
+			e.cancelBubble = true;
 		}
 }
 
@@ -68,7 +67,6 @@ function checkmark(e){
 			}else if(toCheck == 'false'){
 				toCheck = false;
 			}
-			console.log("toCheck ="+toCheck);
 			// set XHR
 			var xhr = new XMLHttpRequest();
 			xhr.onload = function(){
@@ -99,7 +97,7 @@ function checkmark(e){
 							massage = responseObject.massage;
 					}
 				}else{
-					massage = "Something go wrong with the service... Try again later";
+					message = "Something go wrong with the service... Try again later";
 				}
 				// show massage
 				var messageboard = document.getElementById('message-board');
@@ -108,7 +106,6 @@ function checkmark(e){
 			}
 			// get api's url from form action
 			var formNode = el.parentNode;
-			console.log(formNode);
 
 			let check_item_url = formNode.getAttribute('action');
 			xhr.open('POST', check_item_url, true);
@@ -120,7 +117,6 @@ function checkmark(e){
 
 var checkboxs = document.getElementsByTagName('button');
 for(var checkbox of checkboxs){
-	console.log(checkbox);
 	checkbox.addEventListener("click", checkmark, false);
 }
 
@@ -161,7 +157,6 @@ function delete_item(e){
 
 var deleteButtons = document.getElementsByClassName('delete-button');
 for(var deleteButt of deleteButtons){
-	console.log(deleteButt);
 	deleteButt.addEventListener("click", delete_item, false);
 }
 
@@ -180,7 +175,6 @@ function add_new_item(e){
 		// get form elements
 		var form_elements = add_new_form.elements; 
 		item_title = form_elements.item_title.value;
-		console.log(item_title);
 
 			// set XHR
 			var xhr = new XMLHttpRequest();
@@ -208,6 +202,12 @@ function add_new_item(e){
 					newAddNew_form.addEventListener("submit", add_new_item, false);
 
 					// edit toggle hide
+					let newEditButt = find_1stDescendant_with(newliNode, 'div', 'edit-button');
+					newEditButt.addEventListener("click", edit_toggle_hide, false); 
+
+					// item show subitems
+					let newItemDiv =  find_1stDescendant_with(newliNode, 'div', 'item');
+					newItemDiv.addEventListener("click",show_subitems, false); 
 
 					// set delete button delete on click
 					let newDeleteButt = find_1stDescendant_with(newliNode, 'a', 'delete-button');
@@ -215,10 +215,15 @@ function add_new_item(e){
 
 					// hide edit-panel, add-new-form, edit-title
 					let editTitle = find_1stDescendant_with(newliNode, 'input', 'edit-title'); 
-					let editForm = find_1stDescendant_with(newliNode, 'div', 'edit-panel');
+					let editPanel = find_1stDescendant_with(newliNode, 'div', 'edit-panel');
 					editTitle.className += ' hide';
-					editForm.className += ' hide';
+					editPanel.className += ' hide';
 					newAddNew_form.className += ' hide';
+
+					// update edit-form on submit
+					let newEditForm = find_1stDescendant_with(newliNode, 'form', 'edit-form');
+					let newFormData = getFormParams(newEditForm);
+					newEditForm.addEventListener('submit',function(e){update_item(e,newFormData);}, false);
 
 
 
@@ -243,6 +248,137 @@ function add_new_item(e){
 
 var new_item_forms = document.getElementsByClassName('add-new-item');
 for(var new_item_form of new_item_forms){
-	console.log(deleteButt);
 	new_item_form.addEventListener("submit", add_new_item, false);
+}
+
+// edit button
+function edit_toggle_hide(e){
+	let el = getTriggerEle(e);
+	let edit_form = el.parentNode.parentNode;
+	// hide the edit-title and -link
+	let title_link = edit_form.getElementsByClassName('title-link')[0];
+	if(title_link){
+		toggleHide(title_link);}
+	let edit_title = edit_form.getElementsByClassName('edit-title')[0];
+	if(edit_title){
+		toggleHide(edit_title);}
+	// hide the panel
+	let edit_panel = edit_form.getElementsByClassName('edit-panel')[0];
+	if(edit_panel){
+	toggleHide(edit_panel);}
+
+		stopBubbling(e);
+}
+
+var editButts = document.getElementsByClassName('edit-button');
+
+for(var editButt of editButts){
+		editButt.addEventListener("click", edit_toggle_hide,false);
+}//End for
+
+
+// item button shows subitems
+function show_subitems(e){
+	var el = getTriggerEle(e);
+			// if it is title link, element in form, don't trigger
+			if(el.className != 'title-link' && el.tagName.toLowerCase() != 'input' && el.tagName.toLowerCase() != 'textarea'){
+				// find li node
+				var liNode = find_ancestor_tag(el,'li') ;
+				if(this.id != 'head'){
+					var addNew = liNode.getElementsByClassName('add-new-item')[0];
+					if(addNew){
+						toggleHide(addNew);
+					}
+					var sublist = liNode.getElementsByTagName('ul')[0];
+						if(sublist){
+							toggleHide(sublist);
+						}
+					}
+				}
+			// stop bubbling
+			stopBubbling(e);
+}
+
+var items = document.getElementsByClassName('item');
+for(var item of items){
+		item.addEventListener('click', show_subitems,false);
+}
+
+// update edit-form on submit
+function update_item(e, dataBeforeEdit){
+	preventLinkAction(e);
+	let updateForm = getTriggerEle(e);
+	let formData = updateForm.elements;
+	// set xhr
+	let xhr = new XMLHttpRequest();
+	xhr.onload = function(){
+		let message = '';
+		let responseObj = JSON.parse(xhr.responseText);
+		if(xhr.status === 200){
+			if(responseObj.success){
+					// update sanitized text
+					formData['title'].value = responseObj.title;
+					formData['note'].value = responseObj.note;
+					// update title link and show it
+					let title_link = updateForm.getElementsByTagName('a')[0];
+					// head of list does't have a link
+					if(title_link){
+						title_link.textContent = responseObj.title;
+						title_link.className =title_link.className.replace(' hide', '');
+					}else{
+						// head item trigger this, got set list-title
+						document.getElementById('list-title').textContent = responseObj.title;
+						// and the path end
+						document.getElementById('nav-current-item').textContent = responseObj.title;
+					}
+					// hide edit-panel, add-new-form, edit-title
+					let editTitle = find_1stDescendant_with(updateForm, 'input', 'edit-title'); 
+					let editPanel = find_1stDescendant_with(updateForm, 'div', 'edit-panel');
+					editTitle.className += ' hide';
+					editPanel.className += ' hide';
+			}else{
+				message = responseObj.message;
+				// restore data
+				for(inputName in dataBeforeEdit){
+					formData[inputName].value = dataBeforeEdit[inputName];
+				}
+			}
+		}else{
+			message = "Something go wrong with the service... Try again later";
+			// restore data
+			for(inputName in dataBeforeEdit){
+				formData[inputName].value = dataBeforeEdit[inputName];
+			}
+		}
+		// show massage
+		var messageboard = document.getElementById('message-board');
+		messageboard.textContent=message;
+	};
+
+			let update_item_url = updateForm.getAttribute('action');
+			xhr.open('POST',update_item_url, true);
+			xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			// encode to application/x-www-form-urlencoded format
+			// get form data
+			let dataString = ''
+			for(let i=0; i<formData.length;i++){
+				dataString += ('&'+formData[i].name +'='+ encodeForPost(formData[i].value));
+			}
+			xhr.send('ajax=true'+dataString);
+			
+			stopBubbling(e);
+}
+function getFormParams(formEle){
+	let inputs=formEle.elements;
+	let inputsData ={};
+			for(let i=0; i<inputs.length;i++){
+				inputsData[inputs[i].name]=inputs[i].value;
+			}
+	return inputsData;	
+}
+
+let editForms = document.getElementsByClassName('edit-form');
+for(let editForm of editForms){
+	let dataBeforeEdit = getFormParams(editForm);
+	editForm.addEventListener('submit',function(e){update_item(e,dataBeforeEdit);}, false);
 }

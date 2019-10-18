@@ -58,6 +58,9 @@ ul .add-new-item{
 	background-color: rgb(238, 228, 229);
 	border: 2px solid #f9f9f9;
 	border-radius: 5px;
+
+}
+.add-new-item input:hover, .add-new-item input:focus{
 	box-shadow: 0 0 5px #eb00ff;
 }
 

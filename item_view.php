@@ -22,11 +22,11 @@ function genEditForm($item,$isItem){
 				echo '<div class="item-control">'.$editButt.$deleteButt.'</div>';
 				echo
 								$itemlink.
-								'<form action="components/update_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post" data-item_id='.$item->id.' data-item_type='.$item->type.'>'.
+								'<form class="edit-form" action="components/update_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post" data-item_id='.$item->id.' data-item_type='.$item->type.'>'.
 									'<input class="edit-title" type="text" name="title" value="'.$item_title.'" >'.
 									'<div class="edit-panel">'.
 									'<textarea name="note">'.$item_note.'</textarea>'.
-									'<input type="submit" value="save">'.
+									'<input type="submit" name="save"  value="save">'.
 									'</div>'.
 								'</form>'.
 								'</div></div>';
@@ -51,14 +51,14 @@ function genEditForm($item,$isItem){
 					echo $checkBox;
 				echo '</form>';
 				echo
-								'<form  action="components/update_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post"  data-item_id='.$item->id.' data-item_type='.$item->type.'>';
+								'<form class="edit-form"  action="components/update_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post"  data-item_id='.$item->id.' data-item_type='.$item->type.'>';
 									
 									echo
 									$itemlink.
 									'<input class="edit-title" type="text" name="title" value="'.$item_title.'" >'.
 									'<div class="edit-panel">'.
 									'<textarea name="note">'.$item_note.'</textarea>'.
-									'<input type="submit" value="save">'.
+									'<input type="submit" name="save"  value="save">'.
 									'</div>'.
 								'</form>'.
 								'</div></div>';
@@ -83,7 +83,7 @@ function genEditForm($item,$isItem){
 									echo $checkBox;
 				echo 		'</form>';
 				echo	
-								'<form  action="components/update_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post" data-item_id='.$item->id.' data-item_type='.$item->type.'>';
+								'<form class="edit-form" action="components/update_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post" data-item_id='.$item->id.' data-item_type='.$item->type.'>';
 								echo
 										$itemlink.
 										'<input class="edit-title" type="text" name="title" value="'.$item_title.'" ></br>';
@@ -119,7 +119,7 @@ function genEditForm($item,$isItem){
 										'" pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}" step="1">'.
 									'</div>';
 					echo		'<div><textarea name="note">'.$item_note.'</textarea>'.
-									'<input type="submit" value="save">'.
+									'<input type="submit" name="save"  value="save">'.
 									'</div>'.
 									'</div>';
 					echo '</form></div>'.

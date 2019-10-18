@@ -292,7 +292,7 @@
 		public function update(){
 			$query = 'UPDATE '.self::ITEMS_TABLE.' AS i'.
 								' INNER JOIN '.self::TASK_TABLE.' AS tsk ON (i.id = tsk.item_id)'.
-								' SET i.title = :title, i.note = :note, chk.checked = :checked, tsk.schedule = :schedule, tsk.due = :due'.
+								' SET i.title = :title, i.note = :note, tsk.schedule = :schedule, tsk.due = :due'.
 								' WHERE i.id = :id';
 
 			$stmt = $this->connection->prepare($query);

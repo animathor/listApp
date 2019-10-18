@@ -37,7 +37,7 @@
 				header("Content-type:text/html");
 				genEditForm($newSubItem, true);
 				genAddNew($newSubItem);
-				echo '<ul></ul>';
+				echo '<ul class=" hide"></ul>';
 			}else{
 				http_response_code(500);
 			}

@@ -52,7 +52,7 @@
 
 		include_once 'header.php';
 			// display list
-		echo '<h2>'.$theList->title.'</h2>';
+		echo '<h2 id="list-title">'.$theList->title.'</h2>';
 
 		genEditForm($theList, false);
 		
