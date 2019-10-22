@@ -21,8 +21,8 @@ function genEditForm($item,$isItem){
 							'<div class="item-edit">';
 				echo '<div class="item-control">'.$editButt.$deleteButt.'</div>';
 				echo
-								$itemlink.
 								'<form class="edit-form" action="components/update_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post" data-item_id='.$item->id.' data-item_type='.$item->type.'>'.
+									$itemlink.
 									'<input class="edit-title" type="text" name="title" value="'.$item_title.'" >'.
 									'<div class="edit-panel">'.
 									'<textarea name="note">'.$item_note.'</textarea>'.
@@ -129,6 +129,7 @@ function genEditForm($item,$isItem){
 		}//end switch
 		
 	}
+
 	function genAddNew($item){
 	echo '<form class="add-new-item" action="components/add_new_item.php?list_id='.$item->id.'&list_type='.$item->type.'" method="post">'.
 						'<input type="text" name="item_title" placeholder="add new item"><br />'.
@@ -137,10 +138,11 @@ function genEditForm($item,$isItem){
 	
 	function genSubitemTo($item, $level){
 		
-		if($level==0){
+		// the number of levels to show
+		if($level == 0){
 			return;
 		}else{
-			 // add item input send to create
+			// add item input send to create
 			genAddNew($item);
 			echo '<ul>';
 			if($item->readSubitems() && !empty($item->subItems)){

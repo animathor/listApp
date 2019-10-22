@@ -1,5 +1,5 @@
 <?php
-	include_once 'Base.php';
+	include 'Base.php';
 	class Item extends Ordered{
 
 		// Properties
@@ -18,25 +18,26 @@
 
 		// Methods
 		public function read(){
-			$query = 'SELECT type, title, note, addTime, author_id FROM '.self::ITEMS_TABLE.' WHERE id = ? ';
-			$stmt = $this->connection->prepare($query);
+			try{
+				$query = 'SELECT type, title, note, addTime, author_id FROM '.self::ITEMS_TABLE.' WHERE id = ? ';
+				$stmt = $this->connection->prepare($query);
 
-			$stmt->bindParam(1,$this->id);
+				$stmt->bindParam(1,$this->id);
 
-			if($stmt->execute()){
+				$stmt->execute();
 				//fetch the record store in associate array
 				$row = $stmt->fetch(PDO::FETCH_ASSOC);
 
 				//assign each property the value in the corresponding field
-				$this->type = $row['type'];
+				if($this->type !=$row['type']){
+					throw new Exception("Wrong type!");
+				}
 				$this->title = $row['title'];
 				$this->note = $row['note'];
 				$this->addTime = $row['addTime'];
 				$this->author_id = $row['author_id'];
 				return true;
-			}else{
-				foreach($stmt->errorInfo() as $line)
-					echo $line."</br>";
+			}catch(Excepion $e){
 				return false;
 			}
 
@@ -76,7 +77,6 @@
 			// Clean data
 			$this->title = (empty($this->title)) ? 'blank': htmlspecialchars($this->title);
 			$this->note = htmlspecialchars($this->note);
-			//$this->author_id = htmlspecialchars($this->author_id);
 
 			// Bind parameters
 			$stmt->bindParam(':title', $this->title,PDO::PARAM_STR);
@@ -142,29 +142,30 @@
 
 		// Methods
 		public function read(){
-			$query = 'SELECT i.type, i.title, i.note, i.addTime, i.author_id , chk.checked FROM '.self::ITEMS_TABLE.' AS i'.
-								' INNER JOIN '.self::CHECK_TABLE.' AS chk '.
-								' ON i.id = chk.item_id '.
-								' WHERE id = ? ';
-			$stmt = $this->connection->prepare($query);
+			try{
+				$query = 'SELECT i.type, i.title, i.note, i.addTime, i.author_id , chk.checked FROM '.self::ITEMS_TABLE.' AS i'.
+									' INNER JOIN '.self::CHECK_TABLE.' AS chk '.
+									' ON i.id = chk.item_id '.
+									' WHERE id = ? ';
+				$stmt = $this->connection->prepare($query);
 
-			$stmt->bindParam(1,$this->id);
+				$stmt->bindParam(1,$this->id);
 
-			if($stmt->execute()){
-				//fetch the record store in associate array
+				$stmt->execute();
+				// fetch the record store in associate array
 				$row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-				//assign each property the value in the corresponding field
-				$this->type = $row['type'];
+				// assign each property the value in the corresponding field
+				if($this->type != $row['type']){
+					throw Exception("Wrong type");
+				}
 				$this->title = $row['title'];
 				$this->note = $row['note'];
 				$this->addTime = $row['addTime'];
 				$this->author_id = $row['author_id'];
 				$this->checked = $row['checked'];
 				return true;
-			}else{
-				foreach($stmt->errorInfo() as $line)
-					echo $line."</br>";
+			}catch(Exception $e){
 				return false;
 			}
 
@@ -230,20 +231,23 @@
 		
 		// Methods
 		public function read(){
-			$query = 'SELECT i.type, i.title, i.note, i.addTime, i.author_id , chk.checked , tsk.schedule, tsk.due, tsk.totalTime FROM '.self::ITEMS_TABLE.' AS i'.
-								' INNER JOIN '.self::CHECK_TABLE.' AS chk  ON i.id = chk.item_id '.
-								' INNER JOIN '.self::TASK_TABLE.' AS tsk ON i.id = tsk.item_id '.
-								' WHERE id = ? ';
-			$stmt = $this->connection->prepare($query);
+			try{
+				$query = 'SELECT i.type, i.title, i.note, i.addTime, i.author_id , chk.checked , tsk.schedule, tsk.due, tsk.totalTime FROM '.self::ITEMS_TABLE.' AS i'.
+									' INNER JOIN '.self::CHECK_TABLE.' AS chk  ON i.id = chk.item_id '.
+									' INNER JOIN '.self::TASK_TABLE.' AS tsk ON i.id = tsk.item_id '.
+									' WHERE id = ? ';
+				$stmt = $this->connection->prepare($query);
 
-			$stmt->bindParam(1,$this->id);
+				$stmt->bindParam(1,$this->id);
 
-			if($stmt->execute()){
+				$stmt->execute();
 				//fetch the record store in associate array
 				$row = $stmt->fetch(PDO::FETCH_ASSOC);
 
 				//assign each property the value in the corresponding field
-				$this->type = $row['type'];
+				if($this->type != $row['type']){
+					throw new Exception("Wrong type");
+				}
 				$this->title = $row['title'];
 				$this->note = $row['note'];
 				$this->addTime = $row['addTime'];
@@ -253,9 +257,7 @@
 				$this->due= $row['due'];
 				$this->totalTime= $row['totalTime'];
 				return true;
-			}else{
-				foreach($stmt->errorInfo() as $line)
-					echo $line."</br>";
+			}catch(Exception $e){
 				return false;
 			}
 

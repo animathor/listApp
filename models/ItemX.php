@@ -3,32 +3,37 @@
 	include_once 'Collections.php';
 
 	class ItemX{
-		//Database
+		// Database
 		private $connection;
 		protected	const ITEMS_TABLE = 'items';
 
-		//Properties
+		// Properties
 		public $id;
 		public $type;
 		public $container;
 
-		//Constructor
+		// Constructor
 		public function __construct($pdoObj,$id_type_array){
 			$this->connection = $pdoObj;
 
-			// 1.id, type 都有   2.有id沒type, 查type, 生item 存id  3. 有type沒id, 生item
-			if(isset($id_type_array['id'])){
-				$this->id = $id_type_array['id'];
-				if(isset($id_type_array['type'])){
-					$this->type = $id_type_array['type'];
+			// 1.Id, type are set.   2.Id is set, but type isn't. Fetch type. 3. Only type is set
+			//		Is it a support type?
+			try{
+				if(isset($id_type_array['id'])){
+					$this->id = $id_type_array['id'];
+					if(isset($id_type_array['type'])){
+						$this->type = $id_type_array['type'];
+					}else{
+						$this->type = $this->fetch_type($this->id);
+					}
+					$this->container = $this->distributeContainer($this->type);
+					$this->container->id = $this->id;
 				}else{
-					$this->type = $this->fetch_type($this->id);
+					$this->type = $id_type_array['type'];
+					$this->container = $this->distributeContainer($this->type);
 				}
-				$this->container = $this->distributeContainer($this->type);
-				$this->container->id = $this->id;
-			}else{
-				$this->type = $id_type_array['type'];
-				$this->container = $this->distributeContainer($this->type);
+			}catch(Exception $e){
+				throw $e;
 			}
 		}//end Constructor
 
@@ -47,7 +52,7 @@
 					$item = new Task($this->connection);
 					return $item;
 				default:
-					return null;
+					throw new Exception("Type is not supported!");
 			}
 		}
 

@@ -1,7 +1,6 @@
 body {
 	background-color: #e1f4bc;
 }
-
 h2 {
 	margin: 70px 0px 0px 0px;
 	padding: 15px 0px 5px 15px;
@@ -16,7 +15,6 @@ h2 {
 	border:solid white;
 	border-top-width:0px;
 	background-color: #1e7384;
-	
 }
 
 #head .edit-button {
@@ -85,7 +83,7 @@ a{
 		text-decoration: none;
 }
 
-.item, .check, .task {
+.item{
 	background-color: white;
 	overflow: auto;
 	padding: 0 0 0 10px;
@@ -185,11 +183,9 @@ div[class$="control"]{
 .checked{
 	background-color: #664b4b12;
 }
+
 /*dynamic*/
 
 .hide {
 	display:none;
 }
-
-
-	

@@ -16,11 +16,18 @@
 				$this->connection = new PDO($dsn, self::DB_USERNAME, self::DB_PASSWORD);
 				$this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			}catch(PDOException $e){
-				echo 'Connection Error: '.$e->getMessage();
+				throw new dbConnectException('Fail to connect to datasbase.');
 			}
-
 			return $this->connection;
 		}
 
+	}
+	
+	// database exception
+	class dbConnectException extends Exception{
+		function __toString(){
+			return "Exception".$this->getCode().":".$this->getmessage()."<br />".
+							"in ".$this->getFile()."on line".$this->getLine()."<br />";
+		}
 	}
 ?>

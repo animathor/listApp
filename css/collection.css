@@ -38,11 +38,12 @@ nav {
 	/*調整成與連結左右margin一樣*/
 	margin:0 0.5em 0 0.5em;
 }
-
-nav > div {
+nav ul {
+	margin:0;
+	padding:0;
+}
+nav li {
 	display: inline;
-	padding: 0.5em 0 0 0;
-	line-height: 2em;
 }
 /*去縮排，對齊左邊*/
 #subele>ul>li {
@@ -66,9 +67,14 @@ ul .add-new-collection {
 	background-color: rgba(255,255,255,0.7);
 	border:2px solid white;
 	border-radius: 5px;
-	box-shadow: 0 0 5px gold;
+}
+.add-new-collection input:hover,.add-new-collection input:focus{
+	box-shadow: 0 0 8px 2px gold;
 }
 
+#message-board{
+	margin:0;
+}
 li{
 		margin: 5px 0 5px 0;
 }
@@ -166,6 +172,7 @@ a{
 	margin-top: 4px;
 	float: left;
 }
+
 /* dynamic */
 .hide {
 	display:none;

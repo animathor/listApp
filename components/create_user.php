@@ -1,29 +1,44 @@
 <?php
-require_once '../config/Database.php';
-require_once '../models/Users.php';
-include '../authorize.php';// successfully sign in, $user_id, $username and $home_collection_id are set.
+/*
+** Read list and Display it.
+** // 1) Get form data
+** // 2) Connect to Database 
+** // 3) Validate user, email, passwords
+** //    -username uniqueness
+** // 4) Valid: store data and sign in,  Invalid: return
+*/
 
-	// connect to db
-	$database = new Database();
-	$connection = $database->connect();
+require '../config/Database.php';
+require '../models/Users.php';
 
-	// post from sign up form
+
+	// 1) Get form data
+	//  post from sign up form
 	if(isset($_POST['username'])){
 		$username = trim($_POST['username']);
 		$email = trim($_POST['email']);
 		$password = $_POST['password'];
 		$confirm_pw = $_POST['confirm'];
 
-		// set invalid massage
+		try{
+			// 2) Connect to Database 
+			$database = new Database();
+			$connection = $database->connect();
+		}catch(dbConnectExceptioin $dbe){
+			header("Location:sign_in.php?system_msg=".$system_msg);
+		}
+		
+		// 3) Validate user, email, passwords
+		// set massage for invalid input
 		$username_msg = '';
     $email_msg = '';
     $password_msg = '';
-		$valid_input = true;
+		$valid_input = true;// invalid input Flag
 
 		$system_msg='';
 
 		// user validate
-		if(!preg_match('/^([[:alnum:]]{1,255})$/',$username)){
+		if(!preg_match('/^([[:alnum:]]{6,255})$/',$username)){
 			$username_msg = "Only letters and digits";
 			$valid_input = false;
 		}else	if(User::isRegistered($username,$connection)){
@@ -49,9 +64,11 @@ include '../authorize.php';// successfully sign in, $user_id, $username and $hom
 			$password_msg = "Passwords do not match!";
 			$valid_input = false;
 		}
+		
+		// 4) Valid: store data and sign in,  Invalid: return
 		if($valid_input === true){
-		// store into db
-
+		
+			// store into db
 			$new_user = new User($connection);
 			$new_user->username = $username; 
 			$new_user->email = $email; 
@@ -70,8 +87,8 @@ include '../authorize.php';// successfully sign in, $user_id, $username and $hom
 			}
 		}
 
-		// invalid input or database error
-		header("Location:sign_up.php?".
+		// invalid input 
+		header("Location:../sign_up.php?".
 						"system_msg=".$system_msg."&".
 						"username=".urlencode($username)."&".
 						"email=".urlencode($email)."&".
@@ -79,5 +96,6 @@ include '../authorize.php';// successfully sign in, $user_id, $username and $hom
 				    "email_msg=".$email_msg."&". 
 				    "password_msg=".$password_msg);
 
-	}	
+	}// end if $_POST is set
+	header("Location:../sign_up.php");
 ?>

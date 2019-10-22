@@ -89,12 +89,14 @@ require_once("Collections.php");
 		}//End read user
 
 		public function signin($username){
-			$query = "SELECT id, username, email, password, home_collection_id".
-								"	FROM ".self::USERS_TABLE." WHERE username = :username";
-			$stm = $this->connection->prepare($query);
-			$stm->bindParam(':username',$username);
-
-			if($stm->execute()){
+			try{
+				$query = "SELECT id, username, email, password, home_collection_id".
+									"	FROM ".self::USERS_TABLE." WHERE username = :username";
+				$stm = $this->connection->prepare($query);
+				$stm->bindParam(':username',$username);
+      
+				$stm->execute();
+      
 				$row = $stm->fetch(PDO::FETCH_ASSOC);
 				$this->id = $row['id'];
 				$this->username = $row['username'];
@@ -103,9 +105,9 @@ require_once("Collections.php");
 				$this->home_collection_id = $row['home_collection_id'];
 
 				return true;
+			}catch(Exception $e){
+				return false;
 			}
-			return false;
-			
 		}// end sign in
 
 		public function update(){

@@ -33,7 +33,7 @@
 	<fieldset>
 		<div>
 		<label for="username">username</label>
-		<input type="text" name="username" value="<?php echo $username?>"/>
+		<input type="text" name="username" value="<?php echo $username?>" required minlength="6" maxlength="255" pattern="[a-zA-Z0-9]">
 			<?php
 				if(strlen($username_msg)>0){
 					echo '<h3 id="username_msg">'.$username_msg.'</h3>';
@@ -42,7 +42,7 @@
 		</div>
 		<div>
 		<label for="email">email</label>
-		<input type="text" name="email" value="<?php echo $email?>"/>
+		<input type="email" name="email" value="<?php echo $email?>"/>
 			<?php
 				if(strlen($email_msg)>0){
 					echo '<h3 id="email_msg">'.$email_msg.'</h3>';
@@ -51,7 +51,7 @@
 		</div>
 		<div>
 			<label for="password">password</label>
-			<input type="password" name="password"/>
+			<input type="password" name="password" placeholder="10 to 20 charactors of aplabet and numbers" required minlength="10"  maxlength="20" pattern="[a-zA-Z0-9]">
 			<?php
 				if(strlen($password_msg)>0){
 					echo '<h3 id="password_msg">'.$password_msg.'</h3>';
@@ -60,10 +60,10 @@
 		</div>
 		<div>
 		<label for="confirm">confirm password</label>
-		<input type="password" name="confirm"/>
+		<input type="password" name="confirm" required minlength="10" maxlength="20" pattern="[a-zA-Z0-9]" >
 		</div>
 		<div>
-		<input type="submit" value="sign up"/>
+		<input type="submit" name="sign_up" value="Sign up">
 		</div>
 	</fieldset>
 </form>
