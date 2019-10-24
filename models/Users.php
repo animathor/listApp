@@ -119,19 +119,25 @@ require_once("Collections.php");
  		// Static methods
 
 		static function isRegistered($username,$pdoObj){
-			// DB connection
-			$connection = $pdoObj;
+			try{
+				// DB connection
+				$connection = $pdoObj;
 
-			$query = "SELECT id".
-								"	FROM ".self::USERS_TABLE." WHERE username = :username";
-			$stm = $connection->prepare($query);
-			$stm->bindParam(':username',$username);
+				$query = "SELECT id".
+									"	FROM ".self::USERS_TABLE." WHERE username = :username";
+				$stm = $connection->prepare($query);
+				$stm->bindParam(':username',$username);
 
-			if($stm->execute()){
+				$stm->execute();
 				$row = $stm->fetch(PDO::FETCH_ASSOC);
-				return $row['id'];
+				if($row['id']){
+					return true;
+				}else{
+					return false;
+				}
+			}catch(PDOException $pdoe){
+				throw new Exception("Failed to check the registeration of user ".$username);
 			}
-			return false;
 		}
 
 		static function search($fieldName, $matchString){

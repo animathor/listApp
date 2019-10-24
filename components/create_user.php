@@ -25,6 +25,7 @@ require '../models/Users.php';
 			$database = new Database();
 			$connection = $database->connect();
 		}catch(dbConnectExceptioin $dbe){
+			$system_msg = $e->getMessage();
 			header("Location:sign_in.php?system_msg=".$system_msg);
 		}
 		
@@ -38,17 +39,22 @@ require '../models/Users.php';
 		$system_msg='';
 
 		// user validate
-		if(!preg_match('/^([[:alnum:]]{6,255})$/',$username)){
-			$username_msg = "Only letters and digits";
-			$valid_input = false;
-		}else	if(User::isRegistered($username,$connection)){
-			$username_msg = "Username ".$username." is registered!";
-			$valid_input = false;
+		try{
+			if(!preg_match('/^([[:alnum:]]{6,255})$/',$username)){
+				$username_msg = "6 to 255 characters of letters and digits";
+				$valid_input = false;
+			}else	if(User::isRegistered($username,$connection)){
+				$username_msg = "Username ".$username." is registered!";
+				$valid_input = false;
+			}
+		}catch(Exception $e){
+			$system_msg = $e->getMessage();			
+			header("Location:sign_in.php?system_msg=".$system_msg);			
 		}
-
+		
 		// email validate
 		if(filter_var($email,FILTER_VALIDATE_EMAIL)===false){
-			$email_msg = "Invalid email!";
+			$email_msg = "Please enter a valid email!";
 			$valid_input = false;
 		}
 		// password validate
@@ -60,8 +66,11 @@ require '../models/Users.php';
 			$valid_input = false;
 		}else if(!preg_match('/[[:digit:]]+/',$password)){
 			$password_msg = "At least one digit!";
-		}else if($password != $confirm_pw){
-			$password_msg = "Passwords do not match!";
+			$valid_input = false;
+		}
+		// confirm password
+		if($password !== $confirm_pw){
+			$confirm_msg = "Passwords do not match!";	
 			$valid_input = false;
 		}
 		
@@ -94,8 +103,9 @@ require '../models/Users.php';
 						"email=".urlencode($email)."&".
 						"username_msg=".$username_msg."&". 
 				    "email_msg=".$email_msg."&". 
-				    "password_msg=".$password_msg);
-
+				    "password_msg=".$password_msg."&".
+				    "confirm_msg=".$confirm_msg);
+		exit;
 	}// end if $_POST is set
 	header("Location:../sign_up.php");
 ?>
