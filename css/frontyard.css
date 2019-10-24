@@ -29,3 +29,12 @@ h3{
 a {
 	color:white;
 }
+
+/* dynamic */
+.pass {
+	color: #14e697;
+}
+
+.try-again:hover{
+	text-decoration: underline;
+}
