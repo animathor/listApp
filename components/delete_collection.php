@@ -6,29 +6,34 @@
 	//connect to DB
 	$database = new Database();
 	$connection = $database->connect();
-	var_dump($connection);
 	
 
 	//get data from query string $_GET
 	if(isset($_GET['id']) && preg_match('/^[0-9]+$/',$_GET['id'])){
 		$collection_id= $_GET['id'];
-		//delete collection 
+		//delete collection
 		$collection = new Collection($connection);
 		$collection->id = $collection_id;
-		echo '<pre>';
-		echo var_dump($collection);
-		echo "</pre>";
-		session_start();
-		if($collection->delete()){
-			$_SESSION['message'] = 'collection'.$collection_id.' was deleted';
+
+		$result = $collection->delete();
+
+		if(isset($_POST['ajax'])){
+		// request by ajax
+			if($result){
+				header("Content-type:application/json");
+				echo json_encode(["success"=>true]);
+			}else{
+				echo json_encode(["success"=>false,
+													"message"=>'collection is not deleted']);
+			}
 		}else{
-			$_SESSION['message'] = 'collection'.$collection_id.' is not deleted';
+		// request by normal 
+			if($result){
+				$_SESSION['message'] = 'collection'.$collection_id.' was deleted';
+			}else{
+				$_SESSION['message'] = 'collection'.$collection_id.' is not deleted';
+			}
+			header("Location:../collection_template.php");
 		}
-		// back to current collection
-		if(isset($_SESSION['current_collection'])){
-			$id = $_SESSION['current_collection'];
-			header("Location:../collection_template.php?id=$id");
-		}
-		header("Location:../collection_template.php");
 	}
 ?>

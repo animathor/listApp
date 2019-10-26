@@ -42,7 +42,7 @@
 				http_response_code(500);
 			}
 		}else{
-			if($id){
+			if($result){
 				$_SESSION['message'] = 'item is created';
 			}else{
 				$_SESSION['message'] = 'Sorry, item is not created. Something wrong with the server... Please try again later';
@@ -50,5 +50,4 @@
 			header("Location:../list_template.php");
 		}
 	}
-	
 ?>

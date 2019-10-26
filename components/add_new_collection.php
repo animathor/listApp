@@ -1,13 +1,13 @@
 <?php
+	include_once '../config/app_config.php';
 	include_once '../config/Database.php';
 	include_once '../models/Collections.php';
 	include_once '../authorize.php';// successfully sign in, $user_id, $username and $home_collection_id are set.
-
+	include '../collection_view.php';// for function "genAddNewColl($collection)" and "genOneEle($collection,$subEle)"
 
 	//connect to DB
 	$database = new Database();
 	$connection = $database->connect();
-	var_dump($connection);
 	
 	// get parent collection id
 	if(isset($_GET['id']) && preg_match('/^[0-9]+$/',$_GET['id'])){
@@ -22,18 +22,32 @@
 				$collection_title = $_POST['collection_title'];
 			}
 		// create collection
-			session_start();
-			$author_id = $user_id;			
-			if($collection->addNewSubCollection($collection_title, $author_id)){
+
+			$author_id = $user_id;
+			$newSubCollection_id = $result = $collection->addNewSubCollection($collection_title, $author_id);
+			
+		if(isset($_POST['ajax'])){
+		// request by ajax
+			if($result){
+				$newSubCollection = new Collection($connection);
+				$newSubCollection->id = $newSubCollection_id;
+				$newSubCollection->read();
+				header("Content-type:text/html");
+				genOneEle($collection, $newSubCollection);
+				genAddNewColl($newSubCollection);
+				echo '<ul class=" hide"></ul>';
+			}else{
+				http_response_code(500);
+			}
+		}else{
+			if($result){		
 				$_SESSION['message'] = 'Collection is created';
-				echo '<pre>';
-				var_dump($collection);
-				echo '</pre>';
 			}else{
 				$_SESSION['message'] = 'Collection is not created';
 			}
+			// back to current collection
+			header("Location:../collection_template.php");
+		}
 	}
-	// back to current collection
-	header("Location:../collection_template.php");
 	
 ?>

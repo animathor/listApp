@@ -15,17 +15,25 @@
 		$collection = new Collection($connection);
 		$collection->id = $collection_id;
 
-		session_start();
-		if($collection->deleteList($list_id)){
-			$_SESSION['message'] = 'List'.$list_id.' was deleted';
+		$result = $collection->deleteList($list_id);
+		
+		if(isset($_POST['ajax'])){
+		// request by ajax
+			if($result){
+				header("Content-type:application/json");
+				echo json_encode(["success"=>true]);
+			}else{
+				echo json_encode(["success"=>false,
+													"message"=>'List is not deleted']);
+			}
 		}else{
-			$_SESSION['message'] = 'List'.$list_id.' is not deleted';
+			if($result){
+				$_SESSION['message'] = 'List'.$list_id.' was deleted';
+			}else{
+				$_SESSION['message'] = 'List'.$list_id.' is not deleted';
+			}
+			// back to current collection
+			header("Location:../collection_template.php");
 		}
-		// back to current collection
-		if(isset($_SESSION['current_collection'])){
-			$id = $_SESSION['current_collection'];
-			header("Location:../collection_template.php?id=$id");
-		}
-		header("Location:../collection_template.php");
 	}
 ?>
