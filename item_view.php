@@ -1,5 +1,5 @@
 <?php
-function genEditForm($item,$isItem){
+	function genEditForm($item,$isItem){
 		$item_title = $item->title;
 		$item_note = $item->note;
 	
@@ -18,8 +18,8 @@ function genEditForm($item,$isItem){
 		switch($item->type){
 			case ITEM_TYPE:
 				echo '<div '.$headId.' class="item type-item">'.
-							'<div class="item-edit">';
-				echo '<div class="item-control">'.$editButt.$deleteButt.'</div>';
+							'<div class="edit">';
+				echo '<div class="control">'.$editButt.$deleteButt.'</div>';
 				echo
 								'<form class="edit-form" action="components/update_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post" data-item_id='.$item->id.' data-item_type='.$item->type.'>'.
 									$itemlink.
@@ -44,8 +44,8 @@ function genEditForm($item,$isItem){
 					$ischecked = '';
 				}
 				echo '<div '.$headId.' class="item type-check'.$ischecked.'">'.
-							'<div  class="check-edit">';
-				echo '<div class="check-control">'.$editButt.$deleteButt.'</div>';
+							'<div  class="edit">';
+				echo '<div class="control">'.$editButt.$deleteButt.'</div>';
 				echo	
 								'<form action="components/check_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post">';
 					echo $checkBox;
@@ -76,8 +76,8 @@ function genEditForm($item,$isItem){
 					$ischecked = '';
 				}
 				echo '<div '.$headId.' class="item type-task'.$ischecked.'">'.
-							'<div  class="task-edit">'.
-								'<div class="task-control">'.$editButt.$deleteButt.'</div>';
+							'<div  class="edit">'.
+								'<div class="control">'.$editButt.$deleteButt.'</div>';
 				echo	
 								'<form action="components/check_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post">';
 									echo $checkBox;

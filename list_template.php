@@ -112,10 +112,9 @@
 		echo '<div id="subitems">';
 		genSubitemTo($theList, LEVEL_OF_LIST);
 		echo '</div>';
-
 ?>
-	<script src="script/hide.js"></script>
-	<script src="script/list_hide.js"></script>
+	<script src="script/utilities.js"></script>
+	<script src="script/control.js"></script>
 	<script src="script/list_control.js"></script>
 	</body>
 </html>

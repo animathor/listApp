@@ -66,7 +66,7 @@ ul .add-new-item{
 	margin:0;
 }
 /*去縮排，對齊左邊*/
-body>ul>li {
+#subitems>ul>li {
 	margin:5px 5px 5px -40px;
 }
 
@@ -147,7 +147,7 @@ div[class$="edit"] {
 	float: left;
 }
 
-div[class$="control"]{
+.control{
 	display: inline-block;
 	float: right;
 }
@@ -180,10 +180,9 @@ div[class$="control"]{
 	color: orange;
 }
 /*turn bg-color for checked items*/
-.checked{
-	background-color: #664b4b12;
+.checked {
+	background-color: #d8e8b4;
 }
-
 /*dynamic*/
 
 .hide {
