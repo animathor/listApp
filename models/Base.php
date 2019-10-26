@@ -161,32 +161,32 @@
 
 		protected function readSubitemsGen($relation_table, $parent_element, $child_element, $element_table){
 			// Read Item
-			$query = "SELECT rel.".$child_element.", itm.type".
+			try{
+				$query = "SELECT rel.".$child_element.", itm.type".
 								" FROM `".$relation_table."` AS rel".
 								" INNER JOIN `".$element_table."` AS itm ON rel.".$child_element."= itm.id".
 								" WHERE rel.".$parent_element." = ?".
 								" ORDER BY itm.title ASC";
 
-			$stmt = $this->connection->prepare($query);
-			$stmt->bindParam(1, $this->id);
+				$stmt = $this->connection->prepare($query);
+				$stmt->bindParam(1, $this->id);
 
-			if(!$stmt->execute()){
-				foreach($stmt->errorInfo() as $line)
-					echo $line."</br>";
+				$stmt->execute();
+			
+				// Fetch data of each item
+				$subItems = [];
+				while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+					$id_and_type = ['id'=>$row[$child_element], 'type'=>$row['type']];
+					$newItem = new ItemX($this->connection, $id_and_type);
+					if(!$newItem->read()){
+						throw new Exception("fail to read subitem");
+					}
+						$subItems[] = $newItem->container;
+				}
+				return $subItems;
+			}catch(Exception $e){
 				return false;
 			}
-			
-			// Fetch data of each item
-			while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-				$id_and_type = ['id'=>$row[$child_element], 'type'=>$row['type']];
-				$newItem = new ItemX($this->connection, $id_and_type);
-				if($newItem->read()){
-					$this->subItems[] = $newItem->container;
-				}else{
-					return false;
-				}
-			}
-			return true;
 
 		}// End read Subitems
 
@@ -314,35 +314,34 @@
 		protected function readSubitemsGen($relation_table, $parent_element, $child_element, $element_table){
 			
 			// Read Item
-			$query = "SELECT rel.".$child_element.", itm.type".
+			try{
+				$query = "SELECT rel.".$child_element.", itm.type".
 								" FROM `".$relation_table."` AS rel".
 								" INNER JOIN `".$element_table."` AS itm ON rel.".$child_element."= itm.id".
 								" WHERE rel.".$parent_element." = ?".
 								" ORDER BY rel.ordinal_num ASC";
 
-			$stmt = $this->connection->prepare($query);
-			$stmt->bindParam(1, $this->id);
+				$stmt = $this->connection->prepare($query);
+				$stmt->bindParam(1, $this->id);
+	
+				$stmt->execute();
+			
+				// Fetch data of each item
+				$subItems = [];
+				while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+					$id_and_type = ['id'=>$row[$child_element], 'type'=>$row['type']];
+					$newItem = new ItemX($this->connection, $id_and_type);
 
-			if(!$stmt->execute()){
-				throw Exception("SQL query failed.");
-				foreach($stmt->errorInfo() as $line)
-					echo $line."</br>";
-				return false;
-			}
-			// Fetch data of each item
-			while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-				$id_and_type = ['id'=>$row[$child_element], 'type'=>$row['type']];
-				$newItem = new ItemX($this->connection, $id_and_type);
-
-				if($newItem->read()){
-					$this->subItems[] = $newItem->container;
-				}else{
-					foreach($stmt->errorInfo() as $line)
-						echo $line."</br>";
+					if(!$newItem->read()){
+						throw new Exception('fail to read subitem');
+					}
+					$subItems[] = $newItem->container;
+				}
+				return $subItems;
+				
+				}catch(Exception $e){
 					return false;
 				}
-			}
-			return true;
 
 		}// End read Subitems
 

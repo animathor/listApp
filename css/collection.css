@@ -51,6 +51,7 @@ nav li {
 }
 
 ul{
+	margin:0;
 	list-style-type:none;
 }
 
@@ -110,18 +111,18 @@ a{
 }
 
 
-.collection-control {
+.control {
 	display:inline-block;
 	float:right;
 }
-.collection-control select {
+.control select {
 	background-color: transparent;
 	border: 2px solid white;
 	border-radius: 20px 0 0 20px;
 	color: white;
 	text-align: right;
 }
-.collection-control input {
+.control input {
 	font-weight: bold;
 	width: 30px;
 	border-radius: 0 5px 5px 0;
@@ -130,8 +131,11 @@ a{
 	background-color: white;
 	color: green;
 }
+.collection form{
+	display: inline;
+}
 
-.item, .check, .task {
+.list {
 	background-color: white;
 	
 }
@@ -144,32 +148,28 @@ a{
 	color: #b7b74e;
 }
 
-.item a, .check a, .task a{
+.list a{
 	color: limegreen;
 	text-shadow: 0px 0px 1px pink;
-	text-decoration: none;
 }
 
-.item a:hover, .check a:hover, .task a:hover{
+.list a:hover{
 	color:#ec2346;
-	text-decoration: none;
-		
+
 }
 
-.collection-control form{
-	float: left;	
+.control form{
+	float: left;
 }
 .edit-button {
 	width: 25px;
 	height: 25px;
 	margin: 5px 5px;
 	float: left;
-}
-.list-control {
-	float:right;
+	background-image: url(../img/edit.png);
+	background-size: 25px;
 }
 .delete-button {
-	margin-top: 4px;
 	float: left;
 }
 

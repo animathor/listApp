@@ -119,8 +119,10 @@
 		echo "<div id='subele'>";
 			genSubCollTo($collection, LEVEL_OF_COLLECTION);
 		echo "</div>";
+
 ?>
-<script src="script/hide.js"></script>
-<script src="script/collection_hide.js"></script>
+<script src="script/utilities.js"></script>
+<script src="script/control.js"></script>
+<script src="script/collection_control.js"></script>
 </body>
 </html>

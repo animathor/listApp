@@ -117,7 +117,13 @@
 
 			// Read and store in subitems[]
 		public function readSubitems(){
-			return $this->readSubitemsGen(self::ITEM_ITEMS, self::PARENT_ITEM, self::CHILD_ITEM, self::ITEMS_TABLE);
+			$subItems = $this->readSubitemsGen(self::ITEM_ITEMS, self::PARENT_ITEM, self::CHILD_ITEM, self::ITEMS_TABLE);
+			if($subItems === false){
+				return false;
+			}else{
+				$this->subItems = $subItems;
+				return true;
+			}
 		}
 
 		public function dropSubitem($item_id){

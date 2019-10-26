@@ -9,12 +9,13 @@
 		private const ITEMS_TABLE ='items';
 
 		// Subcollections Properties
+		public $subCollections;
 		private const COLLECTION_COLLECTIONS='collection_collections';
 		private const PARENT_COLLECTION = 'parent_collection';
 		private const CHILD_COLLECTION = 'child_collection';
 		private const DEFAULT_NEW = 1;// add new collection
 
-		// Subitems Properties
+		// Subitems(list) Properties
 		private const COLLECTION_ITEMS='collection_items';
 		private const PARENT_ITEM= 'parent_item';
 		private const CHILD_ITEM= 'child_item';
@@ -96,7 +97,6 @@
 				// Find all collection
 				$collections = $this->traversal(self::COLLECTION_COLLECTIONS, self::PARENT_COLLECTION, self::CHILD_COLLECTION, $this->id);
 				$collections[] = $this->id;// include current collection
-				print_r($collections);
       
 				// delete	all list in each collection
 				foreach($collections as $collection_id){
@@ -106,21 +106,17 @@
 					foreach($lists as $list_id){
 						if(!$this->deleteList($list_id)){
 							throw new Exception("List $list_id not deleted");
-							return false;
 						}
 					}
 					// delete collection element
 					if(!$this->deleteEle(self::COLLECTIONS_TABLE, $collection_id)){
 							throw new Exception("Collection $collection_id not deleted");
-							return false;
 					}
 				}// finish all collections
 				return true;
 				
 			}catch(Exception $e){
-				print "檔案:".$e->getFile()."<br/>";
-				print "行號".$e->getLine()."<br/>";
-				print "錯誤:".$e->getMessage()."<br/>";
+				return false;
 			}
 
 		}//end delete
@@ -145,7 +141,13 @@
 
 			// Read and store in subitems[]
 		public function readLists(){
-			return $this->readSubitemsGen(self::COLLECTION_ITEMS, self::PARENT_COLLECTION, self::CHILD_ITEM, self::ITEMS_TABLE);
+			$subItems = $this->readSubitemsGen(self::COLLECTION_ITEMS, self::PARENT_COLLECTION, self::CHILD_ITEM, self::ITEMS_TABLE);
+			if($subItems === false){
+				return false;
+			}else{
+				$this->subItems = $subItems;
+				return true;
+			}
 		}
 
 		public function dropList($item_id){
@@ -188,7 +190,7 @@
 				$newCollection = new Collection($this->connection);
 				$newCollection->id = $row[self::CHILD_COLLECTION];
 				if($newCollection->read()){
-					$this->subItems[] = $newCollection;
+					$this->subCollections[] = $newCollection;
 				}else{
 					return false;
 				}
@@ -207,15 +209,13 @@
 
 				// Read list
 				if(!$this->readLists()){
-					return false;
+					throw new Exception('Reading subLists failed!');
 				}
-				else{
-					return true;
-				}
+				return true;
+				
 			}catch(Exception $e){
-				print "檔案:".$e->getFile()."<br/>";
-				print "行號".$e->getLine()."<br/>";
-				print "錯誤:".$e->getMessage()."<br/>";
+				throw $e;
+				return false;
 			}
 
 		}
