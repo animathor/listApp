@@ -29,6 +29,9 @@ require '../models/Users.php';
 		}catch(Exception $e){
 			http_response_code(500);
 		}
-	}// End if $_POST is set
+	}else{
+		header("Content-type:application/json");			
+			echo json_encode(["success"=>false, "message"=>"Sorry, something go wrong..."]);
+	}
 	
 ?>

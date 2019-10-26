@@ -209,11 +209,16 @@ function checkRegisteration(e){
 			let newMessage = document.createElement('span');
 			if(xhr.status === 200){
 				responseObj = JSON.parse(xhr.responseText);
-				if(responseObj.isRegistered){
-					newMessage.textContent = "Please try another one";
+				if(responseObj.success === true){
+					if(responseObj.isRegistered){
+						newMessage.textContent = "Please try another one";
+					}else{
+						newMessage.className ="pass";
+						newMessage.textContent = "The name is available";
+					}
 				}else{
-					newMessage.className ="pass";
-					newMessage.textContent = "The name is available";
+					let system_msgBorad = document.getElementById('system_msg');
+					system_msgBorad.textContent = responseObj.message;
 				}
 			}else if(xhr.status ===500){
 					newMessage.className ="try-again";

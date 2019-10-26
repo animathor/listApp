@@ -26,11 +26,7 @@
 	</head>
 
 <body>
-<?php
-	if(strlen($system_msg)>0){
-		echo '<h3 id="system_msg">'.$system_msg.'</h3>';
-	}
-?>
+	<h3 id="system_msg"><?php echo $system_msg;?></h3>
 <form action="components/create_user.php" method="post">
 	<fieldset>
 		<div>
