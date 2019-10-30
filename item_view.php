@@ -8,18 +8,20 @@
 			$itemlink ='<a class="title-link" href="list_template.php?id='.$item->id.'&type='.$item->type.'">'.$item_title.'</a>';
 			$deleteButt = '<a class="delete-button" href="components/delete_item.php?item_id='.$item->id.'&item_type='.$item->type.'">&cross;</a>';
 			$editButt = '<div class="edit-button"></div>';//'<img class="edit-button" src="img/edit_blue.png">';
+			$dragHandle = '<div class="drag-handle"></div>';
 			$headId='';
 		}else{
 			$deleteButt = '';
 			$itemlink = '';
 			$editButt = '<img id="head-edit-button" class="edit-button" src="img/edit.png">';
+			$dragHandle = '';
 			$headId = 'id="head"';
 		}
 		switch($item->type){
 			case ITEM_TYPE:
 				echo '<div '.$headId.' class="item type-item">'.
 							'<div class="edit">';
-				echo '<div class="control">'.$editButt.$deleteButt.'</div>';
+				echo '<div class="control">'.$dragHandle.$editButt.$deleteButt.'</div>';
 				echo
 								'<form class="edit-form" action="components/update_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post" data-item_id='.$item->id.' data-item_type='.$item->type.'>'.
 									$itemlink.
@@ -45,7 +47,7 @@
 				}
 				echo '<div '.$headId.' class="item type-check'.$ischecked.'">'.
 							'<div  class="edit">';
-				echo '<div class="control">'.$editButt.$deleteButt.'</div>';
+				echo '<div class="control">'.$dragHandle.$editButt.$deleteButt.'</div>';
 				echo	
 								'<form action="components/check_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post">';
 					echo $checkBox;
@@ -77,7 +79,7 @@
 				}
 				echo '<div '.$headId.' class="item type-task'.$ischecked.'">'.
 							'<div  class="edit">'.
-								'<div class="control">'.$editButt.$deleteButt.'</div>';
+								'<div class="control">'.$dragHandle.$editButt.$deleteButt.'</div>';
 				echo	
 								'<form action="components/check_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post">';
 									echo $checkBox;
@@ -144,11 +146,16 @@
 		}else{
 			// add item input send to create
 			genAddNew($item);
-			echo '<ul>';
+			echo '<ul class="subitems" data-id="'.$item->id.'" data-type="'.$item->type.'">';
 			if($item->readSubitems() && !empty($item->subItems)){
 			
 				foreach($item->subItems as $subItem){
-					echo "<li>";
+					// may has next level items, load by ajax
+					if($level == 1){
+						echo '<li id="item_'.$subItem->id.'" class="load-more" data-id="'.$subItem->id.'" data-type="'.$subItem->type.'">';
+					}else{
+						echo '<li id="item_'.$subItem->id.'" data-id="'.$subItem->id.'" data-type="'.$subItem->type.'">';
+					}
 					genEditForm($subItem, true);
 					genSubitemTo($subItem, $level-1);
 					echo "</li>";

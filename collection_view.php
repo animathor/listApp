@@ -75,10 +75,15 @@
 			genAddNewColl($collection);
 			if($collection->readAllSub()){
 				// display subcollections
-				echo '<ul class="subCollections">';
+				echo '<ul class="subcollections">';
 				if(!empty($collection->subCollections)){
 					foreach($collection->subCollections as $subCollection){
-							echo '<li>';
+							// may has next level items, load by ajax
+							if($level == 1){
+								echo '<li class="load-more" data-id="'.$subCollection->id.'" >';
+							}else{
+								echo "<li>";
+							}
 							genOneEle($collection,	$subCollection);// html
 							// if it is collection, then go to next level.
 							//if($subEle->type == 1 && $subEle->read()){
@@ -89,7 +94,7 @@
 				}
 				echo '</ul>';
 				// display sublist
-				echo '<ul class="subLists">';
+				echo '<ul class="lists">';
 				if(!empty($collection->subItems)){
 					foreach($collection->subItems as $subEle){
 						echo '<li>';
@@ -100,8 +105,8 @@
 				}
 				echo '</ul>';
 			}else{
-				echo '<ul class="subCollections"></ul>';
-				echo '<ul class="subLists"></ul>';
+				echo '<ul class="subcollections"></ul>';
+				echo '<ul class="lists"></ul>';
 			}
 			return;
 		}
