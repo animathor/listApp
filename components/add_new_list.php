@@ -8,11 +8,9 @@
 	//connect to DB
 	$database = new Database();
 	$connection = $database->connect();
-	var_dump($connection);
-	var_dump($_GET);
+
 	// get collection_id from get
-	$item_types_reg = "/^".ITEM_TYPE."|".CHECK_TYPE."|".TASK_TYPE."$/";// supported types
-		if(isset($_GET['id']) && preg_match('/^[0-9]+$/',$_GET['id']) && isset($_REQUEST['list_type']) && preg_match($item_types_reg,$_REQUEST['list_type'])){
+		if(isset($_GET['id']) && preg_match('/^[0-9]+$/',$_GET['id']) && isset($_REQUEST['list_type']) && preg_match(SUPPORT_TYPES_REG,$_REQUEST['list_type'])){
 		$collection_id = $_GET['id'];
 		var_dump($_GET);
 		// get type from $_POST

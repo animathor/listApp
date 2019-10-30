@@ -9,8 +9,7 @@
 	$database = new Database();
 	$connection = $database->connect();
 	//get list id and type
-	$item_types_reg = "/^".ITEM_TYPE."|".CHECK_TYPE."|".TASK_TYPE."$/";// supported types
-		if(isset($_GET['list_id']) && preg_match('/^[0-9]+$/',$_GET['list_id']) && isset($_GET['list_type']) && preg_match($item_types_reg,$_GET['list_type'])){
+		if(isset($_GET['list_id']) && preg_match('/^[0-9]+$/',$_GET['list_id']) && isset($_GET['list_type']) && preg_match(SUPPORT_TYPES_REG,$_GET['list_type'])){
 		$list_id = $_GET['list_id'];
 		$list_type = $_GET['list_type'];
 		$id_n_type = ['id'=>$list_id, 'type'=>$list_type];
@@ -37,7 +36,7 @@
 				header("Content-type:text/html");
 				genEditForm($newSubItem, true);
 				genAddNew($newSubItem);
-				echo '<ul class=" hide"></ul>';
+				echo '<ul class="suitems hide" data-id="'.$newSubItem->id.'" data-type="'.$newSubItem->type.'"></ul>';
 			}else{
 				http_response_code(500);
 			}

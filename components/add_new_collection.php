@@ -14,7 +14,7 @@
 		// prepare model
 		$collection = new Collection($connection);
 		$collection->id = $_GET['id'];
-// $user_id is set in authorize.php
+		// $user_id is set in authorize.php
 		// prepaare title
 			$collection_title = 'new collection';
 			//get data from $_POST
@@ -35,7 +35,8 @@
 				header("Content-type:text/html");
 				genOneEle($collection, $newSubCollection);
 				genAddNewColl($newSubCollection);
-				echo '<ul class=" hide"></ul>';
+				echo '<ul class="subcollections hide"></ul>';
+				echo '<ul class="lists hide"></ul>';
 			}else{
 				http_response_code(500);
 			}

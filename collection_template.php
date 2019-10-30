@@ -116,7 +116,7 @@
 		echo "<h3 id='message-board'>".$massage."</h3>";
 		
 		// 7) Display: subcollections and lists: generate the tree to a finite level
-		echo "<div id='subele'>";
+		echo "<div id='subEles'>";
 			genSubCollTo($collection, LEVEL_OF_COLLECTION);
 		echo "</div>";
 

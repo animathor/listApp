@@ -8,8 +8,7 @@
 	$connection = $database->connect();
 
 	//get data from query string $_GET
-$item_types_reg = "/^".ITEM_TYPE."|".CHECK_TYPE."|".TASK_TYPE."$/";// supported types
-		if(isset($_GET['item_id']) && preg_match('/^[0-9]+$/',$_GET['item_id']) && isset($_GET['item_type']) && preg_match($item_types_reg,$_GET['item_type'])){
+		if(isset($_GET['item_id']) && preg_match('/^[0-9]+$/',$_GET['item_id']) && isset($_GET['item_type']) && preg_match(SUPPORT_TYPES_REG,$_GET['item_type'])){
 		$item_id= $_GET['item_id'];
 		$item_type = $_GET['item_type'];
 		$id_type_arr = ['id'=>$item_id, 'type'=>$item_type];

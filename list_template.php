@@ -23,8 +23,7 @@
 	
 	// 2) Get id and type
 	//: --$_GET (id, type) --back to previous list --back to collection
-	$item_types_reg = "/^".ITEM_TYPE."|".CHECK_TYPE."|".TASK_TYPE."$/";// supported types
-	if(isset($_GET['id']) && preg_match('/^[0-9]+$/',$_GET['id']) && isset($_GET['type']) && preg_match($item_types_reg,$_GET['type'])){
+	if(isset($_GET['id']) && preg_match('/^[0-9]+$/',$_GET['id']) && isset($_GET['type']) && preg_match(SUPPORT_TYPES_REG,$_GET['type'])){
 		$id = $_GET['id'];
 		$type = $_GET['type'];
 		$id_n_type = ['id'=>$id, 'type'=>$type];	
@@ -67,6 +66,7 @@
 	<head>
 		<meta charset="utf-8"/>
 		<title>list</title>
+		<link href="css/jquery-ui.min.css" type="text/css" rel="stylesheet"/>
 		<link href="css/header.css" type="text/css" rel="stylesheet"/>
 		<link href="css/list.css" type="text/css" rel="stylesheet">
 	</head>
@@ -113,8 +113,12 @@
 		genSubitemTo($theList, LEVEL_OF_LIST);
 		echo '</div>';
 ?>
+	<script src="script/jquery.js"></script>
+	<script src="script/jquery-ui.min.js"></script>
 	<script src="script/utilities.js"></script>
 	<script src="script/control.js"></script>
 	<script src="script/list_control.js"></script>
+	
+
 	</body>
 </html>
