@@ -276,7 +276,7 @@
 
 	abstract class Ordered extends Base{
 		// Preserve a specific order for subitems
-		protected $order;
+		public $order;
 
 		protected function addSubItemGen($relation_table, $parent_element, $child_element, $subitem_id){
 			$ordinal_num=0;
@@ -288,7 +288,9 @@
 			$stmt = $this->connection->prepare($query);
 			if($stmt->execute([$this->id])){
 				$row = $stmt->fetch(PDO::FETCH_ASSOC);
-				$ordinal_num = $row['ordinal_num']+1;// new item
+				if($row){
+					$ordinal_num = $row['ordinal_num']+1;// new item
+				}
 			}
 
 			// Add new relation
@@ -348,16 +350,25 @@
 		//update order
 		public function updateOrderGen($relation_table, $parent_element, $child_element, $element_table){
 			if(!is_null($this->order)){
-				foreach($this->order as $index=>$item_id){
+				try{
+					// start transaction for update all item ordinal num
+					$this->connection->beginTransaction();
 					$query = "UPDATE `".$relation_table."`".
 										" SET ordinal_num = :ordinal_num".
 										" WHERE `".$parent_element."` = :parent_element AND ".$child_element." = :child_element";
 					$stmt = $this->connection->prepare($query);
-					if(!$stmt->execute(['ordinal_num'=>$index, 'parent_element'=>$this->id, 'child_element'=>$item_id])){
-						print "{$stmt->error}";
-						return false;
+					$ordinal_num = $child_id = null;
+					$stmt->bindParam(':parent_element',$this->id);
+					$stmt->bindParam(':ordinal_num', $ordinal_num);
+					$stmt->bindParam(':child_element',$child_id);
+					foreach($this->order as $ordinal_num=>$child_id){
+						$stmt->execute();
 					}
+					$this->connection->commit();
 					return true;
+				}catch(Exception $e){
+					$this->connection->rollBack();
+					return false;
 				}
 			}
 		}// End update order

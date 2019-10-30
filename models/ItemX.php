@@ -121,6 +121,9 @@
 					}elseif($prop_name == 'note'){
 						$this->container->note = $value;
 						return true;
+					}elseif($prop_name == 'order'){
+						$this->container->order = $value;
+						return true;
 					}else{
 						return false;						 
 					}
@@ -137,6 +140,9 @@
 					}elseif($prop_name == 'checked'){
 						$this->container->checked= $value;
 						return true;
+					}elseif($prop_name == 'order'){
+						$this->container->order = $value;
+						return true;
 					}else{
 						return false;						 
 					}
@@ -149,6 +155,9 @@
 						return true;
 					}elseif($prop_name == 'note'){
 						$this->container->note = $value;
+						return true;
+					}elseif($prop_name == 'order'){
+						$this->container->order = $value;
 						return true;
 					}elseif($prop_name == 'checked'){
 						$this->container->checked= $value;
