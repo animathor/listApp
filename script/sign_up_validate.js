@@ -201,6 +201,7 @@ function checkRegisteration(e){
 			// select message board for display
 			let messageBoard = document.getElementById('username_msg');
 			// remove old message if there are any
+			messageBoard.textContent = '';
 			let oldMessage = messageBoard.getElementsByTagName('span')[0];
 			if(oldMessage){
 				messageBoard.removeChild(oldMessage);
