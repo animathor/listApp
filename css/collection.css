@@ -46,7 +46,7 @@ nav li {
 	display: inline;
 }
 /*去縮排，對齊左邊*/
-#subele>ul>li {
+#subEles>ul>li {
 	margin:5px 5px 5px -40px;
 }
 
@@ -91,7 +91,6 @@ a{
 	width: 100%;
 	border-top: 3px #2fce88 solid;
 	border-bottom: 3px #3e5505 solid;
-	line-height: 2.2em;
 }
 .collection:hover {
 	background-color: #6f7695;
@@ -127,7 +126,7 @@ a{
 	width: 30px;
 	border-radius: 0 5px 5px 0;
 	border: 2px solid white;
-	height: 27.3px;
+	height: 29px;
 	background-color: white;
 	color: green;
 }

@@ -1,4 +1,38 @@
-// general use funct
+// sortable (jQuery)
+
+function setSortable(jq_obj){
+	jq_obj.sortable({
+		opacity:0.5,
+		axis:'y',
+		container:'parent',// only can sort under the same parent item. Can't cut and paste at will.
+		placeholder:'ui-state-highlight',
+		handle:'.drag-handle',
+		stop: function (e,ui){
+			// serilize the order of the items
+			$this = $(this);
+			let item = $this.data();
+			let order = $this.sortable('serialize');
+			// update the change by Ajax
+			$.ajax({
+				method:"POST",
+				url: "components/update_subitems_order.php?item_id="+item.id+"&item_type="+item.type,
+				data: order,
+				success: function(data){
+					if(data.success == false){
+						// cancel the sort and display message
+						$this.sortable('cancel');
+						$('#message-board').text("Fail to update the order of items");
+					}
+				},
+				fail: function(){
+						$('#message-board').text( "Sorry, somethig go wrong..., please try again later");
+				}
+			});
+		} // end stop
+	});
+}
+
+// general use function
 
 // hide more in collection page
 function hide_more_collection(){
@@ -7,18 +41,23 @@ function hide_more_collection(){
 	for(var title of hideTitles){
 		title.className += ' hide';	
 	}	
-	// hide sublists
-	var items = document.getElementsByTagName('li');
-	for(var item of items){
-		var addnew = item.getElementsByClassName('add-new-collection')[0];
-		if(addnew){
+	// hide addnews 
+	let addnews = document.getElementsByClassName('add-new-collection')
+	for(let addnew of addnews){
+		if(addnew.parentNode.id !== 'subEles'){
 			addnew.className += ' hide';
 		}
-		var sublists = item.getElementsByTagName('ul');
-		for(let sublist of sublists){
-			if(sublist){
-				sublist.className += ' hide';}
+	}
+	let subcollections = document.getElementsByClassName('subcollections');
+	for(let subcollection of subcollections){
+		if(subcollection.parentNode.id !== 'subEles'){
+			subcollection.className += ' hide';
 		}
+	}
+	let all_lists = document.getElementsByClassName('lists');
+	for(let a_lists of all_lists){
+		if(a_lists.parentNode.id !== 'subEles'){
+			a_lists.className += ' hide';}
 	}
 }
 
@@ -106,7 +145,7 @@ function delete_element(e){
 }
 
 
-// add new element(item list collectiona) WIP
+// add new element(item list collectiona)
 function add_new_element(e, element_type){
 		preventLinkAction(e);
 		let add_new_form = getTriggerEle(e);
@@ -128,44 +167,9 @@ function add_new_element(e, element_type){
 					let currentUl = formParent.getElementsByTagName('ul')[0];
 					let newliNode = document.createElement('li');
 					newliNode.innerHTML = xhr.responseText;
-					currentUl.appendChild(newliNode);////////////WIP
+					currentUl.appendChild(newliNode);
 					
-					// set checkbox toggle checked
-					let newCheckBox = newliNode.getElementsByTagName('button')[0];// only one button
-					if(newCheckBox){
-						newCheckBox.addEventListener("click", checkmark, false);
-					}
-					// set add-new-form add new on submit
-					let newAddNew_form = find_1stDescendant_with(newliNode, 'form', 'add-new-'+element_type);
-					newAddNew_form.addEventListener("submit", function(e){add_new_element(e,element_type)}, false);
-
-					// edit toggle hide
-					let newEditButt = find_1stDescendant_with(newliNode, 'div', 'edit-button');
-					newEditButt.addEventListener("click", edit_toggle_hide, false); 
-
-					// item show subitems
-					let newItemDiv =  find_1stDescendant_with(newliNode, 'div', element_type);
-					newItemDiv.addEventListener("click",function(e){show_subelements(e,element_type)}, false); 
-
-					// set delete button delete on click
-					let newDeleteButt = find_1stDescendant_with(newliNode, 'a', 'delete-button');
-					newDeleteButt.addEventListener("click", delete_element, false);
-
-					// hide edit-panel, add-new-form, edit-title
-					let editTitle = find_1stDescendant_with(newliNode, 'input', 'edit-title'); 
-					let editPanel = find_1stDescendant_with(newliNode, 'div', 'edit-panel');
-					editTitle.className += ' hide';
-					if(element_type === 'item'){
-						editPanel.className += ' hide';
-					}
-					newAddNew_form.className += ' hide';
-
-					// update edit-form on submit
-					let newEditForm = find_1stDescendant_with(newliNode, 'form', 'edit-form');
-					let newFormData = getFormParams(newEditForm);
-					newEditForm.addEventListener('submit',function(e){update_element(e,element_type,newFormData);}, false);
-
-
+					setLiAllControl(element_type,newliNode);
 
 				}else{ 
 					massage = xhr.status+" Something go wrong with the service... Try again later";
@@ -186,7 +190,50 @@ function add_new_element(e, element_type){
 			stopBubbling(e);
 }
 
+function setLiAllControl(element_type, newliNode){
+					// set checkbox toggle checked
+					let newCheckBox = newliNode.getElementsByTagName('button')[0];// only one button
+					if(newCheckBox){
+						newCheckBox.addEventListener("click", checkmark, false);
+					}
+					// set add-new-form add new on submit
+					let newAddNew_form = find_1stDescendant_with(newliNode, 'form', 'add-new-'+element_type);
+					if(newAddNew_form){
+					newAddNew_form.addEventListener("submit", function(e){add_new_element(e,element_type)}, false);
+					}
+					// edit toggle hide
+					let newEditButt = find_1stDescendant_with(newliNode, 'div', 'edit-button');
+					newEditButt.addEventListener("click", edit_toggle_hide, false); 
 
+					let newSubelementsUl =  find_1stDescendant_with(newliNode, 'ul', 'sub'+element_type+'s');
+					if(newSubelementsUl){
+					// item show subitems (delegate listen to <ul>)
+					newSubelementsUl.addEventListener("click",function(e){show_subelements(e,element_type)}, false); 
+					// set <ul> sortable(jQery)
+					setSortable($(newSubelementsUl));
+					}
+
+					// set delete button delete on click
+					let newDeleteButt = find_1stDescendant_with(newliNode, 'a', 'delete-button');
+					newDeleteButt.addEventListener("click", delete_element, false);
+
+					// hide edit-panel, add-new-form, edit-title
+					let editTitle = find_1stDescendant_with(newliNode, 'input', 'edit-title'); 
+					let editPanel = find_1stDescendant_with(newliNode, 'div', 'edit-panel');
+					editTitle.className += ' hide';
+					if(element_type === 'item'){
+						editPanel.className += ' hide';
+					}
+					if(newAddNew_form){
+						newAddNew_form.className += ' hide';
+					}
+
+					// update edit-form on submit
+					let newEditForm = find_1stDescendant_with(newliNode, 'form', 'edit-form');
+					let newFormData = getFormParams(newEditForm);
+					newEditForm.addEventListener('submit',function(e){update_element(e,element_type,newFormData);}, false);
+
+}
 
 
 // element button shows subelements(collections(and lists), items)
@@ -195,27 +242,71 @@ function show_subelements(e, element_type){
 			// if it is title link, element in form, don't trigger
 			if(el.className == 'edit'){
 				// find li node
-				var liNode = find_ancestor_tag(el,'li') ;
-				if(this.id != 'head'){
-					var addNew = liNode.getElementsByClassName('add-new-'+element_type)[0];
-					if(addNew){
-						toggleHide(addNew);
-					}
-					
-					if(element_type === 'item'){
-						let sublist = liNode.getElementsByTagName('ul')[0];
-						if(sublist){
-							toggleHide(sublist);}
-					}else if(element_type === 'collection'){
-						let subCollections = liNode.getElementsByTagName('ul')[0];
-						if(subCollections){
-							toggleHide(subCollections);}
-						let lists = liNode.getElementsByTagName('ul')[1];
-						if(lists){
-							toggleHide(lists);}
-					}
-					
-				}
+				var liNode = find_ancestor_tag(el,'li');
+				if(el.parentNode.id != 'head'){
+					if(liNode.className == 'load-more'){
+						// li that doesn't display sub, may has subelements
+						// set xhr for more
+						let xhr = new XMLHttpRequest();
+						xhr.onload = function(){
+							if(xhr.status === 200){
+								// add the add-new and subEles
+								liNode.insertAdjacentHTML('beforeend', xhr.responseText);
+								// set add-new-form add new on submit
+								let newAddNew_form = find_1stDescendant_with(liNode, 'form', 'add-new-'+element_type);
+								newAddNew_form.addEventListener("submit", function(e){add_new_element(e,element_type)}, false);
+
+								let subLiNodes = liNode.getElementsByTagName('li');
+								for(let subLiNode of subLiNodes){
+									// set all control
+									setLiAllControl(element_type, subLiNode);
+								}
+								// set subitems be sortable
+								if(element_type=='item'){
+									let subitemUl = liNode.getElementsByTagName('ul')[0];
+									setSortable($(subitemUl));
+								}
+								// this item is now loaded. wipe the classname
+								liNode.className = liNode.className.replace('load-more','');
+							}else if(xhr.status === 500){
+								// show massage
+								var messageboard = document.getElementById('message-board');
+								messageboard.textContent="Fail to read sub"+element_type+'s';
+							}
+						};
+						let load_more_from_url = '';
+						if(element_type === 'item'){
+							load_more_from_url = 'components/read_subitems.php?id='+liNode.dataset['id']+'&type='+liNode.dataset['type'];
+						}else if(element_type === 'collection'){
+							load_more_from_url = 'components/read_subcollections_and_lists.php?id='+liNode.dataset['id'];
+						}
+
+						xhr.open('POST',load_more_from_url,true);
+						xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+						xhr.send();
+					}else{
+						// normal <li>
+						var addNew = liNode.getElementsByClassName('add-new-'+element_type)[0];
+						if(addNew){
+							toggleHide(addNew);
+						}
+						
+						if(element_type === 'item'){
+							let sublist = liNode.getElementsByTagName('ul')[0];
+							if(sublist){
+								toggleHide(sublist);}
+						}else if(element_type === 'collection'){
+							let subcollections = liNode.getElementsByClassName('subcollections')[0];
+							if(subcollections){
+								toggleHide(subcollections);}
+							// the last is the sibling ul
+							let all_lists = liNode.getElementsByClassName('lists');
+							let the_lists = all_lists[all_lists.length-1];
+							if(the_lists){
+								toggleHide(the_lists);}
+						}
+					}//if --li no sub else --normal li
+				}// not head item
 			}
 			// stop bubbling
 			stopBubbling(e);
@@ -360,7 +451,7 @@ function getFormParams(formEle){
 
 function toggleHide(e){
 		let className = e.className;
-		if(className.match('hide')){
+		if(/hide/.test(className)){
 			e.className = className.replace(' hide', '');
 		}else{
 			e.className += ' hide';

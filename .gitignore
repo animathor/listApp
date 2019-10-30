@@ -2,3 +2,5 @@
 *.xcf
 # testing
 test*.php
+# jquery download files
+jquery-ui-1.12.1.custom/
