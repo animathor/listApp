@@ -4,14 +4,14 @@
 
 		// Properties
 		public $note;
-		public $type = 2;
+		public $type = ITEM_TYPE;
 		protected const ITEMS_TABLE = 'items';
 		// Collection Properties
 		protected const COLLECTION_ITEMS = 'collection_items';
 		protected const PARENT_COLLECTION = 'parent_collection';
-		protected const COLLECTION_TYPE =1;
+		protected const COLLECTION_TYPE =COLLECTION_TYPE;
   	// Subitem Properties
-		protected const DEFAULT_NEW = 2;
+		protected const DEFAULT_NEW = ITEM_TYPE;
 		protected const ITEM_ITEMS = 'item_items';
 		protected const PARENT_ITEM = 'parent_item';
 		protected const CHILD_ITEM = 'child_item';
@@ -46,24 +46,21 @@
 		public function create(){
 			$query = 'INSERT INTO '.self::ITEMS_TABLE.'(type, title, note)'.
 								'VALUES(:type, :title, :note)';
-			$stmt = $this->connection->prepare($query);
-
-			$this->title = (empty($this->title)) ? 'blank': htmlspecialchars($this->title);
-			$this->note = htmlspecialchars($this->note);
-
-			$stmt->bindParam(':type', $this->type);
-			$stmt->bindParam(':title', $this->title,PDO::PARAM_STR);
-			$stmt->bindParam(':note', $this->note,PDO::PARAM_STR);
-
-			if($stmt->execute()){
+			try{
+				$stmt = $this->connection->prepare($query);
+  
+				$this->title = (empty($this->title)) ? 'blank': htmlspecialchars($this->title);
+				$this->note = htmlspecialchars($this->note);
+  
+				$stmt->bindParam(':type', $this->type);
+				$stmt->bindParam(':title', $this->title,PDO::PARAM_STR);
+				$stmt->bindParam(':note', $this->note,PDO::PARAM_STR);
+  
+				$stmt->execute();
 				//get id
-				$stmt = $this->connection->query('SELECT LAST_INSERT_ID()');
-				$result = $stmt->fetch(PDO::FETCH_NUM);
-				$this->id = $result[0];
+				$this->id = $this->connection->lastInsertId();
 				return true;
-			}else{
-				foreach($stmt->errorInfo() as $line)
-					echo $line."</br>";
+			}catch(Exception $e){
 				return false;
 			}
 
@@ -73,21 +70,20 @@
 			$query = 'UPDATE '.self::ITEMS_TABLE.
 								' SET title = :title, note = :note'.
 								' WHERE id = :id';
-			$stmt = $this->connection->prepare($query);
-			// Clean data
-			$this->title = (empty($this->title)) ? 'blank': htmlspecialchars($this->title);
-			$this->note = htmlspecialchars($this->note);
-
-			// Bind parameters
-			$stmt->bindParam(':title', $this->title,PDO::PARAM_STR);
-			$stmt->bindParam(':note', $this->note,PDO::PARAM_STR);
-			$stmt->bindParam(':id', $this->id);
-
-			if($stmt->execute()){
+			try{
+				$stmt = $this->connection->prepare($query);
+				// Clean data
+				$this->title = (empty($this->title)) ? 'blank': htmlspecialchars($this->title);
+				$this->note = htmlspecialchars($this->note);
+  
+				// Bind parameters
+				$stmt->bindParam(':title', $this->title,PDO::PARAM_STR);
+				$stmt->bindParam(':note', $this->note,PDO::PARAM_STR);
+				$stmt->bindParam(':id', $this->id);
+  
+				$stmt->execute();
 				return true;
-			}else{
-				foreach($stmt->errorInfo() as $line)
-					echo $line."</br>";
+			}catch(Exception $e){
 				return false;
 			}
 		}
@@ -134,17 +130,20 @@
 			return $this->deleteAllGen(self::ITEM_ITEMS, self::PARENT_ITEM, self::CHILD_ITEM, $item_id);
 		}
 		public function updateOrder(){
-			return $this->updateOrderGen(self::ITEM_ITEMS, self::PARENT_ITEM, self::CHILD_ITEM, self::ITEMS_TABLE);
+			return $this->updateOrderGen(self::ITEM_ITEMS, self::PARENT_ITEM, self::CHILD_ITEM);
+		}
+		public function moveSubItem($former_parent,$dragged_child){
+			return $this->moveSubEleGen(self::ITEM_ITEMS, self::PARENT_ITEM, self::CHILD_ITEM,$former_parent,$dragged_child);
 		}
 
 	}// End Class Item
 
 	class Check extends Item{
 		// Properties
-		public $type = 4;
+		public $type = CHECK_TYPE;
 		public $checked;
 		protected const CHECK_TABLE='checks';
-		protected const DEFAULT_NEW = 4;
+		protected const DEFAULT_NEW = CHECK_TYPE;
 
 		// Methods
 		public function read(){
@@ -163,7 +162,7 @@
 
 				// assign each property the value in the corresponding field
 				if($this->type != $row['type']){
-					throw Exception("Wrong type");
+					throw new Exception("Wrong type");
 				}
 				$this->title = $row['title'];
 				$this->note = $row['note'];
@@ -178,24 +177,24 @@
 		}
 
 		public function create(){
-			if(parent::create()){
+			try{
+				if(!parent::create()){
+					throw new Exception("Fail to create item obj");	
+				}
 				$query = 'INSERT INTO '.self::CHECK_TABLE.' (item_id, checked) '.
-										'VALUES(:item_id, DEFAULT)';
-        
+										'VALUES(:item_id, DEFAULT)'; 
 				// Prepare statement 
 				$stmt = $this->connection->prepare($query);
         
 				// Bind parameters
 				$stmt->bindParam(':item_id', $this->id);
 
-				if($stmt->execute()){
+				$stmt->execute();
 					return true;
-				}else{
-					foreach($stmt->errorInfo() as $line)
-						echo $line."</br>";
-					return false;
-				}
+			}catch(Exception $e){
+				return false;
 			}
+			
 		}// End create
 
 
@@ -209,16 +208,15 @@
 								' SET checked = :checked '.
 								' WHERE item_id = :id';
 	
-			$stmt = $this->connection->prepare($query);
-			// Bind parameters
-			$stmt->bindParam(':id', $this->id);
-			$stmt->bindParam(':checked', $on_off, PDO::PARAM_BOOL);
+			try{
+				$stmt = $this->connection->prepare($query);
+				// Bind parameters
+				$stmt->bindParam(':id', $this->id);
+				$stmt->bindParam(':checked', $on_off, PDO::PARAM_BOOL);
 	
-			if($stmt->execute()){
+				$stmt->execute();
 				return true;
-			}else{
-				foreach($stmt->errorInfo() as $line)
-					echo $line."</br>";
+			}catch(Exception $e){
 				return false;
 			}
 		}// End Check
@@ -227,13 +225,13 @@
 
 	class Task extends Check{
 		// Properties
-		public $type = 6;
+		public $type = TASK_TYPE;
 		public $due;
 		public $schedule;
 		public $timer;
 		public $totalTime;
 		protected const TASK_TABLE='tasks';
-		protected const DEFAULT_NEW = 6;
+		protected const DEFAULT_NEW =TASK_TYPE;
 		
 		// Methods
 		public function read(){
@@ -270,7 +268,10 @@
 		}
 
 		public function create(){
-			if(parent::create()){
+			try{
+				if(!parent::create()){
+					throw new Exception("Fail to create task obj");	
+				}
 				$query = 'INSERT INTO '.self::TASK_TABLE.' (item_id, schedule, due) '.
 										'VALUES(:item_id, :schedule, :due)';
         
@@ -287,14 +288,12 @@
 				$stmt->bindParam(':schedule', $this->schedule);
 				$stmt->bindParam(':due', $this->due);
 
-				if($stmt->execute()){
+				$stmt->execute();
 					return true;
-				}else{
-					foreach($stmt->errorInfo() as $line)
-						echo $line."</br>";
-					return false;
-				}
+			}catch(Exception $e){
+				return false;
 			}
+			
 		}// End create
 
 		public function update(){
@@ -324,48 +323,6 @@
 			}
 		}
 
-		/*//check
-		public function checkTheBox($on_off){
-			$query = 'UPDATE '.self::CHECK_TABLE.' AS chk'.
-								' INNER JOIN '.self::TASK_TABLE.' AS tsk ON tsk.item_id = chk.item_id'.
-								' SET chk.checked = :checked , tsk.totalTime = :totlaTime'.
-								' WHERE chk.item_id = :id';
-
-			$stmt = $this->connection->prepare($query);
-			// Bind parameters
-			$stmt->bindParam(':id', $this->id);
-			$stmt->bindParam(':totlaTime', $this->totlaTime);
-			$stmt->bindParam(':checked', $on_off, PDO::PARAM_BOOL);
-
-			if($stmt->execute()){
-				return true;
-			}else{
-				foreach($stmt->errorInfo() as $line)
-					echo $line."</br>";
-				return false;
-			}
-		}// End Check*/
-
-		//clock()
-		protected function clock(){
-			$query = 'UPDATE '.self::TASK_TABLE.
-								' SET timer = :timer'.
-								' WHERE item_id = :id';
-
-			$stmt = $this->connection->prepare($query);
-			// Bind parameters
-			$stmt->bindParam(':id', $this->id);
-			$stmt->bindParam(':timer', $this->timer);
-
-			if($stmt->execute()){
-				return true;
-			}else{
-				foreach($stmt->errorInfo() as $line)
-					echo $line."</br>";
-				return false;
-			}
-		}
-		
 				// recover it, since function inherient ref the self::DEFAULT_NEW in parent class where it is defined.
 		public function addNewSubitem($author_id, $title, $item_type=self::DEFAULT_NEW){
 			return $this->addNewSubItemGen(self::ITEM_ITEMS, self::PARENT_ITEM, self::CHILD_ITEM, $title, $item_type,$author_id);

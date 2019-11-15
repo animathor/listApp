@@ -1,59 +1,50 @@
 <?php
+	function displayListEle($type, $type_num, $list_id, $list_title, $collection_id){
+		echo '<div class="list">';
+			echo '<span class="type">'.$type.'</span>';
+				echo '<a href="list_template.php?id='.$list_id.'&type='.$type_num.'">'.$list_title.'</a>';
+				echo '<div class="control">';
+				echo '<a class="delete-button" href="components/delete_list.php?id='.$collection_id.'&list_id='.$list_id.'">&cross;</a>';// delete list
+			echo '</div>';
+		echo '</div>';
+	}
+	
 	function genOneEle($collection,$subEle){
 		$subEle_title = htmlspecialchars($subEle->title);
 		switch($subEle->type){
 			// collection
 			case COLLECTION_TYPE:
 				echo '<div class="collection">';
-				echo 	'<div class="edit">';
 				echo 	'<div class="control">';
-				echo '<div class="edit-button"></div>';//'<img class="edit-button" src="img/edit.png"/>';
-				echo '<form action="components/add_new_list.php?id='.$subEle->id.'" method="post">'.
-								'<select name="list_type">'.
-								'<option value='.ITEM_TYPE.'>item</option>'.
-								'<option value='.CHECK_TYPE.'>check</option>'.
-								'<option value='.TASK_TYPE.'>task</option></select>'.
-							'<input type="submit" value="+">'.
-							'</form>';// Add list link
-				echo '<a class="delete-button" href="components/delete_collection.php?id='.$subEle->id.'">&cross;</a>';// delete link
+					echo '<div class="edit-button"></div>';//'<img class="edit-button" src="img/edit.png"/>';
+					echo '<form action="components/add_new_list.php?id='.$subEle->id.'" method="post">'.
+									'<select name="list_type">'.
+									'<option value='.ITEM_TYPE.'>item</option>'.
+									'<option value='.CHECK_TYPE.'>check</option>'.
+									'<option value='.TASK_TYPE.'>task</option></select>'.
+								'<input type="submit" value="+">'.
+								'</form>';// Add list link
+					echo '<a class="delete-button" href="components/delete_collection.php?id='.$subEle->id.'">&cross;</a>';// delete link
 				echo  '</div>';
 				echo 		'<form class="edit-form" action="components/update_collection.php?id='.$subEle->id.'" method="post">'.
 									'<a class="title-link" href="collection_template.php?id='.$subEle->id.'">'.$subEle_title.'</a>'.
 									'<input class="edit-title" type="text" name="title" value="'.$subEle_title.'">'.
 								'</form>';
-				echo  '</div>';
+
 				
 				echo '</div>';
 				break;
 			// item
 			case ITEM_TYPE:
-				echo '<div class="list">';
-				echo '<span class="type">item</span>';
-				echo '<a href="list_template.php?id='.$subEle->id.'&type=2">'.$subEle_title.'</a>';
-				echo '<div class="control">';
-				echo '<a class="delete-button" href="components/delete_list.php?id='.$collection->id.'&list_id='.$subEle->id.'">&cross;</a>';// delete list
-				echo '</div>';
-				echo '</div>';
+				displayListEle('item', ITEM_TYPE, $subEle->id, $subEle_title, $collection->id);
 				break;
 			// check
 			case CHECK_TYPE:
-				echo '<div class="list">';
-				echo '<span class="type">check</span>';
-				echo '<a href="list_template.php?id='.$subEle->id.'&type=4">'.$subEle_title.'</a>';
-				echo '<div class="control">';
-				echo '<a class="delete-button" href="components/delete_list.php?id='.$collection->id.'&list_id='.$subEle->id.'">&cross;</a>';// delete list
-				echo '</div>';
-				echo '</div>';
+				displayListEle('check', CHECK_TYPE, $subEle->id, $subEle_title, $collection->id);
 				break;
 			// task
 			case TASK_TYPE:
-				echo '<div class="list">';
-				echo '<span class="type">task</span>';
-				echo '<a href="list_template.php?id='.$subEle->id.'&type=6">'.$subEle_title.'</a>';
-				echo '<div class="control">';
-					echo '<a class="delete-button" href="components/delete_list.php?id='.$collection->id.'&list_id='.$subEle->id.'">&cross;</a>';// delete list
-				echo '</div>';
-				echo '</div>';
+				displayListEle('task', TASK_TYPE, $subEle->id, $subEle_title, $collection->id);
 				break;
 		}//end switch
 		

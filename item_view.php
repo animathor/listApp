@@ -1,132 +1,101 @@
 <?php
-	function genEditForm($item,$isItem){
+	function div($content = '', $attribute = ''){
+		return '<div '.$attribute.'>'.$content.'</div>';
+	}
+	function dateTimeSplit($dateTimeName, $dateTimeValue){
+		$date = $time ='';
+		if(isset($dateTimeValue)){
+			list($date, $time) = explode(' ', $dateTimeValue);
+		}
+		return '<div>'.
+								'<label>'.$dateTimeName.'</label>'.
+							 	'<input type="date" name="'.$dateTimeName.'" value = "'.$date.
+								'"pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" step="1">'.
+							 	'<input type="time" name="'.$dateTimeName.'" value = "'.$time.
+								'" pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}" step="1"><br/>'.
+						'</div>';
+	}
+	
+	function displayCheckBox($item){
+		if($item->checked){
+			// checked is true, so the button sends false
+			$checkBox = '<button type="submit" class="checkbox checked" name="checked" value="false">&checkmark;</button>';
+		}else{
+			$checkBox = '<button type="submit" class="checkbox" name="checked" value="true">&checkmark;</button>';
+		}
+		echo '<form action="components/check_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post">'.
+						$checkBox.
+					'</form>';
+	}
+	function displayEditForm($item, $content){
+		echo '<form class="edit-form" action="components/update_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post" data-item_id='.$item->id.' data-item_type='.$item->type.'>'.
+			$content.
+			'</form>';
+	}
+	
+	function genOneItem($item,$isItem){
 		$item_title = $item->title;
 		$item_note = $item->note;
-	
-		// delete Option for head, because the template will read a ghost list if it suicide(kill the head item).
 		if($isItem===true){
+			$headId='';// no attribute id = head
 			$itemlink ='<a class="title-link" href="list_template.php?id='.$item->id.'&type='.$item->type.'">'.$item_title.'</a>';
 			$deleteButt = '<a class="delete-button" href="components/delete_item.php?item_id='.$item->id.'&item_type='.$item->type.'">&cross;</a>';
-			$editButt = '<div class="edit-button"></div>';//'<img class="edit-button" src="img/edit_blue.png">';
-			$dragHandle = '<div class="drag-handle"></div>';
-			$headId='';
+			$editButt = div('','class="edit-button"');
+			$dragHandle = div('','class="drag-handle"');
+			
 		}else{
-			$deleteButt = '';
-			$itemlink = '';
+			$deleteButt = '';// head can't be deleted
+			$itemlink = '';// head don't need link
 			$editButt = '<img id="head-edit-button" class="edit-button" src="img/edit.png">';
-			$dragHandle = '';
+			$dragHandle = '';// head don't need to be sortable
 			$headId = 'id="head"';
 		}
+		$control = div($dragHandle.$editButt.$deleteButt, 'class = control');
+		//edit form elements
+		$input_title = '<input class="edit-title" type="text" name="title" value="'.$item_title.'" maxlength="255">';
+		$input_note = '<textarea name="note">'.$item_note.'</textarea>';
+		$save_button = '<input type="submit" name="save"  value="save">';
+
 		switch($item->type){
 			case ITEM_TYPE:
-				echo '<div '.$headId.' class="item type-item">'.
-							'<div class="edit">';
-				echo '<div class="control">'.$dragHandle.$editButt.$deleteButt.'</div>';
-				echo
-								'<form class="edit-form" action="components/update_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post" data-item_id='.$item->id.' data-item_type='.$item->type.'>'.
+				echo '<div '.$headId.' class="item type-item">';
+				echo   $control;
+							displayEditForm($item,
 									$itemlink.
-									'<input class="edit-title" type="text" name="title" value="'.$item_title.'" >'.
-									'<div class="edit-panel">'.
-									'<textarea name="note">'.$item_note.'</textarea>'.
-									'<input type="submit" name="save"  value="save">'.
-									'</div>'.
-								'</form>'.
-								'</div></div>';
-					
+									$input_title.
+									div($input_note.$save_button,'class="edit-panel"')
+							);
+				echo '</div>';
 				break;
 			case CHECK_TYPE:
-				// is checked?
-				if($item->checked){
-					// checked is true, so the button sends false
-					$checkBox = '<button type="submit" class="checkbox checked" name="checked" value="false">&checkmark;</button>';
 					// classname for item which is checked
-					$ischecked = ' checked';
-				}else{
-					$checkBox = '<button type="submit" class="checkbox" name="checked" value="true">&checkmark;</button>';
-					$ischecked = '';
-				}
-				echo '<div '.$headId.' class="item type-check'.$ischecked.'">'.
-							'<div  class="edit">';
-				echo '<div class="control">'.$dragHandle.$editButt.$deleteButt.'</div>';
-				echo	
-								'<form action="components/check_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post">';
-					echo $checkBox;
-				echo '</form>';
-				echo
-								'<form class="edit-form"  action="components/update_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post"  data-item_id='.$item->id.' data-item_type='.$item->type.'>';
-									
-									echo
+					$ischecked = ($item->checked) ? ' checked' : '';
+				echo '<div '.$headId.' class="item type-check'.$ischecked.'">';
+				echo 		$control;
+								displayCheckBox($item);
+								displayEditForm($item,
 									$itemlink.
-									'<input class="edit-title" type="text" name="title" value="'.$item_title.'" >'.
-									'<div class="edit-panel">'.
-									'<textarea name="note">'.$item_note.'</textarea>'.
-									'<input type="submit" name="save"  value="save">'.
-									'</div>'.
-								'</form>'.
-								'</div></div>';
-		
+									$input_title.
+									div($input_note.$save_button,'class="edit-panel"')
+								);
+				echo '</div>';
 				break;
 			case TASK_TYPE:
-			// is checked?
-				if($item->checked){
-					// checked is true, so the button sends false
-					$checkBox = '<button type="submit" class="checkbox checked" name="checked" value="false">&checkmark;</button>';
-					// classname for item which is checked
-					$ischecked = ' checked';
-				}else{
-					$checkBox = '<button type="submit" class="checkbox" name="checked" value="true">&checkmark;</button>';
-					$ischecked = '';
-				}
-				echo '<div '.$headId.' class="item type-task'.$ischecked.'">'.
-							'<div  class="edit">'.
-								'<div class="control">'.$dragHandle.$editButt.$deleteButt.'</div>';
-				echo	
-								'<form action="components/check_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post">';
-									echo $checkBox;
-				echo 		'</form>';
-				echo	
-								'<form class="edit-form" action="components/update_item.php?item_id='.$item->id.'&item_type='.$item->type.'" method="post" data-item_id='.$item->id.' data-item_type='.$item->type.'>';
-								echo
-										$itemlink.
-										'<input class="edit-title" type="text" name="title" value="'.$item_title.'" ></br>';
-									echo'<div class="edit-panel">';
-									//	schedule
-									$scheduleDate='';
-									$scheduleTime='';
-									if(isset($item->schedule)){
-										list($scheduleDate, $scheduleTime) = explode(' ', $item->schedule);
-									}
-									
-									echo
-									'<div>'.
-									'<label>schedule</label>'.
-									'<input type="date" name="scheduleDate" value = "'.$scheduleDate.
-										'"pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" step="1">'.
-									'<input type="time" name="scheduleTime" value = "'.$scheduleTime.
-									'" pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}" step="1"><br/>'.
-									'</div>';
-									// due
-									$dueDate='';
-									$dueTime='';
-										if(isset($item->due)){
-											list($dueDate, $dueTime) = explode(' ',$item->due);
-										}
-									
-									echo
-									'<div>'.
-									'<label>due</label>'.
-									'<input type="date" name="dueDate" value = "'.$dueDate.
-										'"pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" step="1">'.
-									'<input type="time" name="dueTime" value = "'.$dueTime.
-										'" pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}" step="1">'.
-									'</div>';
-					echo		'<div><textarea name="note">'.$item_note.'</textarea>'.
-									'<input type="submit" name="save"  value="save">'.
-									'</div>'.
-									'</div>';
-					echo '</form></div>'.
-								'</div>';
-			
+				$ischecked = ($item->checked) ? ' checked' : '';
+				$input_schedule = dateTimeSplit('schedule', $item->schedule);
+				$input_due = dateTimeSplit('due', $item->due);
+				echo '<div '.$headId.' class="item type-task'.$ischecked.'">';
+				echo		$control;
+								displayCheckBox($item);
+								displayEditForm($item,
+									$itemlink.
+									$input_title.
+									div(
+										$input_schedule.
+										$input_due.
+										div($input_note.$save_button), 'class="edit-panel"')
+								);
+					echo '</div>';
 				break;
 		}//end switch
 		
@@ -134,7 +103,7 @@
 
 	function genAddNew($item){
 	echo '<form class="add-new-item" action="components/add_new_item.php?list_id='.$item->id.'&list_type='.$item->type.'" method="post">'.
-						'<input type="text" name="item_title" placeholder="add new item"><br />'.
+						'<input type="text" name="item_title" placeholder="add new item" ><br />'.
 					'</form>';
 	}
 	
@@ -156,7 +125,7 @@
 					}else{
 						echo '<li id="item_'.$subItem->id.'" data-id="'.$subItem->id.'" data-type="'.$subItem->type.'">';
 					}
-					genEditForm($subItem, true);
+					genOneItem($subItem, true);
 					genSubitemTo($subItem, $level-1);
 					echo "</li>";
 				}

@@ -9,46 +9,47 @@
 // 8) update items' order on sort(jQuery)
 
 // 1) hide more info in page
-window.addEventListener("load", hide_more_list, false);
+addEvent(window, "load", hide_more_list);
 
 // 2) edit button toggles hide (edit form) on click
 var editButts = document.getElementsByClassName('edit-button');
 for(var editButt of editButts){
-		editButt.addEventListener("click", edit_toggle_hide,false);
+	addEvent(editButt, "click", edit_toggle_hide);
 }//End for
 
 // 3) delete button deletes item on click
 var deleteButtons = document.getElementsByClassName('delete-button');
 for(var deleteButt of deleteButtons){
-	deleteButt.addEventListener("click", delete_element, false);
+	addEvent(deleteButt,"click", delete_element);
 }
 
 // 4) item (block) show subitems on click(delegate on ansector <ul>)
 var subitems = document.getElementsByClassName('subitems');
 for(var subitem of subitems){
-		subitem.addEventListener('click',function(e){show_subelements(e,'item')},false);
+	addEvent(subitem,'click',function(e){show_subelements(e,'item')});
 }
 
 // 5) edit-form update item on submit
 let editForms = document.getElementsByClassName('edit-form');
 for(let editForm of editForms){
 	let dataBeforeEdit = getFormParams(editForm);
-	editForm.addEventListener('submit',function(e){update_element(e,'item',dataBeforeEdit);}, false);
+	addEvent(editForm,'submit',function(e){update_element(e,'item',dataBeforeEdit);});
 }
 
 // 6) add-new-form add new item on submit
 var new_item_forms = document.getElementsByClassName('add-new-item');
 for(var new_item_form of new_item_forms){
-	new_item_form.addEventListener("submit", function(e){add_new_element(e,'item');}, false);
+	addEvent(new_item_form,"submit", function(e){add_new_element(e,'item');});
 }
 
 // 7) checkbox checkmark on click
 var checkboxs = document.getElementsByTagName('button');
 for(var checkbox of checkboxs){
-	checkbox.addEventListener("click", checkmark, false);
+	addEvent(checkbox,"click", checkmark);
 }
 
 // 8) update items' order on sort
 $(document).ready(function(){
-	setSortable($('.subitems'));
+	setSortable($('.subitems'),true);// set disable by default
+	$('#subitems>.subitems').sortable('enable');// enable top list
 });

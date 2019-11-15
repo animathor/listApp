@@ -58,11 +58,16 @@
 
 		public function fetch_type($item_id){
 			$query = 'SELECT type FROM '.self::ITEMS_TABLE.' WHERE id = ?';
-			$stm = $this->connection->prepare($query);
-			if($stm->execute([$item_id]) && $row = $stm->fetch(PDO::FETCH_NUM))
-				return $row[0];
-			else
-				return null;
+			try{
+				$stm = $this->connection->prepare($query);
+				$stm->execute([$item_id]);
+				if($row = $stm->fetch(PDO::FETCH_NUM))
+					return $row[0];
+				else
+					return null;
+			}catch(Exception $e){
+				return false;
+			}
 		}
 
 		public function read(){
@@ -101,7 +106,7 @@
 		public function setData($prop_name,$value){
 			// item
 			switch($this->type){
-				case 1:
+				case COLLECTION_TYPE:
 					if($prop_name == 'title'){
 						$this->container->title = $value;
 						return true;
@@ -111,7 +116,7 @@
 					}else{
 						return false;						 
 					}
-				case 2:
+				case ITEM_TYPE:
 					if($prop_name == 'title'){
 						$this->container->title = $value;
 						return true;
@@ -127,7 +132,7 @@
 					}else{
 						return false;						 
 					}
-				case 4:
+				case CHECK_TYPE:
 					if($prop_name == 'title'){
 						$this->container->title = $value;
 						return true;
@@ -146,7 +151,7 @@
 					}else{
 						return false;						 
 					}
-				case 6:
+				case TASK_TYPE:
 					if($prop_name == 'title'){
 						$this->container->title = $value;
 						return true;
@@ -207,6 +212,9 @@
 		}
 		public function updateOrder(){
 			return $this->container->updateOrder();
+		}
+		public function moveSubItem($former_parent,$dragged_child){
+			return $this->container->moveSubItem($former_parent,$dragged_child);
 		}
 	}// end class ItemX
 ?>
