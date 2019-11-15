@@ -1,9 +1,10 @@
+@import 'main-color.css';
 body {
 	margin: 0;
 }
 #header {
 	background-image: url(../img/logo.png);
-	background-color: #4c0e77;
+	background-color: var(--main-purple);
 	height: 50px;
 	background-position: center top;
 	background-size: 100px;

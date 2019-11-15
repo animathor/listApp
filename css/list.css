@@ -1,12 +1,13 @@
+@import 'main-color.css';
 body {
-	background-color: #e1f4bc;
+	background-color: var(--main-list-bg);
 }
 h2 {
 
 	margin: 70px 0px 0px 0px;
 	padding: 15px 0px 5px 15px;
-	border-style: solid;
-	border-color: white;
+	/*border-style: solid;
+	border-color: white;*/
 	border-radius: 15px 0 0 0;
 	box-shadow: inset 0 10px 20px aliceblue;
 	background-color: hsl(187.5, 96.3%, 57.5%);
@@ -14,9 +15,12 @@ h2 {
 }
 
 #head{
-	border:solid white;
-	border-top-width:0px;
+	/*border:solid white;
+	border-top-width:0px;*/
 	background-color: #1e7384;
+}
+#head label{
+	color: aliceblue;
 }
 
 #head .edit-button {
@@ -76,6 +80,10 @@ ul{
 	margin:0;
 	list-style-type:none;
 }
+.subitems{
+	padding-bottom:5px;
+	border: 2px solid var(--main-list-bg);;
+}
 
 li{
 		margin: 5px 0 5px 0;
@@ -89,7 +97,7 @@ a{
 .item{
 	background-color: white;
 	overflow: auto;
-	padding: 0 0 0 10px;
+	padding: 0 0 0 10px;	
 }
 
 /*item showing info*/
@@ -97,10 +105,6 @@ input[type="checkbox"]{
 	margin-top:10px;
 }
 
-.title-link {
-	/* float: left; */
-	line-height: 2em;
-}
 
 .item a {
 	color: hsl(187.5, 100%, 39.2%);
@@ -112,6 +116,9 @@ input[type="checkbox"]{
 	text-decoration: none;
 		
 }
+.edit-form{
+	line-height: 2em;
+}
 
 label {
 	width: 4.5em;
@@ -122,10 +129,6 @@ label {
 
 [name="note"]{
 	width:80%;
-}
-
-div[class$="edit"] {
-	width: 100%;
 }
 .drag-handle {
 	width: 27px;
@@ -157,7 +160,7 @@ div[class$="edit"] {
 	background-size: 50px;
 }
 .delete-button {
-	margin-top: 4px;
+	/*margin-top: 4px;*/
 	float: left;
 }
 
@@ -172,7 +175,8 @@ div[class$="edit"] {
 
 .checkbox {
 	border: 1px solid #d0c9c9;
-	padding: 0;
+	padding: 0px;
+	margin-right:5px;
 	line-height: 10px;
 	width: 20px;
 	height: 20px;
@@ -195,7 +199,7 @@ div[class$="edit"] {
 }
 /*turn bg-color for checked items*/
 .checked {
-	background-color: #d8e8b4;
+	background-color: #d0e3c5;
 }
 /*dynamic*/
 

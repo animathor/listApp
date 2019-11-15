@@ -1,5 +1,6 @@
+@import 'main-color.css';
 body{
-	background-color:#4c0e77;
+	background-color:var(--main-purple);
 	color: white;
 	background-image:url(../img/logo_subtitle.png);
 	background-repeat: no-repeat;
@@ -15,16 +16,21 @@ h3{
 			form{
 				margin: 300px auto 0px;
 				width: 400px;
+				font-size: 1.25em;
+				line-height: 1.25em;
 			}
 			div {
 				text-align: center;
 				margin: 5px;
 			}
 			label {
-				font-size: 1.125em;
-				text-align:right;
 				width:10em;
-				margin-right:10px;
+			}
+			input{
+				border-radius:5px;
+			}
+			.text-input{
+				width:95%;
 			}
 a {
 	color:white;
