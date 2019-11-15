@@ -1,3 +1,19 @@
+/*
+** DOM Navigate:
+**	find_ancestor_class: find first ancestor by classname
+**	find_ancestor_tag: find first ancestor by tagname
+**	find_1stDescendant_with: find first descendant by tag and then class
+**
+** Event control (IE fallback):
+**	getTriggerEle
+**	preventLinkAction
+**	stopBubbling
+**	addEvent
+**
+** Other:
+**	encodeForPost: encode data into utf-8 and the form data type
+**
+*/
 function find_ancestor_class(element, classname){
 		let targetEle = element;
 			do{
@@ -46,16 +62,29 @@ function preventLinkAction(e){
 }
 
 function stopBubbling(e){
-		//stop bubbling
 		if(e.stopPropogation){
 			e.stopPropogation();
 		}else{
 			e.cancelBubble = true;
 		}
 }
+
+function addEvent(el, event, callback) {
+  if ('addEventListener' in el) {                  
+    el.addEventListener(event, callback, false);   
+  } else {                                        
+    el['e' + event + callback] = callback;         
+    el[event + callback] = function () {
+      el['e' + event + callback](window.event);
+    };
+    el.attachEvent('on' + event, el[event + callback]);
+  }
+}
+
 // modify the code in MDN document about 'encodeURIComponent'
 function encodeForPost(str) {
   return encodeURIComponent(str).replace('%20','+').replace(/[!'()*]/g, function(c) {
     return '%' + c.charCodeAt(0).toString(16);
   });
 }
+

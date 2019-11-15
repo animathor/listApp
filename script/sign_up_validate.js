@@ -195,7 +195,7 @@ function checkRegisteration(e){
 	// if trigger by try again button
 		 usernameEle =  document.getElementById('username');
 	}
-	if(!isEmpty(usernameEle)){
+	if(usernameEle.value.length >= 6){
 		let xhr = new XMLHttpRequest();
 		xhr.onload = function(){
 			// select message board for display

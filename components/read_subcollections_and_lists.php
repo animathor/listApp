@@ -25,6 +25,7 @@
 			$collection_id = $_GET['id'];
 	}else{
 				http_response_code(500);
+				exit;
 	}
 
 	// Success ?
@@ -45,8 +46,10 @@
 			
 	}catch(Exception $e){
 		http_response_code(500);
+		exit;
 	}
-		// 5) Display: subitems: generate the tree to a finite level
-		header("Content-type:text/html");
-			genSubCollTo($collection, 1);
+
+	// 5) Display: subitems: generate the tree to a finite level
+	header("Content-type:text/html");
+	genSubCollTo($collection, 1);
 ?>

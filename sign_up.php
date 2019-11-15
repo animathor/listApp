@@ -31,22 +31,22 @@
 	<fieldset>
 		<div>
 		<label for="username">username</label></br>
-		<input type="text" id="username" name="username" value="<?php echo $username?>" required >
+		<input class="text-input" type="text" id="username" name="username" placeholder="6 to 255 charactors of aplabet and numbers" value="<?php echo $username?>" required >
 					<h3 class="message-board" id="username_msg"><?php echo $username_msg;?></h3>
 		</div>
 		<div>
 		<label for="email">email</label></br>
-		<input type="email" id="email" name="email" value="<?php echo $email?>"required>
+		<input class="text-input" type="email" id="email" name="email" value="<?php echo $email?>"required>
 					<h3 id="email_msg"><?php echo $email_msg; ?></h3>
 		</div>
 		<div>
 			<label for="password">password</label></br>
-			<input type="password" id="password" name="password" placeholder="10 to 20 charactors of aplabet and numbers" required>
+			<input class="text-input" type="password" id="password" name="password" placeholder="10 to 20 charactors of aplabet and numbers" required>
 					<h3 id="password_msg"><?php echo $password_msg; ?></h3>
 		</div>
 		<div>
 		<label for="confirm">confirm password</label></br>
-		<input type="password" id="confirm" name="confirm" required >
+		<input class="text-input" type="password" id="confirm" name="confirm" required >
 					<h3 id="confirm_msg"><?php echo $confirm_msg; ?></h3>
 		</div>
 		<div>

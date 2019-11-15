@@ -13,7 +13,7 @@
 	include_once '../config/app_config.php';
 	include_once '../config/Database.php';
 	include_once '../models/Items_obj.php';
-	include '../item_view.php';// for function "genEditForm($item,$isItem)" and "genSubitemTo($item, $level)"
+	include '../item_view.php';// for function "genOneItem($item,$isItem)" and "genSubitemTo($item, $level)"
 
 	// 1) Session start and check the authorization
 	include '../authorize.php';// successfully sign in, $user_id, $username and $home_collection_id are set.
@@ -26,6 +26,7 @@
 		$id_n_type = ['id'=>$id, 'type'=>$type];	
 	}else{
 				http_response_code(500);
+				exit;
 	}
 
 	// Success ?
@@ -45,6 +46,7 @@
 			
 	}catch(Exception $e){
 		http_response_code(500);
+		exit;
 	}
 		// 5) Display: subitems: generate the tree to a finite level
 		header("Content-type:text/html");

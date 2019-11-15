@@ -16,7 +16,7 @@
 	include_once 'config/app_config.php';
 	include_once 'config/Database.php';
 	include_once 'models/Items_obj.php';
-	include 'item_view.php';// for function "genEditForm($item,$isItem)" and "genSubitemTo($item, $level)"
+	include 'item_view.php';// for function "genOneItem($item,$isItem)" and "genSubitemTo($item, $level)"
 
 	// 1) Session start and check the authorization
 	include 'authorize.php';// successfully sign in, $user_id, $username and $home_collection_id are set.
@@ -77,7 +77,7 @@
 		include_once 'header.php';
 		// 5) Display: list title and $theList edit form
 		echo '<h2 id="list-title">'.$theList->title.'</h2>';
-		genEditForm($theList, false);
+		genOneItem($theList, false);
 		
 		// 6) Display: navigator: link to collection and supitems
 		echo '<nav>';

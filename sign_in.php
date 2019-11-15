@@ -76,11 +76,11 @@ require_once 'models/Users.php';
     		<h3 id="system-msg"><?php echo $system_msg;?></h3>
     		<div>
     		<label>username</label></br>
-    		<input type="text" name="username" value="<?php echo $username;?>"/>
+    		<input class="text-input" type="text" name="username" value="<?php echo $username;?>"/>
     		</div>
     		<div>
     		<label>password</label></br>
-    		<input type="password" name="password"/>
+    		<input class="text-input" type="password" name="password"/>
     		</div>
     		<div>
     		<input type="submit" name="sign_in" value="Sign in"/>
