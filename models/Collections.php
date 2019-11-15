@@ -4,7 +4,7 @@
 	class Collection extends Base{
 
 		// Properties
-		public $type = 1;
+		public $type = COLLECTION_TYPE;
 		private const COLLECTIONS_TABLE ='collections';
 		private const ITEMS_TABLE ='items';
 
@@ -13,7 +13,7 @@
 		private const COLLECTION_COLLECTIONS='collection_collections';
 		private const PARENT_COLLECTION = 'parent_collection';
 		private const CHILD_COLLECTION = 'child_collection';
-		private const DEFAULT_NEW = 1;// add new collection
+		private const DEFAULT_NEW = COLLECTION_TYPE;// add new collection
 
 		// Subitems(list) Properties
 		private const COLLECTION_ITEMS='collection_items';
@@ -23,11 +23,12 @@
 		// Methods
 		public function read(){
 			$query = 'SELECT title, addTime, author_id FROM '.self::COLLECTIONS_TABLE.' WHERE id = ? ';
-			$stmt = $this->connection->prepare($query);
+			try{
+				$stmt = $this->connection->prepare($query);
+				$stmt->bindParam(1,$this->id);
 
-			$stmt->bindParam(1,$this->id);
-
-			if($stmt->execute()){
+				$stmt->execute();
+				
 				//fetch the record store in associate array
 				$row = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -36,9 +37,7 @@
 				$this->addTime = $row['addTime'];
 				$this->author_id = $row['author_id'];
 				return true;
-			}else{
-				foreach($stmt->errorInfo() as $line)
-					echo $line."</br>";
+			}catch(Exception $e){
 				return false;
 			}
 
@@ -47,26 +46,20 @@
 		public function create(){
 			$query = 'INSERT INTO '.self::COLLECTIONS_TABLE.'(title, author_id)'.
 								'VALUES(:title, :author_id)';
-			$stmt = $this->connection->prepare($query);
+								
+			try{
+				$stmt = $this->connection->prepare($query);
 
-			$this->title = htmlspecialchars(strip_tags($this->title));
+				$this->title = htmlspecialchars($this->title);
 
-			//$stmt->bindParam(':type', self::TYPE);
-			$stmt->bindParam(':title', $this->title);
-			$stmt->bindParam(':author_id', $this->author_id);
+				$stmt->bindParam(':title', $this->title);
+				$stmt->bindParam(':author_id', $this->author_id);
 
-			if($stmt->execute()){
+				$stmt->execute();
 				//get id
-			
-					//$stmt = $this->connection->query('SELECT LAST_INSERT_ID()');
-					//$result = $stmt->fetch(PDO::FETCH_NUM);
-					//$this->id = $result[0];		
-				//one line using pdo method instead
-				$this->id = $this->connection->lastInsertId();
+				$this->id = $this->connection->lastInsertId();	//one line using pdo method instead
 				return true;
-			}else{
-				foreach($stmt->errorInfo() as $line)
-					echo $line."</br>";
+			}catch(Exception $e){
 				return false;
 			}
 
@@ -74,20 +67,18 @@
 
 		public function update(){
 			$query = 'UPDATE '.self::COLLECTIONS_TABLE.' SET title = :title WHERE id = :id';
-			$stmt = $this->connection->prepare($query);
-			// Clean data
-			$this->title = htmlspecialchars(strip_tags($this->title));
-			//$this->author_id = htmlspecialchars(strip_tags($this->author_id));
+			try{
+				$stmt = $this->connection->prepare($query);
+				// Clean data
+				$this->title = htmlspecialchars($this->title);
 
-			// Bind parameters
-			$stmt->bindParam(':title', $this->title);
-			$stmt->bindParam(':id', $this->id);
+				// Bind parameters
+				$stmt->bindParam(':title', $this->title);
+				$stmt->bindParam(':id', $this->id);
 
-			if($stmt->execute()){
+				$stmt->execute();
 				return true;
-			}else{
-				foreach($stmt->errorInfo() as $line)
-					echo $line."</br>";
+			}catch(Exception $e){
 				return false;
 			}
 		}
@@ -121,15 +112,13 @@
 
 		}//end delete
 				
-		// Supitem Methods
-		
-		
+		// SupCollection Methods
 		
 		public function traceBack(){
 			return $this->traceBackEle(self::COLLECTION_COLLECTIONS, self::PARENT_COLLECTION, self::CHILD_COLLECTION, $this->id, $this->type);
 		}
 
-		// Subitems Methods
+		// Items Methods
 
 		public function addList($item_id,$author_id){
 			return $this->addSubItemGen(self::COLLECTION_ITEMS, self::PARENT_COLLECTION, self::CHILD_ITEM, $item_id);
@@ -175,29 +164,30 @@
 								" INNER JOIN ".self::COLLECTIONS_TABLE." AS c ON crc.".self::CHILD_COLLECTION." = c.id".
 								" WHERE ".self::PARENT_COLLECTION." = ?".
 								" ORDER BY title ASC";
+			try{
 
-			$stmt = $this->connection->prepare($query);
-			$stmt->bindParam(1, $this->id);
+				$stmt = $this->connection->prepare($query);
+				$stmt->bindParam(1, $this->id);
+  
+				$stmt->execute();
 
-			if(!$stmt->execute()){
-				foreach($stmt->errorInfo() as $line)
-					echo $line."</br>";
+				// Fetch data of each item
+				while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+					$newCollection = new Collection($this->connection);
+					$newCollection->id = $row[self::CHILD_COLLECTION];
+					if($newCollection->read()){
+						$this->subCollections[] = $newCollection;
+					}else{
+						throw new Exception("Fail to read a subcollection");
+					}
+				}
+				return true;
+			}catch(Exception $e){
 				return false;
 			}
 
-			// Fetch data of each item
-			while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-				$newCollection = new Collection($this->connection);
-				$newCollection->id = $row[self::CHILD_COLLECTION];
-				if($newCollection->read()){
-					$this->subCollections[] = $newCollection;
-				}else{
-					return false;
-				}
-			}
-			return true;
-
 		}// End read Subitems
+
 			//	 Read and store in subitems[]
 		public function readAllSub(){
 			try{
