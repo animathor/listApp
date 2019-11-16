@@ -121,6 +121,8 @@
 		echo "</div>";
 
 ?>
+<script src="script/jquery.js"></script>
+<script src="script/jquery-ui.min.js"></script>
 <script src="script/utilities.js"></script>
 <script src="script/control.js"></script>
 <script src="script/collection_control.js"></script>

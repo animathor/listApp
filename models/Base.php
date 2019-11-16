@@ -261,7 +261,27 @@
 			}
 			return true;
 		}
-
+		protected function moveSubELeGen($relation_table, $parent_element, $child_element, $former_parent, $dragged_child){
+			try{
+				// start transaction for update all item ordinal num
+				$this->connection->beginTransaction();
+				// change parent
+				$query = "UPDATE `".$relation_table."`".
+									" SET ".$parent_element." = :new_parent".
+									" WHERE `".$parent_element."` = :former_parent AND ".$child_element." = :dragged_child";
+				$stmt = $this->connection->prepare($query);
+				$stmt->bindParam(':former_parent',$former_parent);
+				$stmt->bindParam(':new_parent',$this->id);
+				$stmt->bindParam(':dragged_child',$dragged_child);
+				$stmt->execute();
+				
+				$this->connection->commit();
+				return true;
+			}catch(Exception $e){
+				$this->connection->rollBack();
+				return false;
+			}
+		}// end move
 	}// End Base
 
 	abstract class Ordered extends Base{
@@ -359,7 +379,7 @@
 			}
 		}// End update order
 		
-		function moveSubELeGen($relation_table, $parent_element, $child_element, $former_parent, $dragged_child){
+		protected function moveSubELeGen($relation_table, $parent_element, $child_element, $former_parent, $dragged_child){
 			try{
 				// start transaction for update all item ordinal num
 				$this->connection->beginTransaction();
@@ -389,10 +409,9 @@
 				return true;
 			}catch(Exception $e){
 				$this->connection->rollBack();
-				throw $e;
 				return false;
 			}
-		}
+		}// end move
 	}
 
 ?>

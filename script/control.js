@@ -2,13 +2,10 @@
 ** // 1) Hide
 ** // 1-1) hide_more_collection
 ** // 1-2) hide_more_list
-**
 ** // 2) Toggle hide 
 ** // 2-1) toggleHide
 ** // 2-2) edit_toggle_hide
-**
 ** // 3) delete_element
-**
 ** // 4) Add new element into page
 ** // 4-1) setLiAllControl
 ** // 4-2) deleteMsg
@@ -18,11 +15,10 @@
 ** // 4-6) show_subelements
 ** // 4-7) utf8_byte_count
 ** // 4-8) update_element
-**
 ** // 5) checkmark
-**
-** // 6) setSortable 
-**
+** // 6) setSortable
+** // 6-1) toggleSortable
+** // 6-2) setSortable
 */
 
 
@@ -177,9 +173,9 @@ function setLiAllControl(element_type, newliNode){
 	// item show subitems (delegate listen to <ul>)
 	newSubelementsUl.addEventListener("click",function(e){show_subelements(e,element_type)}, false); 
 	// set <ul> sortable(jQery)
-		if(element_type == 'item'){
-			setSortable($(newSubelementsUl));
-		}
+		//if(element_type == 'item'){
+			setSortable($(newSubelementsUl),element_type);
+		//}
 	}
 
 	// set delete button delete on click
@@ -317,7 +313,11 @@ function show_subelements(e, element_type){
 								// set subitems be sortable
 								if(element_type=='item'){
 									let subitemUl = liNode.getElementsByClassName('subitems')[0];
-									setSortable($(subitemUl));
+									setSortable($(subitemUl),'item');
+								}else if(element_type == 'collection'){
+									let subcollectionUl = liNode.getElementsByClassName('subcollections')[0];
+									let listUl = liNode.getElementsByClassName('lists')[0];
+									setSortable($(listUl),'list');
 								}
 								// this item is now loaded. wipe the classname
 								liNode.className = liNode.className.replace('load-more','');
@@ -553,28 +553,31 @@ function toggleSortable(e,el=null){
 		}
 }
 // sortable (jQuery)
-function setSortable(jq_obj, setDisabled = false){
+function setSortable(jq_obj, type, setDisabled = false){
 	var formerParentId = null;
 	var newParent = null;
-	jq_obj.sortable({
-		disabled: setDisabled,
-		opacity:0.5,
-		//axis:'y',
-		cursor: "move",
-		connectWith:'.subitems',
-		
-		forcePlaceholderSize: true,
-		placeholder:'ui-state-highlight',
-		handle:'.drag-handle',
-		// cut from
-		out: function(e, ui){
-			formerParentId = ui.sender.data('id');
-		},
-		// paste on
-		over:function(e, ui){
-			$newParent = $(this);
-		},
-		stop: function (e,ui){
+	var setting = {
+				disabled: setDisabled,
+				opacity:0.5,
+				cursor: "move",
+				connectWith:'.subitems',
+				forcePlaceholderSize: true,
+				handle:'.drag-handle',
+				// cut from
+				out: function(e, ui){
+					formerParentId = ui.sender.data('id');
+				},
+				// paste on
+				over:function(e, ui){
+					$newParent = $(this);
+				}
+			};// end setting
+	// costum setting
+	switch(type){
+		case "item":
+			setting['connectWith']='.subitems';
+			setting['placeholder']='item-placeholder';// placeholder look
+			setting['stop']= function (e,ui){
 			$this = $(this);
 			$newParent = ($newParent==null) ? $this : $newParent;
 			// serilize the order of the items
@@ -582,35 +585,96 @@ function setSortable(jq_obj, setDisabled = false){
 			let order = $newParent.sortable('serialize');
 			// update the change by Ajax
 			console.log(formerParentId);
-			if(formerParentId == $newParent.data('id')){
-				$.ajax({
-					method:"POST",
-					url: "components/update_subitems_order.php?item_id="+item.id+"&item_type="+item.type,
-					data: order,
-					success: function(data){
-						if(data.success == false){
-							// cancel the sort and display message
-							$this.sortable('cancel');
-							$('#message-board').text("Fail to update the order of items");
+				if(formerParentId == $newParent.data('id')){
+				// in same list
+					$.ajax({
+						method:"POST",
+						url: "components/update_subitems_order.php?item_id="+item.id+"&item_type="+item.type,
+						data: order,
+						success: function(data){
+							if(data.success == false){
+								// cancel the sort and display message
+								$this.sortable('cancel');
+								$('#message-board').text("Fail to update the order of items");
+							}
+						},
+						error: function(){
+								$this.sortable('cancel');
+								$('#message-board').text( "Sorry, somethig go wrong..., please try again later");
 						}
-					},
-					error: function(){
-							$this.sortable('cancel');
-							$('#message-board').text( "Sorry, somethig go wrong..., please try again later");
-							
-					}
-				});
-			}else{
-			console.log(ui);
-				let draggedSubItemId = ui.item.data('id');
+					});
+				}else{
+				// different list
+					let draggedSubItemId = ui.item.data('id');
+					$.ajax({
+						method:"POST",
+						url: "components/move_subitem.php?item_id="+item.id+"&item_type="+item.type,
+						data: order+"&draggedSubItemId="+draggedSubItemId+"&formerParentId="+formerParentId,
+						success: function(data){
+							if(data.success != true){
+								$this.sortable('cancel');// cancel the sort and display message
+								$('#message-board').text("Fail to move item");
+							}
+						},
+						error: function(){
+								$this.sortable('cancel');// cancel the sort and display message
+								$('#message-board').text( "Sorry, somethig go wrong..., please try again later");
+						}
+					});
+				}
+			};// end stop
+			break;
+		case "list":
+			setting['connectWith']='.lists';
+			setting['placeholder']="list-placeholder";
+			setting['stop']= function (e,ui){
+			$this = $(this);
+			$newParent = ($newParent==null) ? $this : $newParent;
+			// serilize the order of the items
+			let collection = $newParent.data();
+			// update the change by Ajax
+			console.log(formerParentId);
+				if(formerParentId != $newParent.data('id')){
+				// different collection
+					let draggedListId = ui.item.data('id');
+					$.ajax({
+						method:"POST",
+						url: "components/move_list.php?collection_id="+collection.id,
+						data: "draggedListId="+draggedListId+"&formerParentId="+formerParentId,
+						success: function(data){
+							if(data.success != true){
+								$this.sortable('cancel');// cancel the sort and display message
+								$('#message-board').text("Fail to move the list");
+							}
+						},
+						error: function(){
+								$this.sortable('cancel');// cancel the sort and display message
+								$('#message-board').text( "Sorry, somethig go wrong..., please try again later");
+						}
+					});
+				}
+			};// end stop
+			break;
+		case "collection":
+			setting['connectWith']='.subcollections';
+			setting['placeholder']='collection-placeholder';
+			setting['stop']= function (e,ui){
+			$this = $(this);
+			$newParent = ($newParent==null) ? $this : $newParent;
+			let collection = $newParent.data();
+			// update the change by Ajax
+			console.log(formerParentId);
+			if(formerParentId != $newParent.data('id')){
+			// different collection
+				let draggedSubcollectionId = ui.item.data('id');
 				$.ajax({
 					method:"POST",
-					url: "components/move_subitem.php?item_id="+item.id+"&item_type="+item.type,
-					data: order+"&draggedSubItemId="+draggedSubItemId+"&formerParentId="+formerParentId,
+					url: "components/move_subcollection.php?collection_id="+collection.id,
+					data: "draggedSubcollectionId="+draggedSubcollectionId+"&formerParentId="+formerParentId,
 					success: function(data){
 						if(data.success != true){
 							$this.sortable('cancel');// cancel the sort and display message
-							$('#message-board').text("Fail to move item");
+							$('#message-board').text("Fail to move the subcollection");
 						}
 					},
 					error: function(){
@@ -619,6 +683,7 @@ function setSortable(jq_obj, setDisabled = false){
 					}
 				});
 			}
-		} // end stop
-	});
+		};// end stop
+	}// end switch
+	jq_obj.sortable(setting);
 }

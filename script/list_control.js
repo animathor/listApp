@@ -50,6 +50,6 @@ for(var checkbox of checkboxs){
 
 // 8) update items' order on sort
 $(document).ready(function(){
-	setSortable($('.subitems'),true);// set disable by default
+	setSortable($('.subitems'),'item',true);// set disable by default
 	$('#subitems>.subitems').sortable('enable');// enable top list
 });

@@ -4,6 +4,7 @@
 			echo '<span class="type">'.$type.'</span>';
 				echo '<a href="list_template.php?id='.$list_id.'&type='.$type_num.'">'.$list_title.'</a>';
 				echo '<div class="control">';
+				echo	'<div class="drag-handle"></div>';
 				echo '<a class="delete-button" href="components/delete_list.php?id='.$collection_id.'&list_id='.$list_id.'">&cross;</a>';// delete list
 			echo '</div>';
 		echo '</div>';
@@ -16,6 +17,7 @@
 			case COLLECTION_TYPE:
 				echo '<div class="collection">';
 				echo 	'<div class="control">';
+					echo	'<div class="drag-handle"></div>';
 					echo '<div class="edit-button"></div>';//'<img class="edit-button" src="img/edit.png"/>';
 					echo '<form action="components/add_new_list.php?id='.$subEle->id.'" method="post">'.
 									'<select name="list_type">'.
@@ -66,14 +68,14 @@
 			genAddNewColl($collection);
 			if($collection->readAllSub()){
 				// display subcollections
-				echo '<ul class="subcollections">';
+				echo '<ul class="subcollections" data-id='.$collection->id.'>';
 				if(!empty($collection->subCollections)){
 					foreach($collection->subCollections as $subCollection){
 							// may has next level items, load by ajax
 							if($level == 1){
 								echo '<li class="load-more" data-id="'.$subCollection->id.'" >';
 							}else{
-								echo "<li>";
+								echo '<li data-id="'.$subCollection->id.'">';
 							}
 							genOneEle($collection,	$subCollection);// html
 							// if it is collection, then go to next level.
@@ -85,10 +87,10 @@
 				}
 				echo '</ul>';
 				// display sublist
-				echo '<ul class="lists">';
+				echo '<ul class="lists" data-id='.$collection->id.'>';
 				if(!empty($collection->subItems)){
 					foreach($collection->subItems as $subEle){
-						echo '<li>';
+						echo '<li data-id="'.$subEle->id.'">';
 						genOneEle($collection,$subEle);// html
 						echo '</li>';
 					}

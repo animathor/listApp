@@ -82,7 +82,7 @@ ul{
 }
 .subitems{
 	padding-bottom:5px;
-	border: 2px solid var(--main-list-bg);;
+	border: 2px solid var(--main-list-bg);
 }
 
 li{
@@ -98,6 +98,9 @@ a{
 	background-color: white;
 	overflow: auto;
 	padding: 0 0 0 10px;	
+}
+.item-placeholder{
+	background-color: #f9d38b;
 }
 
 /*item showing info*/

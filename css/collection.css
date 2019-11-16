@@ -55,7 +55,10 @@ ul{
 	margin:0;
 	list-style-type:none;
 }
-
+.subcollections, .lists{
+	padding-bottom:1px;
+	border: 2px solid var(--main-green);
+}
 .add-new-collection{
 	margin-right:10px;
 }
@@ -97,7 +100,12 @@ a{
 .collection:hover {
 	background-color: #6f7695;
 }
-
+.collection-placeholder{
+	background-color: #b0b4c8;
+}
+.list-placeholder{
+	background-color: #d7d77a;
+}
 
 .collection a:link{
 		color: white;
@@ -122,6 +130,7 @@ a{
 .control {
 	display:inline-block;
 	float:right;
+	clear:right;
 }
 .control select {
 	background-color: forestgreen;
@@ -179,6 +188,30 @@ a{
 	float: left;
 	background-image: url(../img/edit.png);
 	background-size: 25px;
+}
+.collection .drag-handle {
+	width: 27px;
+	height: 27px;
+	margin: 5px 5px;
+	float: left;
+	background-image: url(../img/drag_handle_white.png);
+	background-size: 54px;
+	background-position: left center;
+}
+.collection .drag-handle:hover {
+	background-position: 27px 0px;
+}
+.list .drag-handle {
+	width: 27px;
+	height: 27px;
+	margin: 3px 0px auto auto;
+	float: left;
+	background-image: url(../img/drag_handle_green_pink.png);
+	background-size: 54px;
+	background-position: left center;
+}
+.list .drag-handle:hover {
+	background-position: 27px 0px;
 }
 .delete-button {
 	float: left;

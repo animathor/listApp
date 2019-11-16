@@ -77,11 +77,11 @@
 			$newSubCollection->id = $newSubCollection_id;
 			$newSubCollection->read();
 			header("Content-type:text/html");
-			echo "<li>";
+			echo '<li data-id="'.$newSubCollection->id.'">';
 			genOneEle($collection, $newSubCollection);
 			genAddNewColl($newSubCollection);
-			echo '<ul class="subcollections hide"></ul>';
-			echo '<ul class="lists hide"></ul>';
+			echo '<ul class="subcollections hide data-id="'.$newSubCollection->id.'"></ul>';
+			echo '<ul class="lists hide data-id="'.$newSubCollection->id.'"></ul>';
 			echo "</li>";
 		}else{
 			header("Content-type:text/html");

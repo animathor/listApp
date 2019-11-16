@@ -146,7 +146,10 @@
 		public function deleteList($item_id){
 			return $this->deleteAllGen(self::ITEM_ITEMS, self::PARENT_ITEM, self::CHILD_ITEM,self::ITEMS_TABLE, $item_id);
 		}
-
+		
+		public function movelist($formerParentId, $draggedListId){
+			return $this->moveSubEleGen(self::COLLECTION_ITEMS, self::PARENT_COLLECTION, self::CHILD_ITEM, $formerParentId, $draggedListId);
+		}
 		// Subcollections Methods
 
 		public function addSubCollection($subcollection_id,$author_id){
@@ -214,6 +217,9 @@
 			return $this->dropSubItemGen(self::COLLECTION_COLLECTIONS, self::PARENT_COLLECTION, self::CHILD_COLLECTION, $collection_id);
 		}
 		
+		public function moveSubcollection($formerParentId, $draggedSubcollectionId){
+			return $this->moveSubEleGen(self::COLLECTION_COLLECTIONS, self::PARENT_COLLECTION, self::CHILD_COLLECTION, $formerParentId, $draggedSubcollectionId);
+		}
 	}// End Collection
 	
 ?>

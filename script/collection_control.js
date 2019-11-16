@@ -5,6 +5,7 @@
 // 4) collection (block) show subcollections and lists on click
 // 5) edit-form update item on submit
 // 6) add-new-form add new item on submit
+// 7) move collections' and lists' on sort
 
 // 1) hide more info in collection page on load
 addEvent(window,"load",hide_more_collection);
@@ -39,3 +40,11 @@ var new_collection_forms = document.getElementsByClassName('add-new-collection')
 for(var new_collection_form of new_collection_forms){
 	addEvent(new_collection_form, "submit", function(e){add_new_element(e,'collection');});
 }
+
+// 7) move collections' and lists' on sort
+$(document).ready(function(){
+	setSortable($('.subcollections'),'collection',true);// set disable by default
+	$('#subEles>.subcollections').sortable('enable');// enable top list
+	setSortable($('.lists'),'list',true);// set disable by default
+	$('#subEles>.lists').sortable('enable');// enable top list
+});
