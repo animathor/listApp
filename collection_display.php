@@ -2,7 +2,7 @@
 	function displayListEle($type, $type_num, $list_id, $list_title, $collection_id){
 		echo '<div class="list">';
 			echo '<span class="type">'.$type.'</span>';
-				echo '<a href="list_template.php?id='.$list_id.'&type='.$type_num.'">'.$list_title.'</a>';
+				echo '<a href="list.php?id='.$list_id.'&type='.$type_num.'">'.$list_title.'</a>';
 				echo '<div class="control">';
 				echo	'<div class="drag-handle"></div>';
 				echo '<a class="delete-button" href="components/delete_list.php?id='.$collection_id.'&list_id='.$list_id.'">&cross;</a>';// delete list
@@ -29,7 +29,7 @@
 					echo '<a class="delete-button" href="components/delete_collection.php?id='.$subEle->id.'">&cross;</a>';// delete link
 				echo  '</div>';
 				echo 		'<form class="edit-form" action="components/update_collection.php?id='.$subEle->id.'" method="post">'.
-									'<a class="title-link" href="collection_template.php?id='.$subEle->id.'">'.$subEle_title.'</a>'.
+									'<a class="title-link" href="collection.php?id='.$subEle->id.'">'.$subEle_title.'</a>'.
 									'<input class="edit-title" type="text" name="title" value="'.$subEle_title.'">'.
 								'</form>';
 

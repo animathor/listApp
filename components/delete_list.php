@@ -39,7 +39,7 @@
 				exit;
 		}else{
 			$_SESSION['meassage'] = $e->getMessage();
-			header("Location:../collection_template.php");
+			header("Location:../collection.php");
 		}
 	}catch(Exception $e){
 		if($ajax){
@@ -50,7 +50,7 @@
 				exit;
 		}else{
 			$_SESSION['meassage'] = $e->getMessage();
-			header("Location:../collection_template.php");
+			header("Location:../collection.php");
 		}
 	}
 	// 4) Delete the list
@@ -72,6 +72,6 @@
 			$_SESSION['message'] = 'List'.$list_id.' is not deleted';
 		}
 		// back to current collection
-		header("Location:../collection_template.php");
+		header("Location:../collection.php");
 	}
 ?>

@@ -45,7 +45,7 @@
 				exit;
 		}else{
 			$_SESSION['meassage'] = $e->getMessage();
-			header("Location:../list_template.php");
+			header("Location:../list.php");
 		}
 	}catch(Exception $e){
 		if($ajax){
@@ -55,7 +55,7 @@
 				exit;
 		}else{
 			$_SESSION['meassage'] = $e->getMessage();
-			header("Location:../list_template.php");
+			header("Location:../list.php");
 		}
 	}
 	// 5) call the check method
@@ -77,6 +77,6 @@
 		if(!$result){
 			$_SESSION['massage']="fail to check the item";
 		}
-		header("Location:../list_template.php");
+		header("Location:../list.php");
 	}
 ?>

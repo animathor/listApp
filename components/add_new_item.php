@@ -12,7 +12,7 @@
 	include_once '../config/app_config.php';
 	include_once '../config/Database.php';
 	include_once '../models/ItemX.php';
-	include '../item_view.php';// for function "genOneItem($item,$isItem)" and "genSubitemTo($item, $level)"
+	include '../item_display.php';// for function "genOneItem($item,$isItem)" and "genSubitemTo($item, $level)"
 	
 	// 1) Check authorization 
 	include_once '../authorize.php';// successfully sign in, $user_id, $username and $home_collection_id are set.
@@ -53,7 +53,7 @@
 				exit;
 		}else{
 			$_SESSION['meassage'] = $e->getMessage();
-			header("Location:../list_template.php");
+			header("Location:../list.php");
 		}
 	}catch(Exception $e){
 		if($ajax){
@@ -63,7 +63,7 @@
 				exit;
 		}else{
 			$_SESSION['meassage'] = $e->getMessage();
-			header("Location:../list_template.php");
+			header("Location:../list.php");
 		}
 	}
 	// 6) Read list and add new item
@@ -93,6 +93,6 @@
 		}else{
 			$_SESSION['message'] = 'Sorry, item is not created. Something wrong with the server... Please try again later';
 		}
-		header("Location:../list_template.php");
+		header("Location:../list.php");
 	}
 ?>

@@ -12,7 +12,7 @@
 	include_once '../config/app_config.php';
 	include_once '../config/Database.php';
 	include_once '../models/Collections.php';
-	include '../collection_view.php';// for function "genAddNewColl($collection)" and "genOneEle($collection,$subEle)"
+	include '../collection_display.php';// for function "genAddNewColl($collection)" and "genOneEle($collection,$subEle)"
 
 	// 1) Check authorization 
 	include_once '../authorize.php';// successfully sign in, $user_id, $username and $home_collection_id are set.
@@ -50,7 +50,7 @@
 				exit;
 		}else{
 			$_SESSION['meassage'] = $e->getMessage();
-			header("Location:../collection_template.php");
+			header("Location:../collection.php");
 		}
 	}catch(Exception $e){
 		if($ajax){
@@ -60,7 +60,7 @@
 				exit;
 		}else{
 			$_SESSION['meassage'] = $e->getMessage();
-			header("Location:../collection_template.php");
+			header("Location:../collection.php");
 		}
 	}
 
@@ -95,6 +95,6 @@
 			$_SESSION['message'] = 'Collection is not created';
 		}
 		// back to current collection
-		header("Location:../collection_template.php");
+		header("Location:../collection.php");
 	}
 ?>

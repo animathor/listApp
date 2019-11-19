@@ -24,7 +24,7 @@ $home_collection_id = $_SESSION['home_collection_id'];
 			<div id="file">
 				<div class="fuction-content">
 					<h3>Open</h3>
-					<a href="collection_template.php?id=<?php echo $home_collection_id; ?>">My collections</a>
+					<a href="collection.php?id=<?php echo $home_collection_id; ?>">My collections</a>
 				</div>
 			</div>
 			<div id="quick-start">

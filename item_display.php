@@ -38,7 +38,7 @@
 		$item_note = $item->note;
 		if($isItem===true){
 			$headId='';// no attribute id = head
-			$itemlink ='<a class="title-link" href="list_template.php?id='.$item->id.'&type='.$item->type.'">'.$item_title.'</a>';
+			$itemlink ='<a class="title-link" href="list.php?id='.$item->id.'&type='.$item->type.'">'.$item_title.'</a>';
 			$deleteButt = '<a class="delete-button" href="components/delete_item.php?item_id='.$item->id.'&item_type='.$item->type.'">&cross;</a>';
 			$editButt = div('','class="edit-button"');
 			$dragHandle = div('','class="drag-handle"');

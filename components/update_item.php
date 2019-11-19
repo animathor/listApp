@@ -111,7 +111,7 @@ function validateDate($date, $format = 'Y-m-d H:i:s')
 				exit;
 		}else{
 			$_SESSION['meassage'] = $e->getMessage();
-			header("Location:../list_template.php");
+			header("Location:../list.php");
 		}
 	}catch(Exception $e){
 		if($ajax){
@@ -122,7 +122,7 @@ function validateDate($date, $format = 'Y-m-d H:i:s')
 				exit;
 		}else{
 			$_SESSION['meassage'] = $e->getMessage();
-			header("Location:../list_template.php");
+			header("Location:../list.php");
 		}
 	}
 		// 6) Update item
@@ -146,6 +146,6 @@ function validateDate($date, $format = 'Y-m-d H:i:s')
 			}else{
 				$_SESSION['message'] = 'item'.$item_id.' is not updated';
 			}
-			header("Location:../list_template.php");
+			header("Location:../list.php");
 		}
 ?>

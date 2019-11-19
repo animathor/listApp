@@ -13,7 +13,7 @@
 	include_once '../config/app_config.php';
 	include_once '../config/Database.php';
 	include_once '../models/Items_obj.php';
-	include '../item_view.php';// for function "genOneItem($item,$isItem)" and "genSubitemTo($item, $level)"
+	include '../item_display.php';// for function "genOneItem($item,$isItem)" and "genSubitemTo($item, $level)"
 
 	// 1) Session start and check the authorization
 	include '../authorize.php';// successfully sign in, $user_id, $username and $home_collection_id are set.

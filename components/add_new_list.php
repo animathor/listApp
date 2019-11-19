@@ -34,7 +34,7 @@
 	
 	}catch(Exception $e){
 			$_SESSION['meassage'] = $e->getMessage();
-			header("Location:../collection_template.php");
+			header("Location:../collection.php");
 	}
 	
 	// 4) Read collection and add new list
@@ -44,8 +44,8 @@
 	
 	// 5) Respond
 	if($id = $collection->addNewList('New list',$list_type,$author_id)){
-		header("Location:../list_template.php?id=".$id."&type=".$list_type);
+		header("Location:../list.php?id=".$id."&type=".$list_type);
 	}else{
-		header("Location:../collection_template.php");
+		header("Location:../collection.php");
 	}
 ?>

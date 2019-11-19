@@ -16,7 +16,7 @@
 	include_once 'config/app_config.php';
 	include_once 'config/Database.php';
 	include_once 'models/Collections.php';
-	include 'collection_view.php';// function: genSubCollTo
+	include 'collection_display.php';// function: genSubCollTo
 
 	// 1) Session start and check the authorization
 	include 'authorize.php';// successfully sign in, $user_id, $username and $home_collection_id are set.
@@ -61,7 +61,7 @@
 		header("Location:error.php");
 	}catch(Exception $e){
 		$_SESSION['message'] = $e->getMessage();
-		header("Location:collection_template.php?id=".$home_collection_id);// reload
+		header("Location:collection.php?id=".$home_collection_id);// reload
 	}
 
 ?>
@@ -92,7 +92,7 @@
 			$link_train = '<li id="nav-current-collection">'.$collection_title.'</li>';
 			foreach($collection_train as $c){
 				$c_title = htmlspecialchars($c->title);
-				$link_train = '<a href=collection_template.php?id='.$c->id.'>'.$c_title.'</a> /'.$link_train;
+				$link_train = '<a href=collection.php?id='.$c->id.'>'.$c_title.'</a> /'.$link_train;
 			}
 				
 					echo '<form id="current-coll-addList" action="components/add_new_list.php?id='.$collection->id.'" method="post">'.

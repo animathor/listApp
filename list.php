@@ -16,7 +16,7 @@
 	include_once 'config/app_config.php';
 	include_once 'config/Database.php';
 	include_once 'models/Items_obj.php';
-	include 'item_view.php';// for function "genOneItem($item,$isItem)" and "genSubitemTo($item, $level)"
+	include 'item_display.php';// for function "genOneItem($item,$isItem)" and "genSubitemTo($item, $level)"
 
 	// 1) Session start and check the authorization
 	include 'authorize.php';// successfully sign in, $user_id, $username and $home_collection_id are set.
@@ -30,7 +30,7 @@
 	}else if(isset($_SESSION['current_list'])){
 		$id_n_type = $_SESSION['current_list'];
 	}else{
-		header("Location:collection_template.php");
+		header("Location:collection.php");
 		exit;
 	}
 
@@ -55,7 +55,7 @@
 		header("Location:error.php");
 	}catch(Exception $e){
 		$_SESSION['message'] = $e->getMessage();
-		header("Location:list_template.php");
+		header("Location:list.php");
 	}
 
 ?>
@@ -86,14 +86,14 @@
 		$link_train = '<li id="nav-current-item">'.$theList->title.'</li>';
 		foreach($item_train as $item){
 		$item_title = $item->title;
-			$link_train = '<li><a href=list_template.php?id='.$item->id.'&type='.$item->type.'>'.$item_title.'</a> /</li>'.$link_train;
+			$link_train = '<li><a href=list.php?id='.$item->id.'&type='.$item->type.'>'.$item_title.'</a> /</li>'.$link_train;
 		}
 		// link Back to collection
 		if(empty($item_train)){
 			$item_train[] = $theList;
 		}
 		if($collection = end($item_train)->in_collection()){
-		echo '<span><a href=collection_template.php?id='.$collection->id.'>Back to '.$collection->title.'</a></span><br/>';
+		echo '<span><a href=collection.php?id='.$collection->id.'>Back to '.$collection->title.'</a></span><br/>';
 		}else{
 			
 		}

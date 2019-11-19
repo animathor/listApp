@@ -36,7 +36,7 @@
 				exit;
 		}else{
 			$_SESSION['meassage'] = $e->getMessage();
-			header("Location:../collection_template.php");
+			header("Location:../collection.php");
 		}
 	}catch(Exception $e){
 		if($ajax){
@@ -46,7 +46,7 @@
 				exit;
 		}else{
 			$_SESSION['meassage'] = $e->getMessage();
-			header("Location:../collection_template.php");
+			header("Location:../collection.php");
 		}
 	}
 
@@ -70,7 +70,7 @@
 		}else{
 			$_SESSION['message'] = 'collection'.$collection_id.' is not deleted';
 		}
-		header("Location:../collection_template.php");
+		header("Location:../collection.php");
 	}
 	
 ?>

@@ -14,7 +14,7 @@
 	include_once '../config/Database.php';
 	include_once '../models/Collections.php';
 	include_once '../models/Items_obj.php';
-	include '../collection_view.php';// function: genSubCollTo
+	include '../collection_display.php';// function: genSubCollTo
 
 	// 1) Session start and check the authorization
 	include '../authorize.php';// successfully sign in, $user_id, $username and $home_collection_id are set.
