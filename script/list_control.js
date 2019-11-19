@@ -43,7 +43,7 @@ for(var new_item_form of new_item_forms){
 }
 
 // 7) checkbox checkmark on click
-var checkboxs = document.getElementsByTagName('button');
+var checkboxs = document.getElementsByClassName('checkbox');
 for(var checkbox of checkboxs){
 	addEvent(checkbox,"click", checkmark);
 }

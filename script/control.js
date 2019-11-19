@@ -65,7 +65,6 @@ function hide_more_list(e){
 	}	
 	// hide edit-panels
 	var hidePanels = document.getElementsByClassName('edit-panel');
-	console.log(hidePanels);
 		for(var panel of hidePanels){
 			panel.className += ' hide';
 		}
@@ -126,16 +125,20 @@ function delete_element(e){
 			var xhr = new XMLHttpRequest();
 			xhr.onload = function(){
 				var massage='';
+				var responseObj = JSON.parse(xhr.responseText);
 				if(xhr.status === 200){
-					var responseObject = JSON.parse(xhr.responseText);
-					if(responseObject.success === true){
+					if(responseObj.success === true){
 						var liNode = find_ancestor_tag(el, 'li')// find ancestor div[.item]
 						liNode.parentNode.removeChild(liNode);//remove it
 					}else{
-							massage = responseObject.massage;
+							massage = responseObj.massage;
 					}
 				}else{
+					if(responseObj.timeout === true){
+						sign_in_again();
+					}else{
 					massage = "Something go wrong with the service... Try again later";
+					}
 				}
 				// show massage
 				var messageboard = document.getElementById('message-board');
@@ -166,7 +169,9 @@ function setLiAllControl(element_type, newliNode){
 	}
 	// edit toggle hide
 	let newEditButt = find_1stDescendant_with(newliNode, 'div', 'edit-button');
-	newEditButt.addEventListener("click", edit_toggle_hide, false); 
+	if(newEditButt){
+		newEditButt.addEventListener("click", edit_toggle_hide, false); 
+	}// lists have no edit
 
 	let newSubelementsUl =  find_1stDescendant_with(newliNode, 'ul', 'sub'+element_type+'s');
 	if(newSubelementsUl){
@@ -185,7 +190,9 @@ function setLiAllControl(element_type, newliNode){
 	// hide edit-panel, add-new-form, edit-title
 	let editTitle = find_1stDescendant_with(newliNode, 'input', 'edit-title'); 
 	let editPanel = find_1stDescendant_with(newliNode, 'div', 'edit-panel');
-	editTitle.className += ' hide';
+	if(editTitle){
+		editTitle.className += ' hide';
+	}
 	if(element_type === 'item'){
 		editPanel.className += ' hide';
 	}
@@ -195,8 +202,10 @@ function setLiAllControl(element_type, newliNode){
 
 	// update edit-form on submit
 	let newEditForm = find_1stDescendant_with(newliNode, 'form', 'edit-form');
-	let newFormData = getFormParams(newEditForm);
-	newEditForm.addEventListener('submit',function(e){update_element(e,element_type,newFormData);}, false);
+	if(newEditForm){
+		let newFormData = getFormParams(newEditForm);
+		newEditForm.addEventListener('submit',function(e){update_element(e,element_type,newFormData);}, false);
+	}
 
 }
 // 4-2) deleteMsg
@@ -257,12 +266,16 @@ function add_new_element(e, element_type){
 					currentUl.insertAdjacentHTML('afterbegin',xhr.responseText);// insert <li> by server side html
 					let newliNode = currentUl.getElementsByTagName('li')[0];
 					setLiAllControl(element_type,newliNode);
-
 				}else if(xhr.status === 400){
 					// title too long or incorrect query
 					addMsg('titleMsg',xhr.responseText, formParent, add_new_form);
 				}else{
-					massage = " Something go wrong with the service... Try again later";
+					var responseObj = JSON.parse(xhr.responseText);
+					if(responseObj.timeout === true){
+						sign_in_again();
+					}else{
+						massage = " Something go wrong with the service... Try again later";
+					}
 				}
 				// show massage
 				var messageboard = document.getElementById('message-board');
@@ -299,32 +312,38 @@ function show_subelements(e, element_type){
 						let xhr = new XMLHttpRequest();
 						xhr.onload = function(){
 							if(xhr.status === 200){
-								// add the add-new and subEles
-								liNode.insertAdjacentHTML('beforeend', xhr.responseText);
-								// set add-new-form add new on submit
-								let newAddNew_form = find_1stDescendant_with(liNode, 'form', 'add-new-'+element_type);
-								newAddNew_form.addEventListener("submit", function(e){add_new_element(e,element_type)}, false);
-
-								let subLiNodes = liNode.getElementsByTagName('li');
-								for(let subLiNode of subLiNodes){
-									// set all control
-									setLiAllControl(element_type, subLiNode);
-								}
-								// set subitems be sortable
-								if(element_type=='item'){
-									let subitemUl = liNode.getElementsByClassName('subitems')[0];
-									setSortable($(subitemUl),'item');
-								}else if(element_type == 'collection'){
-									let subcollectionUl = liNode.getElementsByClassName('subcollections')[0];
-									let listUl = liNode.getElementsByClassName('lists')[0];
-									setSortable($(listUl),'list');
-								}
-								// this item is now loaded. wipe the classname
-								liNode.className = liNode.className.replace('load-more','');
+									// add the add-new and subEles
+									liNode.insertAdjacentHTML('beforeend', xhr.responseText);
+									// set add-new-form add new on submit
+									let newAddNew_form = find_1stDescendant_with(liNode, 'form', 'add-new-'+element_type);
+									newAddNew_form.addEventListener("submit", function(e){add_new_element(e,element_type)}, false);
+                
+									let subLiNodes = liNode.getElementsByTagName('li');
+									for(let subLiNode of subLiNodes){
+										// set all control
+										setLiAllControl(element_type, subLiNode);
+									}
+									// set subitems be sortable
+									if(element_type=='item'){
+										let subitemUl = liNode.getElementsByClassName('subitems')[0];
+										setSortable($(subitemUl),'item');
+									}else if(element_type == 'collection'){
+										let subcollectionUl = liNode.getElementsByClassName('subcollections')[0];
+										let listUl = liNode.getElementsByClassName('lists')[0];
+										setSortable($(subcollectionUl),'collection');
+										setSortable($(listUl),'list');
+									}
+									// this item is now loaded. wipe the classname
+									liNode.className = liNode.className.replace('load-more','');
 							}else if(xhr.status === 500){
+								var responseObj = JSON.parse(xhr.responseText);
+								if(responseObj.timeout === true){
+									sign_in_again();
+								}else{
 								// show massage
 								var messageboard = document.getElementById('message-board');
 								messageboard.textContent="Fail to read sub"+element_type+'s';
+								}
 							}
 						};
 						let load_more_from_url = '';
@@ -336,7 +355,7 @@ function show_subelements(e, element_type){
 
 						xhr.open('POST',load_more_from_url,true);
 						xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-						xhr.send();
+						xhr.send("ajax=true");
 					}else{
 						// normal <li>
 						var addNew = liNode.getElementsByClassName('add-new-'+element_type)[0];
@@ -396,10 +415,8 @@ function update_element(e, element_type, dataBeforeEdit){
 
 	//delete updatemsg
 	deleteMsg('updateMsg');
-	console.log("validate");
 	//validate
 	let utf8_strLength = utf8_byte_count(formData['title'].value);
-	console.log(utf8_strLength);
 	if(utf8_strLength < 256){
 	
 
@@ -435,20 +452,24 @@ function update_element(e, element_type, dataBeforeEdit){
 					editPanel.className += ' hide';
 				}
 			}else{
-				message = responseObj.message;
-				// restore data
-				for(inputName in dataBeforeEdit){
-					formData[inputName].value = dataBeforeEdit[inputName];
-				}
+					message = responseObj.message;
+					// restore data
+					for(inputName in dataBeforeEdit){
+						formData[inputName].value = dataBeforeEdit[inputName];
+					}
 			}
 		}else{
-			if(xhr.status === 400){
-				addUpdateMsg(responseObj.message, updateForm);
-			}
-			//message = "Something go wrong with the service... Try again later";
-			// restore data
-			for(inputname in dataBeforeEdit){
-				formData[inputname].value = dataBeforeEdit[inputname];
+			if(responseObj.timeout === true){
+					sign_in_again();
+			}else{
+				if(xhr.status === 400){
+					addUpdateMsg(responseObj.message, updateForm);
+				}
+				//message = "Something go wrong with the service... Try again later";
+				// restore data
+				for(inputname in dataBeforeEdit){
+					formData[inputname].value = dataBeforeEdit[inputname];
+				}
 			}
 		}
 		// show massage
@@ -495,9 +516,9 @@ function checkmark(e){
 			var xhr = new XMLHttpRequest();
 			xhr.onload = function(){
 				var massage='';
+				var responseObj = JSON.parse(xhr.responseText);
 				if(xhr.status === 200){
-					var responseObject = JSON.parse(xhr.responseText);
-					if(responseObject.success === true){
+					if(responseObj.success === true){
 							// toggle checked class
 								//find div[.item]
 								var itemNode = find_ancestor_class(el, 'item');
@@ -517,10 +538,14 @@ function checkmark(e){
 								itemNode.className = itemNode.className.replace(' checked','');
 							}
 					}else{
-							massage = responseObject.massage;
+							massage = responseObj.massage;
 					}
 				}else{
-					message = "Something go wrong with the service... Try again later";
+					if(responseObj.timeout === true){
+						sign_in_again();
+					}else{
+						message = "Something go wrong with the service... Try again later";
+					}
 				}
 				// show massage
 				var messageboard = document.getElementById('message-board');
@@ -584,13 +609,12 @@ function setSortable(jq_obj, type, setDisabled = false){
 			let item = $newParent.data();
 			let order = $newParent.sortable('serialize');
 			// update the change by Ajax
-			console.log(formerParentId);
 				if(formerParentId == $newParent.data('id')){
 				// in same list
 					$.ajax({
 						method:"POST",
 						url: "components/update_subitems_order.php?item_id="+item.id+"&item_type="+item.type,
-						data: order,
+						data: order+"&ajax",
 						success: function(data){
 							if(data.success == false){
 								// cancel the sort and display message
@@ -598,9 +622,15 @@ function setSortable(jq_obj, type, setDisabled = false){
 								$('#message-board').text("Fail to update the order of items");
 							}
 						},
-						error: function(){
+						error: function(jqxhr){
+							let responseObj = jqxhr.responseJSON;
+								// session timeout
+								if(responseObj.timeout === true){
+									sign_in_again();
+								}else{
+									$('#message-board').text( "Sorry, somethig go wrong..., please try again later");
+								}
 								$this.sortable('cancel');
-								$('#message-board').text( "Sorry, somethig go wrong..., please try again later");
 						}
 					});
 				}else{
@@ -609,16 +639,22 @@ function setSortable(jq_obj, type, setDisabled = false){
 					$.ajax({
 						method:"POST",
 						url: "components/move_subitem.php?item_id="+item.id+"&item_type="+item.type,
-						data: order+"&draggedSubItemId="+draggedSubItemId+"&formerParentId="+formerParentId,
+						data: "ajax=true&"+order+"&draggedSubItemId="+draggedSubItemId+"&formerParentId="+formerParentId,
 						success: function(data){
 							if(data.success != true){
 								$this.sortable('cancel');// cancel the sort and display message
 								$('#message-board').text("Fail to move item");
 							}
 						},
-						error: function(){
+						error: function(jqxhr){
+							let responseObj = jqxhr.responseJSON;
+								// session timeout
+								if(responseObj.timeout === true){
+									sign_in_again();
+								}else{
+									$('#message-board').text( "Sorry, somethig go wrong..., please try again later");
+								}
 								$this.sortable('cancel');// cancel the sort and display message
-								$('#message-board').text( "Sorry, somethig go wrong..., please try again later");
 						}
 					});
 				}
@@ -633,23 +669,28 @@ function setSortable(jq_obj, type, setDisabled = false){
 			// serilize the order of the items
 			let collection = $newParent.data();
 			// update the change by Ajax
-			console.log(formerParentId);
 				if(formerParentId != $newParent.data('id')){
 				// different collection
 					let draggedListId = ui.item.data('id');
 					$.ajax({
 						method:"POST",
 						url: "components/move_list.php?collection_id="+collection.id,
-						data: "draggedListId="+draggedListId+"&formerParentId="+formerParentId,
+						data: "ajax=true&draggedListId="+draggedListId+"&formerParentId="+formerParentId,
 						success: function(data){
 							if(data.success != true){
 								$this.sortable('cancel');// cancel the sort and display message
 								$('#message-board').text("Fail to move the list");
 							}
 						},
-						error: function(){
+						error: function(jqxhr){
+							let responseObj = jqxhr.responseJSON;
+								// session timeout
+								if(responseObj.timeout === true){
+									sign_in_again();
+								}else{
+									$('#message-board').text( "Sorry, somethig go wrong..., please try again later");
+								}
 								$this.sortable('cancel');// cancel the sort and display message
-								$('#message-board').text( "Sorry, somethig go wrong..., please try again later");
 						}
 					});
 				}
@@ -663,23 +704,28 @@ function setSortable(jq_obj, type, setDisabled = false){
 			$newParent = ($newParent==null) ? $this : $newParent;
 			let collection = $newParent.data();
 			// update the change by Ajax
-			console.log(formerParentId);
 			if(formerParentId != $newParent.data('id')){
 			// different collection
 				let draggedSubcollectionId = ui.item.data('id');
 				$.ajax({
 					method:"POST",
 					url: "components/move_subcollection.php?collection_id="+collection.id,
-					data: "draggedSubcollectionId="+draggedSubcollectionId+"&formerParentId="+formerParentId,
+					data: "ajax=true&draggedSubcollectionId="+draggedSubcollectionId+"&formerParentId="+formerParentId,
 					success: function(data){
 						if(data.success != true){
 							$this.sortable('cancel');// cancel the sort and display message
 							$('#message-board').text("Fail to move the subcollection");
 						}
 					},
-					error: function(){
+					error: function(jqxhr){
+							let responseObj = jqxhr.responseJSON;
+							// session timeout
+							if(responseObj.timeout === true){
+								sign_in_again();
+							}else{
+								$('#message-board').text( "Sorry, somethig go wrong..., please try again later");
+							}
 							$this.sortable('cancel');// cancel the sort and display message
-							$('#message-board').text( "Sorry, somethig go wrong..., please try again later");
 					}
 				});
 			}
