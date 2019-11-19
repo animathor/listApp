@@ -40,7 +40,7 @@
 		//  prepare model
 		$itemx = new ItemX($connection, $id_n_type);
    	if(!$itemx->read()){
-   		throw new Exception("Fail to read the item");
+   		throw new Exception("Failed to read the item");
    	}
 		$theItem = $itemx->container;// fetch the real obj
 			

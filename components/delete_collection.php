@@ -61,14 +61,14 @@
 			echo json_encode(["success"=>true]);
 		}else{
 			echo json_encode(["success"=>false,
-												"message"=>'collection is not deleted']);
+												"message"=>'Collection is not deleted']);
 		}
 	}else{
 	// request by normal 
 		if($result){
-			$_SESSION['message'] = 'collection'.$collection_id.' was deleted';
+			$_SESSION['message'] = 'Collection is deleted';
 		}else{
-			$_SESSION['message'] = 'collection'.$collection_id.' is not deleted';
+			$_SESSION['message'] = 'Collection is not deleted';
 		}
 		header("Location:../collection.php");
 	}

@@ -89,9 +89,9 @@
 		}
 	}else{
 		if($result){
-			$_SESSION['message'] = 'item is created';
+			$_SESSION['message'] = 'Item is created';
 		}else{
-			$_SESSION['message'] = 'Sorry, item is not created. Something wrong with the server... Please try again later';
+			$_SESSION['message'] = 'Item is not created.';
 		}
 		header("Location:../list.php");
 	}

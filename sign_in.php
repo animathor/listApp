@@ -37,7 +37,7 @@ require_once 'models/Users.php';
 			// 3) Find user's info
 			$user = new User($connection);
 			if(!$user->signin($username)){
-				throw new Exception("Database error");
+				throw new Exception("Faided to sign in.");
 			}
 			if($user->id === NULL){
 				throw new Exception("User not found");

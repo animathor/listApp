@@ -61,7 +61,7 @@ function validateDate($date, $format = 'Y-m-d H:i:s')
 				}
 				// validate date format
 				if($due_value != null && validateDate($due_value)){
-					throw new Exception("Please enter due date in 'YYYY-MM-DD' and time in 'HH-ii-ss'");
+					throw new Exception("Please enter due date in 'YYYY-MM-DD' format and time in 'HH-ii-ss' format");
 				}
 
 			//schedule prepare
@@ -76,7 +76,7 @@ function validateDate($date, $format = 'Y-m-d H:i:s')
 				}
 				// validate date format
 				if($schedule_value != null && validateDate($schedule_value)){
-					throw new Exception("Please enter schedule date in 'YYYY-MM-DD' and time in 'HH-ii-ss'");
+					throw new Exception("Please enter schedule date in 'YYYY-MM-DD' format and time in 'HH-ii-ss' format");
 				}
 
 		if(isset($_POST['title'])){
@@ -138,13 +138,13 @@ function validateDate($date, $format = 'Y-m-d H:i:s')
 			}else{
 				header("Content-type:application/json");
 				echo json_encode(["success"=>false,
-														"message"=>"item is not updated"]);
+														"message"=>"Item is not updated"]);
 			}
 		}else{
 			if($result){
-				$_SESSION['message'] = 'item'.$item_id.'is updated';
+				$_SESSION['message'] = 'Item is updated';
 			}else{
-				$_SESSION['message'] = 'item'.$item_id.' is not updated';
+				$_SESSION['message'] = 'Item is not updated';
 			}
 			header("Location:../list.php");
 		}

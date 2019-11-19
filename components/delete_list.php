@@ -67,9 +67,9 @@
 		}
 	}else{
 		if($result){
-			$_SESSION['message'] = 'List'.$list_id.' was deleted';
+			$_SESSION['message'] = 'List is deleted';
 		}else{
-			$_SESSION['message'] = 'List'.$list_id.' is not deleted';
+			$_SESSION['message'] = 'List is not deleted';
 		}
 		// back to current collection
 		header("Location:../collection.php");

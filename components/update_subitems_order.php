@@ -29,7 +29,7 @@
 		if(isset($_POST['item'])){
 			$order = $_POST['item'];
 		}else{
-			throw new Exception("Order does not send");
+			throw new Exception("Order is not sent.");
 		}
 		
   	// 4) Connect to Database and prepare model

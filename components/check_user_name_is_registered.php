@@ -31,7 +31,7 @@ require '../models/Users.php';
 		}
 	}else{
 		header("Content-type:application/json");			
-			echo json_encode(["success"=>false, "message"=>"Sorry, something go wrong..."]);
+			echo json_encode(["success"=>false, "message"=>"Sorry, something went wrong..."]);
 	}
 	
 ?>

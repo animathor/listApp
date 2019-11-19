@@ -47,7 +47,7 @@ function setSignInAgain(){
 									}
 								},
 				error:function(){
-								addSignInMsg('Something go wrong');
+								addSignInMsg('Something went wrong');
 							}
 			});
 		}else{

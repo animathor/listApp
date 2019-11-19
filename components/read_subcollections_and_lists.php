@@ -41,7 +41,7 @@
 		if(!$collection->read()){
 			// since the current collection can't be deleted, and it always start from home collection.
 			// Current collection always exist.
-			throw new Exception("Fail to read the collection");
+			throw new Exception("Failed to read the collection");
 		}
 			
 	}catch(Exception $e){

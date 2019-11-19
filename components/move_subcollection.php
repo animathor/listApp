@@ -27,7 +27,7 @@
 			$draggedSubcollectionId = filter_input(INPUT_POST,'draggedSubcollectionId', FILTER_VALIDATE_INT);
 			$formerParentId = filter_input(INPUT_POST,'formerParentId', FILTER_VALIDATE_INT);
 		if(!$draggedSubcollectionId || !$formerParentId){
-			throw new Exception("Data does not send ");
+			throw new Exception("Data is not sent.");
 		}
 		
   	// 4) Connect to Database and prepare model

@@ -92,7 +92,7 @@ require '../models/Users.php';
 				header("Location:../index.php");
 				exit;
 			}else{
-				$system_msg = "Sorry, something gone wrong.";
+				$system_msg = "Sorry, something went wrong.";
 			}
 		}
 

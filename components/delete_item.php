@@ -66,14 +66,14 @@
 			echo json_encode(["success"=>true]);
 		}else{
 			echo json_encode(["success"=>false,
-												"message"=>'item'.$item_id.' is not deleted']);
+												"message"=>'Item is not deleted']);
 		}
 	}else{
 	// request by normal 
 		if($result){
-			$_SESSION['message'] = 'item'.$item_id.' is deleted';
+			$_SESSION['message'] = 'Item is deleted';
 		}else{
-			$_SESSION['message'] = 'item'.$item_id.' is not deleted';
+			$_SESSION['message'] = 'Item is not deleted';
 		}
 		header("Location:../list.php");
 	}

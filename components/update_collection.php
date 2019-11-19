@@ -81,13 +81,13 @@
 			}else{
 				header("Content-type:application/json");
 				echo json_encode(["success"=>false,
-														"message"=>"collection is not updated"]);
+														"message"=>"Collection is not updated"]);
 			}
 		}else{
 			if($result){
-				$_SESSION['message'] = 'collection is updated';
+				$_SESSION['message'] = 'Collection is updated';
 			}else{
-				$_SESSION['message'] = 'collection is not updated';
+				$_SESSION['message'] = 'Collection is not updated';
 			}
 			header("Location:../collection.php");
 		}

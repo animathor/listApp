@@ -75,7 +75,7 @@
 	}else{
 		// normal
 		if(!$result){
-			$_SESSION['massage']="fail to check the item";
+			$_SESSION['massage']="Failed to check the item";
 		}
 		header("Location:../list.php");
 	}

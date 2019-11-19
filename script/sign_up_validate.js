@@ -224,7 +224,7 @@ function checkRegisteration(e){
 			}else if(xhr.status ===500){
 					newMessage.className ="try-again";
 				// display message with a try again button on message board
-				newMessage.textContent = "Server error! Please click here to try again";
+				newMessage.textContent = "Sorry! Please click here to try again";
 				newMessage.addEventListener('click', checkRegisteration,true);// try again button on click
 			}
 			messageBoard.appendChild(newMessage);

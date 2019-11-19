@@ -137,7 +137,7 @@ function delete_element(e){
 					if(responseObj.timeout === true){
 						sign_in_again();
 					}else{
-					massage = "Something go wrong with the service... Try again later";
+					massage = "Something went wrong... Try again later";
 					}
 				}
 				// show massage
@@ -274,7 +274,7 @@ function add_new_element(e, element_type){
 					if(responseObj.timeout === true){
 						sign_in_again();
 					}else{
-						massage = " Something go wrong with the service... Try again later";
+						massage = " Something went wrong... Try again later";
 					}
 				}
 				// show massage
@@ -342,7 +342,7 @@ function show_subelements(e, element_type){
 								}else{
 								// show massage
 								var messageboard = document.getElementById('message-board');
-								messageboard.textContent="Fail to read sub"+element_type+'s';
+								messageboard.textContent="Failed to read sub"+element_type+'s';
 								}
 							}
 						};
@@ -465,7 +465,7 @@ function update_element(e, element_type, dataBeforeEdit){
 				if(xhr.status === 400){
 					addUpdateMsg(responseObj.message, updateForm);
 				}
-				//message = "Something go wrong with the service... Try again later";
+				//message = "Something went wrong... Try again later";
 				// restore data
 				for(inputname in dataBeforeEdit){
 					formData[inputname].value = dataBeforeEdit[inputname];
@@ -544,7 +544,7 @@ function checkmark(e){
 					if(responseObj.timeout === true){
 						sign_in_again();
 					}else{
-						message = "Something go wrong with the service... Try again later";
+						message = "Something went wrong... Try again later";
 					}
 				}
 				// show massage
@@ -619,7 +619,7 @@ function setSortable(jq_obj, type, setDisabled = false){
 							if(data.success == false){
 								// cancel the sort and display message
 								$this.sortable('cancel');
-								$('#message-board').text("Fail to update the order of items");
+								$('#message-board').text("Failed to update the order of items");
 							}
 						},
 						error: function(jqxhr){
@@ -628,7 +628,7 @@ function setSortable(jq_obj, type, setDisabled = false){
 								if(responseObj.timeout === true){
 									sign_in_again();
 								}else{
-									$('#message-board').text( "Sorry, somethig go wrong..., please try again later");
+									$('#message-board').text( "Sorry, somethig went wrong..., please try again later");
 								}
 								$this.sortable('cancel');
 						}
@@ -643,7 +643,7 @@ function setSortable(jq_obj, type, setDisabled = false){
 						success: function(data){
 							if(data.success != true){
 								$this.sortable('cancel');// cancel the sort and display message
-								$('#message-board').text("Fail to move item");
+								$('#message-board').text("Failed to move item");
 							}
 						},
 						error: function(jqxhr){
@@ -652,7 +652,7 @@ function setSortable(jq_obj, type, setDisabled = false){
 								if(responseObj.timeout === true){
 									sign_in_again();
 								}else{
-									$('#message-board').text( "Sorry, somethig go wrong..., please try again later");
+									$('#message-board').text( "Sorry, somethig went wrong..., please try again later");
 								}
 								$this.sortable('cancel');// cancel the sort and display message
 						}
@@ -679,7 +679,7 @@ function setSortable(jq_obj, type, setDisabled = false){
 						success: function(data){
 							if(data.success != true){
 								$this.sortable('cancel');// cancel the sort and display message
-								$('#message-board').text("Fail to move the list");
+								$('#message-board').text("Failed to move the list");
 							}
 						},
 						error: function(jqxhr){
@@ -688,7 +688,7 @@ function setSortable(jq_obj, type, setDisabled = false){
 								if(responseObj.timeout === true){
 									sign_in_again();
 								}else{
-									$('#message-board').text( "Sorry, somethig go wrong..., please try again later");
+									$('#message-board').text( "Sorry, somethig went wrong..., please try again later");
 								}
 								$this.sortable('cancel');// cancel the sort and display message
 						}
@@ -714,7 +714,7 @@ function setSortable(jq_obj, type, setDisabled = false){
 					success: function(data){
 						if(data.success != true){
 							$this.sortable('cancel');// cancel the sort and display message
-							$('#message-board').text("Fail to move the subcollection");
+							$('#message-board').text("Failed to move the subcollection");
 						}
 					},
 					error: function(jqxhr){
@@ -723,7 +723,7 @@ function setSortable(jq_obj, type, setDisabled = false){
 							if(responseObj.timeout === true){
 								sign_in_again();
 							}else{
-								$('#message-board').text( "Sorry, somethig go wrong..., please try again later");
+								$('#message-board').text( "Sorry, somethig went wrong..., please try again later");
 							}
 							$this.sortable('cancel');// cancel the sort and display message
 					}
