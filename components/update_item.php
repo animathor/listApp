@@ -60,7 +60,8 @@ function validateDate($date, $format = 'Y-m-d H:i:s')
 					$due_value=null;
 				}
 				// validate date format
-				if($due_value != null && validateDate($due_value)){
+				if($due_value != null && !validateDate($due_value)){
+				//	throw new Exception($due_value);
 					throw new Exception("Please enter due date in 'YYYY-MM-DD' format and time in 'HH-ii-ss' format");
 				}
 
@@ -75,7 +76,8 @@ function validateDate($date, $format = 'Y-m-d H:i:s')
 					$schedule_value=null;
 				}
 				// validate date format
-				if($schedule_value != null && validateDate($schedule_value)){
+				if($schedule_value != null && !validateDate($schedule_value)){
+					//throw new Exception(validateDate($schedule_value));
 					throw new Exception("Please enter schedule date in 'YYYY-MM-DD' format and time in 'HH-ii-ss' format");
 				}
 

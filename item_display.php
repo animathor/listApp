@@ -9,9 +9,9 @@
 		}
 		return '<div>'.
 								'<label>'.$dateTimeName.'</label>'.
-							 	'<input type="date" name="'.$dateTimeName.'" value = "'.$date.
+							 	'<input type="date" name="'.$dateTimeName.'Date" value = "'.$date.
 								'"pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" step="1">'.
-							 	'<input type="time" name="'.$dateTimeName.'" value = "'.$time.
+							 	'<input type="time" name="'.$dateTimeName.'Time" value = "'.$time.
 								'" pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}" step="1"><br/>'.
 						'</div>';
 	}

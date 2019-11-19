@@ -177,10 +177,16 @@ function setLiAllControl(element_type, newliNode){
 	if(newSubelementsUl){
 	// item show subitems (delegate listen to <ul>)
 	newSubelementsUl.addEventListener("click",function(e){show_subelements(e,element_type)}, false); 
+	}
 	// set <ul> sortable(jQery)
-		//if(element_type == 'item'){
-			setSortable($(newSubelementsUl),element_type);
-		//}
+	if(element_type=='item'){
+		let newSubitemUl = newliNode.getElementsByClassName('subitems')[0];
+		setSortable($(newSubitemUl),'item');
+	}else if(element_type == 'collection'){
+		let newSubcollectionUl = newliNode.getElementsByClassName('subcollections')[0];
+		let newListUl = newliNode.getElementsByClassName('lists')[0];
+		setSortable($(newSubcollectionUl),'collection');
+		setSortable($(newListUl),'list');
 	}
 
 	// set delete button delete on click
@@ -463,7 +469,7 @@ function update_element(e, element_type, dataBeforeEdit){
 					sign_in_again();
 			}else{
 				if(xhr.status === 400){
-					addUpdateMsg(responseObj.message, updateForm);
+					addMsg('updateMsg',responseObj.message, updateForm);
 				}
 				//message = "Something went wrong... Try again later";
 				// restore data

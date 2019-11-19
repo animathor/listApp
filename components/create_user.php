@@ -40,8 +40,8 @@ require '../models/Users.php';
 
 		// user validate
 		try{
-			if(!preg_match('/^([[:alnum:]]{6,255})$/',$username)){
-				$username_msg = "6 to 255 characters of letters and digits";
+			if(!preg_match('/^([[:alnum:]]{6,40})$/',$username)){
+				$username_msg = "6 to 40 characters of letters and digits";
 				$valid_input = false;
 			}else	if(User::isRegistered($username,$connection)){
 				$username_msg = "Username ".$username." is registered!";
