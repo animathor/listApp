@@ -16,7 +16,6 @@
 	include_once 'config/app_config.php';
 	include_once 'config/Database.php';
 	include_once 'models/Collections.php';
-	include_once 'models/Items_obj.php';
 	include 'collection_view.php';// function: genSubCollTo
 
 	// 1) Session start and check the authorization
@@ -126,5 +125,6 @@
 <script src="script/utilities.js"></script>
 <script src="script/control.js"></script>
 <script src="script/collection_control.js"></script>
+<script src="script/sign_in_again.js"></script>
 </body>
 </html>

@@ -118,7 +118,7 @@
 	<script src="script/utilities.js"></script>
 	<script src="script/control.js"></script>
 	<script src="script/list_control.js"></script>
-	
+	<script src="script/sign_in_again.js"></script>
 
 	</body>
 </html>

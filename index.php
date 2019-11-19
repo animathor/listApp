@@ -38,5 +38,4 @@ $home_collection_id = $_SESSION['home_collection_id'];
 			</div>
 		</div>
 	</div>
-	
 </body>

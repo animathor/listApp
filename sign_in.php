@@ -13,7 +13,9 @@
 require_once 'config/Database.php';
 require_once 'models/Users.php';
 	session_start();
-	if(isset($_SESSION['username'])){
+	$ajax = isset($_POST['ajax']);
+	
+	if(!$ajax && isset($_SESSION['username'])){
 		// do not support multiple users. Sign out first
 		header("Location:index.php");
 		exit;
@@ -27,37 +29,55 @@ require_once 'models/Users.php';
 		$password = $_POST['password'];
 
 		try{
-		// 2) Connect to Database
+			// 2) Connect to Database
 			$database = new Database();
 			$connection = $database->connect();
-		}catch(dbConnectException $dbe){
-			$_SESSION['message'] = $dbe->getMessage();
-			header("Loction:error.php");
-		}
+		
 
-		// 3) Find user's info
-		$user = new User($connection);
-		if($user->signin($username)){
-			if($user->id !== NULL){
-				// 4) Verify password
-				// registered user, verify the password
-				$pw_hash = $user->password;
-				if(password_verify($password, $pw_hash)){
-					// successfully sign in
-					$_SESSION['user_id'] = $user->id;
-					$_SESSION['username'] = $user->username;
-					$_SESSION['home_collection_id'] = $user->home_collection_id;
-					header("Location:index.php");
-					exit;
-				}else{
-					$system_msg = "Incorrect password";
-				}
-			}else{
-			// user not found
-				$system_msg = "User not found";
+			// 3) Find user's info
+			$user = new User($connection);
+			if(!$user->signin($username)){
+				throw new Exception("Database error");
 			}
-		}else{
-				$system_msg = "Database error";
+			if($user->id === NULL){
+				throw new Exception("User not found");
+			}
+				
+			// 4) Verify password
+			// registered user, verify the password
+			$pw_hash = $user->password;
+			if(password_verify($password, $pw_hash)){
+						// successfully sign in
+						$_SESSION['user_id'] = $user->id;
+						$_SESSION['username'] = $user->username;
+						$_SESSION['home_collection_id'] = $user->home_collection_id;
+						if($ajax){
+							header("Content-type:application/json");			
+							echo json_encode(["success"=>true]);
+							exit;
+						}else{
+							header("Location:index.php");
+							exit;
+						}
+			}else{
+				throw new Exception("Incorrect password");
+			}
+		}catch(dbConnectException $dbe){
+			if($ajax){
+				http_response_code(500);
+				exit;
+			}else{
+				$_SESSION['message'] = $dbe->getMessage();
+				header("Loction:error.php");
+			}
+		}catch(Exception $e){
+			if($ajax){
+				header("Content-type:application/json");			
+				echo json_encode(["success"=>false, "message"=>$e->getMessage()]);
+				exit;
+			}else{
+				$system_msg = $e->getMessage();
+			}
 		}
 	}
 	
@@ -67,7 +87,7 @@ require_once 'models/Users.php';
 <html>
 	<head>
 		<meta charset="utf-8"/>
-		<title>file</title>
+		<title>Sign in</title>
 		<link href="css/frontyard.css" type="text/css" rel="stylesheet"/>
 	</head>
 	<body>

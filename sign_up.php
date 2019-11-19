@@ -21,7 +21,7 @@
 <html>
 	<head>
 		<meta charset="utf-8"/>
-		<title>file</title>
+		<title>Sign up</title>
 		<link href="css/frontyard.css" type="text/css" rel="stylesheet"/>
 	</head>
 

@@ -7,7 +7,7 @@
 	define('TASK_TYPE', 6);
 	define('SUPPORT_TYPES_REG', "/^".ITEM_TYPE."|".CHECK_TYPE."|".TASK_TYPE."$/");
 	// tree display level
-	define('LEVEL_OF_LIST', 4);
-	define('LEVEL_OF_COLLECTION', 5);
+	define('LEVEL_OF_LIST', 2);
+	define('LEVEL_OF_COLLECTION', 2);
 ?>
 
