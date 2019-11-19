@@ -27,11 +27,11 @@
 
 <body>
 	<h3 id="system_msg"><?php echo $system_msg;?></h3>
-<form action="components/create_user.php" method="post">
+<form id="sign-up"action="components/create_user.php" method="post">
 	<fieldset>
 		<div>
 		<label for="username">username</label></br>
-		<input class="text-input" type="text" id="username" name="username" placeholder="6 to 255 charactors of aplabet and numbers" value="<?php echo $username?>" required >
+		<input class="text-input" type="text" id="username" name="username" placeholder="6 to 40 charactors of aplabet and numbers" value="<?php echo $username?>" required >
 					<h3 class="message-board" id="username_msg"><?php echo $username_msg;?></h3>
 		</div>
 		<div>

@@ -119,12 +119,12 @@ function removeErrorMessage(elementId){
     return !el.value || el.value === el.placeholder;
   }
 
-// --alpha and numbers ,6-30 chars. 
+// --alpha and numbers ,6-40 chars. 
 	function validateUsername(){
 		let usernameEle = document.getElementById('username');
 		let result ={};
 		let usernameStr = usernameEle.value;
-		usernameRag = /^[\w]{6,40}$/;
+		usernameRag = /^[a-zA-Z0-9]{6,40}$/;
 		if(!usernameRag.test(usernameStr)){
 			result['isValid'] = false;
 			result['message'] = "6-40 characters of the alphabet and numbers";
@@ -190,16 +190,17 @@ usernameInput.addEventListener('blur',checkRegisteration, true);
 function checkRegisteration(e){
 	let usernameEle;
 	if(this.id === 'username'){
-		 usernameEle = this;
+		 usernameEle = document.getElementById('sign-up').elements.username;
 	}else{
 	// if trigger by try again button
 		 usernameEle =  document.getElementById('username');
 	}
-	if(usernameEle.value.length >= 6){
+	// select message board for display
+	let messageBoard = document.getElementById('username_msg');
+	console.log(usernameEle.value);
+	if(/^[a-zA-Z0-9]{6,40}$/.test(usernameEle.value)){
 		let xhr = new XMLHttpRequest();
 		xhr.onload = function(){
-			// select message board for display
-			let messageBoard = document.getElementById('username_msg');
 			// remove old message if there are any
 			messageBoard.textContent = '';
 			let oldMessage = messageBoard.getElementsByTagName('span')[0];
@@ -234,5 +235,7 @@ function checkRegisteration(e){
 		xhr.send("ajax=true&username="+encodeForPost(usernameEle.value));
 
 		stopBubbling(e);
+	}else{
+		 messageBoard.innerHTML = "<span>6-40 characters of the alphabet and numbers</span>";
 	}
 }
