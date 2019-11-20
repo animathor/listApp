@@ -6,3 +6,7 @@ Step by step. Focus on what you can do.
 * Sortable and Movable subitems in the same list.
 * You can collect lists into collections (folders) which are also displayed in hierarchical structure.
 * Collections and lists are also movable.
+
+![Moving around](/img/moving.png)
+![Level up](/img/levels.png)
+![Collect all](/img/collect.png)
