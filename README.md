@@ -8,6 +8,7 @@ Step by step. Focus on what you can do.
 * Collections and lists are also movable.
 
 [database schema](/config/database_schema.pdf)
+
 ![Moving around](/img/moving.png)
 ![Level up](/img/levels.png)
 ![Collect all](/img/collect.png)
